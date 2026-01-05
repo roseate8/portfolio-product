@@ -1,0 +1,57 @@
+$fontSerif: 'Space Grotesk', 'Times New Roman', Times, serif;
+$fontSans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$fontMono: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$fontSystem: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+$size1: 64px;
+$line1: 0.9em;
+$size2: 15px;
+$line2: 1.5em;
+$size3: 11px;
+$line3: 1.45em;
+$size4: 29px;
+$line4: 1.25em;
+$size5: 13px;
+$line5: 1.45em;
+
+$size1Mobile: 64px;
+$line1Mobile: 0.9em;
+$size2Mobile: 15px;
+$line2Mobile: 1.5em;
+$size3Mobile: 11px;
+$line3Mobile: 1.45em;
+$size4Mobile: 29px;
+$line4Mobile: 1.25em;
+$size5Mobile: 14px;
+$line5Mobile: 1.45em;
+
+
+$grey: #888;
+$black: #111;
+$white: #fff;
+$red: #FF3200;
+$yellow: #F7DE56;
+$offGrey: rgba(245,246,242, 1);
+$lightGrey: #f4f4f4;
+$orange: #FF5F1F;
+
+$pageYellow: #FFC405;
+$pageRed: #FF3200;
+$pageGreen: #349E30;
+$pagePink: rgb(255 110 80);
+$pageBlue: #37A8EB;
+$pageCream: rgb(250, 248, 240);
+$pageGrey: rgb(191, 190, 171);
+$pageBrown: rgb(191, 190, 171);
+$pageBrick: rgb(191, 190, 171);
+$pagePeach: rgb(191, 190, 171);
+
+$bg: $offGrey;
+
+$margin:6vw;
+
+$transitionDuration:300ms;
+
+$bounce: cubic-bezier(0,0.73,0.12,1.71);
+
+$fastEasing: cubic-bezier(0.16, 1, 0.3, 1);

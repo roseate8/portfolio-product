@@ -1,0 +1,80 @@
+@font-face {
+	font-family: 'Space Grotesk';
+	font-style: normal;
+	font-weight: 300 700;
+	font-display: swap;
+	src: url('../fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+}
+
+
+@mixin largeTypeSerif() {
+	font-family:$fontSerif;
+	font-size:$size1;
+	line-height:$line1;
+	letter-spacing:-0.01em;
+	font-variation-settings:"wght" 600;
+	@include mobile {
+		font-size:$size1Mobile;
+		line-height:$line1Mobile;
+	}
+}
+
+@mixin largeTypeSans() {
+	font-family:$fontSans;
+	font-size:$size4;
+	line-height:$line4;
+	letter-spacing:-0.01em;
+	// letter-spacing:0.015em;
+	@include mobile {
+		font-size:$size4Mobile;
+		line-height:$line4Mobile;
+	}
+}
+
+
+@mixin bodyTypeSans() {
+	font-family:$fontSans;
+	font-size:$size2;
+	line-height:$line2;
+	letter-spacing:-0.01em;
+	// letter-spacing:0.015em;
+	@include mobile {
+		font-size:$size2Mobile;
+		line-height:$line2Mobile;
+	}
+}
+
+@mixin smallTypeSans() {
+	font-family:$fontSans;
+	font-size:$size5;
+	line-height:$line5;
+	letter-spacing:-0.01em;
+	@include mobile {
+		font-size:$size5Mobile;
+		line-height:$line5Mobile;
+	}
+}
+
+@mixin tinyTypeSans() {
+	font-family:$fontSans;
+	font-size:$size3;
+	line-height:$line3;
+	letter-spacing:0.05em;
+	text-transform:uppercase;
+	@include mobile {
+		font-size:$size3Mobile;
+		line-height:$line3Mobile;
+	}
+}
+
+@mixin bodyTypeMono() {
+	font-family:$fontMono;
+	font-size:$size3;
+	line-height:$line3;
+	text-transform:uppercase;
+	letter-spacing:0.075em;
+	@include mobile {
+		font-size:$size3Mobile;
+		line-height:$line3Mobile;
+	}
+}

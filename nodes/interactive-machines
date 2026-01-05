@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="external-refer">
+<head>
+
+	
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>Rudram Piplad</title>
+	<meta name="description" content="Rudram Piplad is a researcher and designer. His initiatives and projects bridge positive psychology, human-computer interaction, and the creative arts.">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="icon" type="image/png" href="https://rudrampiplad.com/assets/img/favicon.png">
+	<link rel="stylesheet" href="https://rudrampiplad.com/assets/css/app.css">
+
+	<meta property="og:title" content="Rudram Piplad">
+	<meta name="twitter:title" content="Rudram Piplad">
+	<meta property="og:type" content="website">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta property="og:url" content="https://rudrampiplad.com/nodes/interactive-machines">
+	<meta name="twitter:description" content="Rudram Piplad is a researcher and designer. His initiatives and projects bridge positive psychology, human-computer interaction, and the creative arts.">
+	<meta property="og:description" content="Rudram Piplad is a researcher and designer. His initiatives and projects bridge positive psychology, human-computer interaction, and the creative arts.">
+	<meta name="twitter:image" content="https://rudrampiplad.com/media/site/0bbd3b0fda-1727721696/at.jpg">
+	<meta property="og:image" content="https://rudrampiplad.com/media/site/0bbd3b0fda-1727721696/at.jpg">
+
+</head>
+
+
+<body data-basepath="https://rudrampiplad.com" data-uri="nodes/interactive-machines" data-uuid="page://PJHjmKbMJpm0TYHC">
+<main id="app">
+
+	<section class="map-container">
+		<svg width="960" height="600" class="map-lines"></svg>
+	</section>
+
+	<div class="page">
+
+		<div class="page-container">
+
+			<button class="header-content">
+
+				<div class="page-titles">
+					
+					<div class="page-titles-type">
+						<span class="tab-icon icon-home"></span>
+						<span class="tab-title">Index</span>
+						<span class="tab-indicator index-indicator"></span>
+					</div>
+					
+				</div>
+
+			</button>
+
+			<div class="main-content">
+
+				<div class="main-content-inner">
+
+				<div class="page-index tabs group">
+
+					<div class="page-tab tab-open">
+
+						<div class="tab-titles">
+							<span class="tab-icon icon-home"></span>
+							<span class="tab-title">Index</span>
+							<span class="tab-indicator"></span>
+						</div>
+
+						<div class="tab-content">
+							<p>Rudram Piplad is a researcher and designer. His initiatives and projects bridge positive psychology, human-computer interaction, and the creative arts — <a href="https://rudrampiplad.com/nodes/information" data-uri="nodes/information" class="index-link">more information</a>.</p>
+
+													</div>
+
+					</div>
+
+					
+												<div class="page-tab">
+								<div class="tab-titles">
+									<span class="tab-icon icon-initiative"></span>
+									<span class="tab-title">Initiatives</span>
+									<span class="tab-indicator"></span>
+								</div>
+								<div class="tab-content">
+						
+									
+									
+									
+																			<p class="tab-description">Concrete actions or projects aimed at implementing ideas that bridge technical, psychological, moral, and aesthetic dimensions.</p>
+															
+									<ul class="list">
+																						<li class="year-group">
+													Currently												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention/apossible" data-uri="nodes/social-intervention/apossible" class="index-link">
+													<span class="item-id highlighted">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>APOSSIBLE</h2>
+														<h3>Research Lab &amp; Creative Studio</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention/apossible/applied-experiments" data-uri="nodes/social-intervention/apossible/applied-experiments" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Applied Experiments</h2>
+														<h3>Prototyping &lsquo;Friction&rsquo;</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2024												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/positive-psychology/seeinghappy" data-uri="nodes/positive-psychology/seeinghappy" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>SeeingHappy</h2>
+														<h3>Phototherapy Nonprofit</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention/nia-ai" data-uri="nodes/social-intervention/nia-ai" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>nia.ai</h2>
+														<h3>AI Wellbeing Startup</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention/apossible/rhizome-7-7" data-uri="nodes/social-intervention/apossible/rhizome-7-7" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Rhizome 7&times;7</h2>
+														<h3>Art-Tech Research Partnership</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2022												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention/the-festival-of-urgent-reinventions" data-uri="nodes/social-intervention/the-festival-of-urgent-reinventions" class="index-link">
+													<span class="item-id ">
+														<span>2022</span>
+													</span>
+													<span class="item-title">
+														<h2>The Festival of Urgent Reinventions</h2>
+														<h3>Distributed Hackathon</h3>
+													</span>
+												</a>
+											</li>
+																			</ul>
+								</div>
+							</div>
+														<div class="page-tab">
+								<div class="tab-titles">
+									<span class="tab-icon icon-research"></span>
+									<span class="tab-title">Research</span>
+									<span class="tab-indicator"></span>
+								</div>
+								<div class="tab-content">
+						
+																			<p class="tab-description">Systematic investigations into the relationship between humans and technology, focusing on its effects on human fulfillment and virtues.</p>
+									
+									
+									
+															
+									<ul class="list">
+																						<li class="year-group">
+													Currently												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/positive-psychology/agency-technology-progress" data-uri="nodes/positive-psychology/agency-technology-progress" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Agency, Technology &amp; Progress</h2>
+														<h3>NLP Psychology Research</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/positive-psychology/character-development" data-uri="nodes/positive-psychology/character-development" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Character Development</h2>
+														<h3>Therepeutic Personal Robot</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/positive-psychology/friction" data-uri="nodes/positive-psychology/friction" class="index-link">
+													<span class="item-id highlighted">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Friction Paper</h2>
+														<h3>Open Research Paper</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2024												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/primary-assembly" data-uri="nodes/interactive-machines/primary-assembly" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Primary Assembly</h2>
+														<h3>Realtime Musical EEG Interface</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/positive-psychology/personal-narratives" data-uri="nodes/positive-psychology/personal-narratives" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Personal Narratives</h2>
+														<h3>AI-Based Research Tool</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/generative-ai-and-intrinsic-creativity" data-uri="nodes/interactive-machines/generative-ai-and-intrinsic-creativity" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Generative AI and Intrinsic Creativity</h2>
+														<h3>Applied Research for ml5.js</h3>
+													</span>
+												</a>
+											</li>
+																			</ul>
+								</div>
+							</div>
+														<div class="page-tab">
+								<div class="tab-titles">
+									<span class="tab-icon icon-artifact"></span>
+									<span class="tab-title">Artifacts</span>
+									<span class="tab-indicator"></span>
+								</div>
+								<div class="tab-content">
+						
+									
+																			<p class="tab-description">Tangible creations or products that reflect the integration of technology with human values, designed to enhance human experience.</p>
+									
+									
+															
+									<ul class="list">
+																						<li class="year-group">
+													Currently												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/rising-river" data-uri="nodes/interactive-machines/rising-river" class="index-link">
+													<span class="item-id highlighted">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Rising River</h2>
+														<h3>Therapeutic AI Video Game</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention/apossible/reference-index" data-uri="nodes/social-intervention/apossible/reference-index" class="index-link">
+													<span class="item-id highlighted">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Reference Index</h2>
+														<h3>Slow Technology Database</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2024												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/programatic-sketches/cognition-study" data-uri="nodes/interactive-machines/programatic-sketches/cognition-study" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Cognition Study no. 2</h2>
+														<h3>Interactive Software</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/programatic-sketches/cognition-study-no-1" data-uri="nodes/interactive-machines/programatic-sketches/cognition-study-no-1" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Cognition Study no. 1</h2>
+														<h3>Interactive Software</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/programatic-sketches/perception-study-no-1" data-uri="nodes/interactive-machines/programatic-sketches/perception-study-no-1" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Perception Study no. 1</h2>
+														<h3>Interactive Software</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/programatic-sketches/motion-study-no-1" data-uri="nodes/interactive-machines/programatic-sketches/motion-study-no-1" class="index-link">
+													<span class="item-id ">
+														<span>2024</span>
+													</span>
+													<span class="item-title">
+														<h2>Motion Study no. 1</h2>
+														<h3>Interactive Software</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2023												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/programatic-sketches/persistence-of-vision" data-uri="nodes/interactive-machines/programatic-sketches/persistence-of-vision" class="index-link">
+													<span class="item-id ">
+														<span>2023</span>
+													</span>
+													<span class="item-title">
+														<h2>Motion Study no. 2</h2>
+														<h3>Interactive Software</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2021												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression/evolutionary-systems/happiness-as-emergence" data-uri="nodes/human-expression/evolutionary-systems/happiness-as-emergence" class="index-link">
+													<span class="item-id ">
+														<span>2021</span>
+													</span>
+													<span class="item-title">
+														<h2>Happiness as Emergence</h2>
+														<h3>Master&#039;s Thesis Paper</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression/evolutionary-systems/burn-topographies" data-uri="nodes/human-expression/evolutionary-systems/burn-topographies" class="index-link">
+													<span class="item-id ">
+														<span>2021</span>
+													</span>
+													<span class="item-title">
+														<h2>Burn Topographies</h2>
+														<h3>Photographic Study</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression/evolutionary-systems/formation" data-uri="nodes/human-expression/evolutionary-systems/formation" class="index-link">
+													<span class="item-id ">
+														<span>2021</span>
+													</span>
+													<span class="item-title">
+														<h2>Formation</h2>
+														<h3>Photographic Study</h3>
+													</span>
+												</a>
+											</li>
+																						<li class="year-group">
+													2019												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression/land-of-high-passes" data-uri="nodes/human-expression/land-of-high-passes" class="index-link">
+													<span class="item-id ">
+														<span>2019</span>
+													</span>
+													<span class="item-title">
+														<h2>Land of High Passes</h2>
+														<h3>Photographic Study</h3>
+													</span>
+												</a>
+											</li>
+																			</ul>
+								</div>
+							</div>
+														<div class="page-tab">
+								<div class="tab-titles">
+									<span class="tab-icon icon-path"></span>
+									<span class="tab-title">Paths</span>
+									<span class="tab-indicator"></span>
+								</div>
+								<div class="tab-content">
+						
+									
+									
+																			<p class="tab-description">A collection of ideas or approaches that converge into a unified direction of thought.</p>
+									
+															
+									<ul class="list">
+																						<li class="year-group">
+													Currently												</li>
+																							<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression" data-uri="nodes/human-expression" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Human Expression</h2>
+														<h3>Area of Interest</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression/evolutionary-systems" data-uri="nodes/human-expression/evolutionary-systems" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Evolutionary Systems</h2>
+														<h3>Area of Interest</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/human-expression/evolutionary-systems/computational-evolution" data-uri="nodes/human-expression/evolutionary-systems/computational-evolution" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Computational Evolution</h2>
+														<h3>Generative Art</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines" data-uri="nodes/interactive-machines" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Interactive Machines</h2>
+														<h3>Area of Practice</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/interactive-machines/programatic-sketches" data-uri="nodes/interactive-machines/programatic-sketches" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Programatic Sketches</h2>
+														<h3>Interactive Experiments</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/positive-psychology" data-uri="nodes/positive-psychology" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Positive Psychology</h2>
+														<h3>Area of Research</h3>
+													</span>
+												</a>
+											</li>
+																					<li>
+												<a href="https://rudrampiplad.com/nodes/social-intervention" data-uri="nodes/social-intervention" class="index-link">
+													<span class="item-id ">
+														<span>Currently</span>
+													</span>
+													<span class="item-title">
+														<h2>Social Intervention</h2>
+														<h3>Area of Practice</h3>
+													</span>
+												</a>
+											</li>
+																			</ul>
+								</div>
+							</div>
+							
+					</div>
+
+				</div>
+			</div>
+			
+		</div>
+
+		
+
+
+
+		
+
+
+
+	</div>
+
+	
+
+
+</main>
+
+</body>
+
+<script src="https://rudrampiplad.com/assets/js/app.min.js"></script>
+
+	<script defer data-domain="rudrampiplad.com" src="https://plausible.io/js/script.js"></script>
+</html>

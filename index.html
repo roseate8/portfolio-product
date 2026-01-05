@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>Portfolio</title>
+	<meta name="description" content="Interactive portfolio showcasing research, initiatives, and creative work.">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+	<link rel="stylesheet" href="/assets/css/app.css">
+
+	<meta property="og:title" content="Portfolio">
+	<meta property="og:type" content="website">
+	<meta property="og:description" content="Interactive portfolio showcasing research, initiatives, and creative work.">
+</head>
+
+<body data-basepath="" data-uri="" data-uuid="">
+<main id="app">
+
+	<section class="map-container">
+		<svg width="960" height="600" class="map-lines"></svg>
+	</section>
+
+	<div class="page">
+
+		<div class="page-container">
+
+			<button class="header-content">
+				<div class="page-titles">
+					<div class="page-titles-type">
+						<span class="tab-icon icon-home"></span>
+						<span class="tab-title">Index</span>
+						<span class="tab-indicator index-indicator"></span>
+					</div>
+				</div>
+			</button>
+
+			<div class="main-content">
+				<div class="main-content-inner">
+
+					<div class="page-index tabs group">
+
+						<div class="page-tab tab-open">
+							<div class="tab-titles">
+								<span class="tab-icon icon-home"></span>
+								<span class="tab-title">Index</span>
+								<span class="tab-indicator"></span>
+							</div>
+							<div class="tab-content">
+								<p>Welcome to my portfolio. I am a researcher and designer working at the intersection of technology, psychology, and creative arts — <a href="/nodes/information" data-uri="nodes/information" class="index-link">more information</a>.</p>
+							</div>
+						</div>
+
+						<div class="page-tab">
+							<div class="tab-titles">
+								<span class="tab-icon icon-initiative"></span>
+								<span class="tab-title">Initiatives</span>
+								<span class="tab-indicator"></span>
+							</div>
+							<div class="tab-content">
+								<p class="tab-description">Concrete actions or projects aimed at implementing ideas that bridge technical, psychological, and aesthetic dimensions.</p>
+								<ul class="list" id="initiatives-list">
+									<!-- Dynamically populated -->
+								</ul>
+							</div>
+						</div>
+
+						<div class="page-tab">
+							<div class="tab-titles">
+								<span class="tab-icon icon-research"></span>
+								<span class="tab-title">Research</span>
+								<span class="tab-indicator"></span>
+							</div>
+							<div class="tab-content">
+								<p class="tab-description">Systematic investigations into the relationship between humans and technology.</p>
+								<ul class="list" id="research-list">
+									<!-- Dynamically populated -->
+								</ul>
+							</div>
+						</div>
+
+						<div class="page-tab">
+							<div class="tab-titles">
+								<span class="tab-icon icon-artifact"></span>
+								<span class="tab-title">Artifacts</span>
+								<span class="tab-indicator"></span>
+							</div>
+							<div class="tab-content">
+								<p class="tab-description">Tangible creations that reflect the integration of technology with human values.</p>
+								<ul class="list" id="artifacts-list">
+									<!-- Dynamically populated -->
+								</ul>
+							</div>
+						</div>
+
+						<div class="page-tab">
+							<div class="tab-titles">
+								<span class="tab-icon icon-path"></span>
+								<span class="tab-title">Paths</span>
+								<span class="tab-indicator"></span>
+							</div>
+							<div class="tab-content">
+								<p class="tab-description">A collection of ideas or approaches that converge into a unified direction of thought.</p>
+								<ul class="list" id="paths-list">
+									<!-- Dynamically populated -->
+								</ul>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+			
+		</div>
+
+	</div>
+
+</main>
+</body>
+
+<script type="module" src="/assets/js/app.js"></script>
+</html>
+

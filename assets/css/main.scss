@@ -1,0 +1,10 @@
+// Main SCSS entry point for Vite
+// This file imports all partials in the correct order
+
+@import 'variables';
+@import 'defaults';
+@import 'type';
+@import 'global';
+@import 'components/map';
+@import 'components/page';
+
