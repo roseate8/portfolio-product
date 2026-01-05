@@ -1,7 +1,7 @@
 .map-container {
 	position: fixed;
-	top: 0; left: 25vw;
-	width:75vw; height:100vh;
+	top: 0; left: 30vw;
+	width:70vw; height:100vh;
 	transition:top 600ms, left 600ms, height 600ms;
 	animation: mapIn 3000ms forwards;
 	z-index:1;
