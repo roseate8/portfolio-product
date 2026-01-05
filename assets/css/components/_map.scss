@@ -1,7 +1,7 @@
 .map-container {
 	position: fixed;
-	top: 0; left: 0;
-	width:100vw; height:100vh;
+	top: 0; left: 25vw;
+	width:75vw; height:100vh;
 	transition:top 600ms, left 600ms, height 600ms;
 	animation: mapIn 3000ms forwards;
 	z-index:1;
@@ -406,9 +406,9 @@
 	.slider-container {
 		position: absolute;
 		bottom: calc(5vh - 20px);
-		left: 30vw;
+		left: 62.5vw;
 		transform: translate(-50%, -50%);
-		width: 25vw;
+		width: 37.5vw;
 		display: flex;
 		align-items: center;
 		justify-content: center;
