@@ -1,6 +1,6 @@
 
 version 1:
-```
+```graph
 graph TB
     %% Root
     R((Rudram))
@@ -82,7 +82,7 @@ graph TB
 ```
 
 version 2:
-```
+```mermaid
 flowchart TB
     RP((Rudram Piplad))
     
