@@ -1,6 +1,6 @@
 
 version 1:
-```graph
+```mermaid
 graph TB
     %% Root
     R((Rudram))
