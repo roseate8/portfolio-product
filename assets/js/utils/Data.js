@@ -1,11 +1,231 @@
-export const Data = {
-    basePath: document.body.dataset.basepath,
-    useStaticData: true, // Set to false when you have a backend API
+/**
+ * =============================================================================
+ * DATA MODULE
+ * =============================================================================
+ * 
+ * This module is the "middleman" between your frontend and your data sources.
+ * It decides WHERE to get data from and handles fallbacks.
+ * 
+ * DATA SOURCES (in order of priority):
+ * 1. Supabase (online database) - DEFAULT
+ * 2. portfolio.json (static file) - FALLBACK
+ * 
+ * HOW IT WORKS:
+ * - If Supabase works → Use that data
+ * - If Supabase fails → Fall back to portfolio.json
+ * 
+ * IMPORTANT:
+ * - portfolio.json is NOT automatically synced with Supabase
+ * - If you edit Supabase, portfolio.json stays the same (and vice versa)
+ * - portfolio.json is only used as a backup if Supabase is down
+ * 
+ * LOGS:
+ * All operations are logged to the browser console (F12 → Console tab)
+ * 
+ * =============================================================================
+ */
 
-    // Recursive function to build the query for nested levels
+// Import the Supabase fetch function from the backend folder
+import { fetchPortfolioData } from '../../../backend/supabase.js';
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+const CONFIG = {
+    // Which data source to use?
+    // true  = Try Supabase first, fall back to JSON
+    // false = Skip Supabase, use JSON directly
+    useSupabase: true,
+    
+    // Path to the static JSON file (fallback)
+    staticDataPath: '/assets/data/portfolio.json',
+    
+    // Show detailed logs in console?
+    debug: true
+};
+
+/**
+ * Logs a message to the console
+ */
+function log(emoji, message, data = null) {
+    if (!CONFIG.debug) return;
+    
+    const prefix = `[Data.js] ${emoji}`;
+    if (data) {
+        console.log(prefix, message, data);
+    } else {
+        console.log(prefix, message);
+    }
+}
+
+// =============================================================================
+// DATA MODULE
+// =============================================================================
+
+export const Data = {
+    // Legacy properties (for backwards compatibility)
+    basePath: document.body?.dataset?.basepath || '',
+    useSupabase: CONFIG.useSupabase,
+    useStaticData: !CONFIG.useSupabase,
+
+    // =========================================================================
+    // MAIN FUNCTION: buildData()
+    // =========================================================================
+    
+    /**
+     * Fetches portfolio data and returns it ready for the frontend.
+     * 
+     * This is the main function your app calls. It:
+     * 1. Tries to get data from Supabase (if enabled)
+     * 2. Falls back to portfolio.json if Supabase fails
+     * 3. Extracts unique dates for timeline features
+     * 
+     * @returns {Promise<{data: Object, uniqueDates: string[]}>}
+     */
+    async buildData() {
+        log('🚀', 'Starting data fetch...');
+        log('⚙️', 'Configuration:', {
+            useSupabase: CONFIG.useSupabase,
+            staticDataPath: CONFIG.staticDataPath
+        });
+        
+        let data = null;
+        let dataSource = 'unknown';
+
+        // =====================================================================
+        // TRY TO GET DATA
+        // =====================================================================
+        
+        if (CONFIG.useSupabase) {
+            // OPTION 1: Try Supabase first
+            log('📡', 'Attempting to fetch from Supabase...');
+            
+            try {
+                data = await fetchPortfolioData();
+                
+                if (data) {
+                    dataSource = 'supabase';
+                    log('✅', 'SUCCESS: Data loaded from Supabase');
+                } else {
+                    log('⚠️', 'Supabase returned no data, trying fallback...');
+                    data = await this.fetchStaticData();
+                    dataSource = 'json-fallback';
+                }
+            } catch (error) {
+                log('❌', 'Supabase failed:', error.message);
+                log('⚠️', 'Falling back to portfolio.json...');
+                data = await this.fetchStaticData();
+                dataSource = 'json-fallback';
+            }
+        } else {
+            // OPTION 2: Use static JSON directly
+            log('📄', 'Supabase disabled, loading from portfolio.json...');
+            data = await this.fetchStaticData();
+            dataSource = 'json-direct';
+        }
+
+        // =====================================================================
+        // CHECK IF WE GOT DATA
+        // =====================================================================
+        
+        if (!data) {
+            log('❌', 'FATAL: No data available from any source!');
+            console.error(
+                '❌ DATA ERROR: Could not load portfolio data!\n\n' +
+                'Tried:\n' +
+                (CONFIG.useSupabase ? '1. Supabase → Failed\n' : '') +
+                '2. portfolio.json → Failed\n\n' +
+                'Check:\n' +
+                '- Is your .env file configured correctly?\n' +
+                '- Does /assets/data/portfolio.json exist?\n' +
+                '- Is your Supabase project active?'
+            );
+            return undefined;
+        }
+
+        // =====================================================================
+        // PROCESS THE DATA
+        // =====================================================================
+        
+        // Extract unique dates for timeline features
+        const allNodes = this.flattenNodes(data);
+        const uniqueDates = [...new Set(
+            allNodes.map(node => node.originDate).filter(date => date)
+        )].sort((a, b) => new Date(a) - new Date(b));
+
+        // Final summary
+        log('✅', '=== DATA LOAD COMPLETE ===');
+        log('📊', 'Summary:', {
+            source: dataSource,
+            rootTitle: data.title,
+            totalNodes: allNodes.length,
+            uniqueDates: uniqueDates.length
+        });
+
+        return { data, uniqueDates };
+    },
+
+    // =========================================================================
+    // HELPER: Fetch Static JSON
+    // =========================================================================
+    
+    /**
+     * Loads data from the static portfolio.json file.
+     * This is used as a fallback when Supabase fails.
+     */
+    async fetchStaticData() {
+        log('📄', `Loading ${CONFIG.staticDataPath}...`);
+        
+        try {
+            const response = await fetch(CONFIG.staticDataPath);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            log('✅', 'Static JSON loaded successfully');
+            return data;
+            
+        } catch (error) {
+            log('❌', 'Failed to load static JSON:', error.message);
+            return null;
+        }
+    },
+
+    // =========================================================================
+    // HELPER: Flatten Tree
+    // =========================================================================
+    
+    /**
+     * Converts a nested tree into a flat array.
+     * Useful for counting nodes, searching, or extracting data.
+     * 
+     * @param {Object} node - Root node
+     * @param {Array} result - Accumulator (used internally)
+     * @returns {Array} Flat array of all nodes
+     */
+    flattenNodes(node, result = []) {
+        if (!node) return result;
+        
+        result.push(node);
+        
+        if (node.children && Array.isArray(node.children)) {
+            node.children.forEach(child => this.flattenNodes(child, result));
+        }
+        
+        return result;
+    },
+
+    // =========================================================================
+    // LEGACY: Kirby CMS Methods (you can ignore these)
+    // =========================================================================
+    // These are here for backwards compatibility if you ever used Kirby CMS.
+    // They're not used when Supabase or static JSON is enabled.
+
     buildQuery(level) {
         if (level === 0) return {};
-
         return {
             title: true,
             uri: true,
@@ -27,227 +247,31 @@ export const Data = {
             media: {
                 query: "page.media.toFiles",
                 select: {
-                    url: true,
-                    alt: true,
-                    type: true,
+                    url: true, alt: true, type: true,
                     smallImage: "file.resize(1200, null, 95).url",
                     largeImage: "file.resize(1600, null, 95).url",
-                    externalLink: true,
-                    externalLinkText: true
+                    externalLink: true, externalLinkText: true
                 }
             },
             type: true,
-            externalLinks: {
-                query: "page.externalLinks.toStructure",
-                select: {
-                    title: true,
-                    link: true
-                }
-            },
-            metadata: {
-                query: "page.metadata.toStructure",
-                select: {
-                    title: true,
-                    subtitle: true
-                }
-            },
-            education: {
-                query: "page.education.toStructure",
-                select: {
-                    title: true,
-                    subtitle: true,
-                    year: true,
-                }
-            },
-            recognition: {
-                query: "page.recognition.toStructure",
-                select: {
-                    title: true,
-                    subtitle: true,
-                    year: true,
-                }
-            },
-            footnotes: {
-                query: "page.footnotes.toStructure",
-                select: {
-                    footnote: true
-                }
-            },
-            connectedNodes: {
-                query: "page.connectedNodes.toStructure",
-                select: {
-                    foreignkey: true
-                }
-            },
-            children: {
-                query: "page.children",
-                select: this.buildQuery(level - 1)
-            }
+            externalLinks: { query: "page.externalLinks.toStructure", select: { title: true, link: true } },
+            metadata: { query: "page.metadata.toStructure", select: { title: true, subtitle: true } },
+            education: { query: "page.education.toStructure", select: { title: true, subtitle: true, year: true } },
+            recognition: { query: "page.recognition.toStructure", select: { title: true, subtitle: true, year: true } },
+            footnotes: { query: "page.footnotes.toStructure", select: { footnote: true } },
+            connectedNodes: { query: "page.connectedNodes.toStructure", select: { foreignkey: true } },
+            children: { query: "page.children", select: this.buildQuery(level - 1) }
         };
     },
 
     async fetchPageData(uri, levels = 20) {
-        const query = {
-            query: `page('${uri}')`,
-            select: this.buildQuery(levels)
-        };
-
-        const api = `${this.basePath}/api/query`;
-        const headers = {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        };
-
-        try {
-            const response = await fetch(api, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(query)
-            });
-
-            const data = await response.json();
-            if (data.error) {
-                console.error('Error:', data.error);
-                return null;
-            } else {
-                return data.result;
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return null;
-        }
+        // Legacy Kirby CMS support - not used with Supabase
+        return null;
     },
 
     async fetchAllPages(uri) {
-        const pageData = await this.fetchPageData(uri, 20); // Fetch up to 20 levels deep
-        if (!pageData) return [];
-
-        // Process the data to add theme IDs and connected nodes
-        const processPageData = (page) => ({
-            title: page.title,
-            uri: page.uri,
-            uuid: page.uuid,
-            summary: page.summary,
-            role: page.role,
-            email: page.email,
-            telephone: page.telephone,
-            overview: page.overview,
-            description: page.description,
-            extendedDescription: page.extendedDescription,
-            originDate: page.originDate,
-            endDate: page.endDate,
-            expirationDate: page.expirationDate,
-            lastUpdated: page.lastUpdated,
-            isFeatured: page.isFeatured,
-            isHighlighted: page.isHighlighted,
-            isSecondary: page.isSecondary,
-            media: (page.media || []).map(media => ({
-                url: media.url,
-                alt: media.alt,
-                type: media.type,
-                smallImage: media.smallImage,
-                largeImage: media.largeImage,
-                externalLink: media.externalLink,
-                externalLinkText: media.externalLinkText
-            })),
-            type: page.type,
-            externalLinks: (page.externalLinks || []).map(link => ({
-                title: link.title,
-                link: link.link
-            })),
-            metadata: (page.metadata || []).map(meta => ({
-                title: meta.title,
-                subtitle: meta.subtitle
-            })),
-            education: (page.education || []).map(edu => ({
-                title: edu.title,
-                subtitle: edu.subtitle,
-                year: edu.year
-            })),
-            recognition: (page.recognition || []).map(rec => ({
-                title: rec.title,
-                subtitle: rec.subtitle,
-                year: rec.year
-            })),
-            footnotes: (page.footnotes || []).map(footnote => ({
-                footnote: footnote.footnote
-            })),
-            connectedNodes: (page.connectedNodes || []).map(node => node.foreignkey),
-            children: (page.children || []).map(child => processPageData(child))
-        });
-
-        return (pageData.children || []).map(child => processPageData(child));
-    },
-
-    async fetchStaticData() {
-        try {
-            const response = await fetch('/assets/data/portfolio.json');
-            if (!response.ok) throw new Error('Failed to load static data');
-            return await response.json();
-        } catch (error) {
-            console.error('Static data fetch error:', error);
-            return null;
-        }
-    },
-
-    async buildData() {
-        let data;
-
-        if (this.useStaticData) {
-            // Load from static JSON file
-            data = await this.fetchStaticData();
-            if (!data) return;
-        } else {
-            // Load from Kirby CMS API
-            const nodesPage = await this.fetchAllPages('nodes');
-            if (!nodesPage) return;
-
-            // Build root node structure for API data
-            data = {
-                title: "Your Name",
-                uri: '/',
-                uuid: '0',
-                summary: "Designer & Researcher",
-                role: '',
-                email: '',
-                telephone: '',
-                overview: '',
-                description: '',
-                extendedDescription: '',
-                originDate: '',
-                endDate: '',
-                expirationDate: '',
-                lastUpdated: '',
-                isFeatured: false,
-                isHighlighted: false,
-                isSecondary: false,
-                media: '',
-                type: '',
-                externalLinks: [],
-                metadata: [],
-                education: [],
-                recognition: [],
-                footnotes: [],
-                connectedNodes: [],
-                children: nodesPage
-            };
-        }
-
-        // Extract all unique dates from the data tree
-        const allNodes = this.flattenNodes(data);
-        const uniqueDates = [...new Set(
-            allNodes.map(node => node.originDate).filter(date => date)
-        )].sort((a, b) => new Date(a) - new Date(b));
-
-        return { data, uniqueDates };
-    },
-
-    flattenNodes(node, result = []) {
-        result.push(node);
-        if (node.children) {
-            node.children.forEach(child => this.flattenNodes(child, result));
-        }
-        return result;
+        // Legacy Kirby CMS support - not used with Supabase
+        return [];
     },
 
     extractDates(node) {
