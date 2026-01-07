@@ -141,7 +141,18 @@ export const Data = {
                 '- Does /assets/data/portfolio.json exist?\n' +
                 '- Is your Supabase project active?'
             );
-            return undefined;
+            
+            // Return empty structure instead of undefined to prevent crashes
+            return {
+                data: {
+                    title: 'Error: No Data',
+                    children: [],
+                    uri: '/',
+                    uuid: 'error',
+                    type: ''
+                },
+                uniqueDates: []
+            };
         }
 
         // =====================================================================

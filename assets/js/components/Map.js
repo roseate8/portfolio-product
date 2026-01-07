@@ -26,11 +26,33 @@ const Map = {
             this.setupMap(initialUri, sliderValue);
         } else {
             this.setUpListeners();
-            Data.buildData().then(({ data, uniqueDates }) => {
+            Data.buildData().then((result) => {
+                console.log('🎯 Map received data:', result);
+                
+                if (!result) {
+                    console.error('❌ Data.buildData() returned undefined!');
+                    return;
+                }
+                
+                const { data, uniqueDates } = result;
+                
+                if (!data) {
+                    console.error('❌ No data in result!');
+                    return;
+                }
+                
+                console.log('✅ Map initializing with:', {
+                    rootTitle: data.title,
+                    childrenCount: data.children?.length || 0,
+                    datesCount: uniqueDates?.length || 0
+                });
+                
                 this.data = data;
                 this.uniqueDates = uniqueDates;
                 this.isDataInitialized = true;
                 this.setupMap(initialUri, sliderValue);
+            }).catch(error => {
+                console.error('❌ Error in Map.initialize:', error);
             });
         }
 
@@ -137,6 +159,9 @@ const Map = {
     },
 
     renderMap(filteredNodes = null, everything = false) {
+        console.log('🎨 renderMap called');
+        console.log('🎨 filteredNodes:', filteredNodes);
+        console.log('🎨 filteredNodes.children:', filteredNodes?.children);
 
         const svgElement = document.querySelector('svg');
         const svg = d3.select("svg.map-lines");
@@ -478,7 +503,11 @@ const Map = {
     },
 
     updateMap(selectedDate) {
+        console.log('🗺️ updateMap called with date:', selectedDate);
+        console.log('🗺️ Raw data:', this.data);
         const filteredData = this.filterDataByDate(this.data, selectedDate);
+        console.log('🗺️ Filtered data:', filteredData);
+        console.log('🗺️ Filtered children count:', filteredData.children?.length || 0);
         this.renderMap(filteredData);
     },
     
@@ -492,11 +521,14 @@ const Map = {
         const selectedDateObj = new Date(selectedDate);
     
         node.children = node.children.filter(child => {
-            const originDate = new Date(child.originDate);
-            const expirationDate = new Date(child.expirationDate);
+            // Handle null/undefined dates gracefully
+            const originDate = child.originDate ? new Date(child.originDate) : new Date('2018-01-01');
+            const expirationDate = child.expirationDate ? new Date(child.expirationDate) : null;
     
-            const isDateValid = originDate <= selectedDateObj && (!child.expirationDate || expirationDate > selectedDateObj);
+            const isDateValid = originDate <= selectedDateObj && (!expirationDate || expirationDate > selectedDateObj);
             const isFeaturedValid = child.isFeatured === true || child.isFeatured === "true";
+    
+            console.log(`🔍 Filtering ${child.title}: originDate=${child.originDate}, isFeatured=${child.isFeatured}, passes=${isDateValid && isFeaturedValid}`);
     
             return isDateValid && isFeaturedValid;
         });

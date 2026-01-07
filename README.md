@@ -143,7 +143,10 @@ The portfolio data is stored in Supabase with these tables:
 ## 📚 Documentation
 
 - **Quick Start:** This file
-- **Supabase Details:** `README_SUPABASE.md`
+- **✅ Migration Completed:** `backend/MIGRATION_COMPLETED.md` ← Data migration summary
+- **Data Status:** `DATA_SITUATION.md` ← Current status (all real data loaded)
+- **Backend Integration:** `backend/supabase.js`
+- **Migration Script:** `backend/migrate_real_data.sql`
 - **Database Setup:** `docs/SUPABASE_SETUP_GUIDE.md`
 - **Implementation:** `docs/SUPABASE_IMPLEMENTATION_SUMMARY.md`
 
