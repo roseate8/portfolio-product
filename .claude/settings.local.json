@@ -11,7 +11,8 @@
       "Bash(Get-ChildItem -Path \"e:\\\\Projects\\\\portfolio-product\" -Recurse -Force -File)",
       "Bash(Where-Object { $_Name -eq \"nul\" })",
       "Bash(Select-Object FullName)",
-      "Bash(claude mcp add:*)"
+      "Bash(claude mcp add:*)",
+      "Bash(git rm:*)"
     ]
   }
 }

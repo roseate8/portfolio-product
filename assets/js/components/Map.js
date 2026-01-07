@@ -50,6 +50,10 @@ const Map = {
                 this.data = data;
                 this.uniqueDates = uniqueDates;
                 this.isDataInitialized = true;
+                
+                // Populate homepage index with root node data
+                Page.populateHomePageIndex();
+                
                 this.setupMap(initialUri, sliderValue);
             }).catch(error => {
                 console.error('❌ Error in Map.initialize:', error);
@@ -102,10 +106,31 @@ const Map = {
                 const clickedNode = this.findNodeById(this.data, clickedUri);
                 if (clickedNode) {
                     
-                    if (Map.currentNode && (Map.currentNode.uri === clickedNode.uri) || (clickedNode.uri === '/')) {
+                    const isRootNode = clickedNode.uri === '/' || clickedNode.uuid === 'root-0';
+                    
+                    // If clicking the same node again (to deselect it), reset the map
+                    if (Map.currentNode && Map.currentNode.uri === clickedNode.uri) {
+                        console.log('🔄 Same node clicked - resetting map');
                         Map.resetMap();
                         Page.closePage();
-                    } else {
+                    } 
+                    // If clicking root node while another node is selected, reset to root view
+                    else if (isRootNode && Map.currentNode) {
+                        console.log('🏠 Root node clicked - resetting to root view');
+                        Map.resetMap();
+                        Page.closePage();
+                    }
+                    // If clicking root node with nothing selected, open root page
+                    else if (isRootNode && !Map.currentNode) {
+                        console.log('📄 Opening root node page');
+                        const sliderValue = document.querySelector('.date-slider').value;
+                        Map.currentNode = clickedNode;
+                        Router.navigate({ sliderValue }, clickedUri);
+                        Page.openPage(clickedUri);
+                    }
+                    // New non-root node clicked - open its page and filter
+                    else {
+                        console.log('📄 Opening page for:', clickedNode.title);
                         const sliderValue = document.querySelector('.date-slider').value;
                         Map.currentNode = clickedNode;
                         this.filterAndRender(clickedNode);
@@ -512,8 +537,10 @@ const Map = {
     },
     
     filterDataByDate(data, selectedDate) {
+        console.log('📅 Filtering by date - showing only first-level children');
         const filteredNodes = JSON.parse(JSON.stringify(data));
         this.filterNodesByDate(filteredNodes, selectedDate);
+        console.log('📅 Result:', filteredNodes.title, 'with', filteredNodes.children?.length || 0, 'direct children');
         return filteredNodes;
     },
     
@@ -533,7 +560,37 @@ const Map = {
             return isDateValid && isFeaturedValid;
         });
     
-        node.children.forEach(child => this.filterNodesByDate(child, selectedDate));
+        // CHANGED: Only show first-level children (remove grandchildren)
+        // EXCEPT for specific second-level nodes on homepage
+        const isRootNode = node.uri === '/' || node.uuid === 'root-0';
+        
+        node.children.forEach(child => {
+            if (isRootNode && child.children && child.children.length > 0) {
+                // Special case: Keep specific second-level nodes on homepage
+                const featuredSecondLevelUUIDs = ['agents-path', 'photo-1']; // AI Agents, Photography
+                
+                child.children = child.children.filter(grandchild => {
+                    if (featuredSecondLevelUUIDs.includes(grandchild.uuid)) {
+                        // Also check date validity for these second-level nodes
+                        const originDate = grandchild.originDate ? new Date(grandchild.originDate) : new Date('2018-01-01');
+                        const expirationDate = grandchild.expirationDate ? new Date(grandchild.expirationDate) : null;
+                        const isDateValid = originDate <= selectedDateObj && (!expirationDate || expirationDate > selectedDateObj);
+                        const isFeaturedValid = grandchild.isFeatured === true || grandchild.isFeatured === "true";
+                        
+                        if (isDateValid && isFeaturedValid) {
+                            console.log(`✨ Keeping featured second-level node: ${grandchild.title}`);
+                            // Clear this grandchild's children to keep it at 2 levels max
+                            grandchild.children = [];
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            } else {
+                // For all other cases, clear grandchildren
+                child.children = [];
+            }
+        });
     },
 
     filterAndRender(clickedNode) {
@@ -638,6 +695,7 @@ const Map = {
     // this just gets one level of children
 
     filterNodes(clickedNode) {
+        console.log('🎯 Node clicked:', clickedNode.title, '- building path to root + first-level children');
         let filteredData = {};
     
         // Function to find ancestors and ensure correct hierarchy
@@ -661,6 +719,7 @@ const Map = {
         // Find ancestors of the clicked node
         let ancestors = [];
         findAncestors(this.data, clickedNode, ancestors);
+        console.log('🎯 Path to root has', ancestors.length, 'ancestors');
     
         // Set up the clicked node and its direct children (but not grandchildren)
         const clickedNodeCopy = { ...clickedNode, children: [] };
@@ -714,6 +773,7 @@ const Map = {
             filteredData = clickedNodeCopy;
         }
     
+        console.log('🎯 Result: Showing', clickedNode.title, 'with', clickedNodeCopy.children?.length || 0, 'direct children');
         return filteredData;
     },
 

@@ -17,8 +17,8 @@ npm install
 Create a `.env` file in the project root:
 
 ```env
-VITE_SUPABASE_URL=https://eeuvtdgwdjerdsumowmx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVldXZ0ZGd3ZGplcmRzdW1vd214Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MzIyMDIsImV4cCI6MjA4MzIwODIwMn0.NIHXxWnHCR-GThu5zoRZyE3vIEVJSt6pfIiVTl3L2Mo
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
 ```
 
 ### 3. Run Development Server

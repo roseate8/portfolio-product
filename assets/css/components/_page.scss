@@ -248,29 +248,6 @@
 
 			
 
-		.website-credit {
-			margin-top:18px;
-			@include tinyTypeSans;
-			letter-spacing:0.0em;
-			text-transform:none;
-			text-indent:23px !important;
-			// margin-left:23px;
-			color:$grey;
-			border-top:1px dashed $grey;
-			padding-top:17px;
-		}
-
-			p.website-credit a {
-				color:$grey;
-				text-decoration:none;
-			}
-
-			p.website-credit:before {
-				content:'i.';
-				left:0px;
-				position:absolute;
-			}
-
 	.page-index {
 		display:flex;
 		flex-direction:column;

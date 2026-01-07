@@ -14,7 +14,52 @@ const Page = {
     initialize(path) {
 		// only runs once
 		this.setupListeners();
+		this.populateHomePageIndex();
 		// this.animateHomePage(path);
+	},
+
+	populateHomePageIndex() {
+		// Populate the homepage index tab with root node data from Supabase
+		console.log('📝 Populating homepage index with root node data');
+		
+		if (!Map.data) {
+			console.log('⚠️ Map data not yet loaded, will retry...');
+			// Retry after a short delay if data isn't loaded yet
+			setTimeout(() => this.populateHomePageIndex(), 100);
+			return;
+		}
+
+		const rootNode = Map.data;
+		const indexTabContent = document.querySelector('.page-index .tab-open .tab-content');
+		
+		if (!indexTabContent) {
+			console.log('⚠️ Index tab content not found');
+			return;
+		}
+
+		// Use description if available, otherwise use summary
+		let content = '';
+		if (rootNode.description) {
+			// Extract just the first paragraph for the homepage
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = rootNode.description;
+			const firstParagraph = tempDiv.querySelector('p');
+			content = firstParagraph ? firstParagraph.innerHTML : rootNode.description;
+		} else if (rootNode.summary) {
+			content = rootNode.summary;
+		} else {
+			content = 'Welcome to my portfolio.';
+		}
+
+		// Add link to Information node if it exists
+		const infoNode = rootNode.children?.find(child => child.type === 'information');
+		const infoLink = infoNode 
+			? ` — <a href="${infoNode.uri}" data-uri="${infoNode.uri}" class="index-link">more information</a>`
+			: '';
+
+		indexTabContent.innerHTML = `<p>${content}${infoLink}</p>`;
+		
+		console.log('✅ Homepage index populated with:', content.substring(0, 50) + '...');
 	},
 
 	animateHomePage(path) {
@@ -437,6 +482,10 @@ const Page = {
 		const pageData = this.findPageDataByUri(uri);
 	
 		if (pageData) {
+			
+			// Check if this node is Information or part of Information branch
+			const isInformationBranch = this.isInformationNode(pageData);
+			console.log(`📄 Building page for ${pageData.title}, isInformationBranch: ${isInformationBranch}`);
 
 			
 
@@ -535,10 +584,19 @@ const Page = {
 			}
 	
 			// Add tabs
+			// Determine which tabs should be open by default
+			// For Information branch: ALL tabs open
+			// For other nodes: Only first relevant tab opens
+			const openAllTabs = isInformationBranch;
+			const shouldOpenFurtherReading = isInformationBranch && pageData.externalLinks && pageData.externalLinks.length > 0;
+			const shouldOpenEducation = !isInformationBranch && pageData.education && pageData.education.length > 0;
+			
+			console.log(`📑 Tab settings: isInformationBranch=${isInformationBranch}, openAllTabs=${openAllTabs}`);
+			
 			let tabsHTML = `
 				<div class="tabs">
 					${pageData.education && pageData.education.length > 0 ? `
-						<div class="page-tab tab-links tab-open">
+						<div class="page-tab tab-links ${openAllTabs || shouldOpenEducation ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-meta"></span>
 								<span class="tab-title">Education</span>
@@ -563,7 +621,7 @@ const Page = {
 						</div>
 					` : ''}
 					${pageData.recognition && pageData.recognition.length > 0 ? `
-						<div class="page-tab tab-links">
+						<div class="page-tab tab-links ${openAllTabs ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-recognition"></span>
 								<span class="tab-title">Recognition</span>
@@ -588,7 +646,7 @@ const Page = {
 						</div>
 					` : ''}
 					${pageData.metadata && pageData.metadata.length > 0 ? `
-						<div class="page-tab tab-metadata">
+						<div class="page-tab tab-metadata ${openAllTabs ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-meta"></span>
 								<span class="tab-title">Details</span>
@@ -607,7 +665,7 @@ const Page = {
 						</div>
 					` : ''}
 					${pageData.externalLinks && pageData.externalLinks.length > 0 ? `
-						<div class="page-tab tab-links">
+						<div class="page-tab tab-links ${openAllTabs || shouldOpenFurtherReading ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-links"></span>
 								<span class="tab-title">Further Reading</span>
@@ -636,7 +694,7 @@ const Page = {
 						</div>
 					` : ''}
 					${pageData.children && pageData.children.length > 0 || pageData.connectedNodes && pageData.connectedNodes.length > 0 ? `
-						<div class="page-tab tab-connections">
+						<div class="page-tab tab-connections ${openAllTabs ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-connections"></span>
 								<span class="tab-title">Connections</span>
@@ -667,10 +725,6 @@ const Page = {
 					
 				</div>
 			`;
-
-			if(pageData.type === 'information'){
-				tabsHTML += '<p class="website-credit">Website by <a href="https://jakedowsmith.com" target="_blank">Jake Dow-Smith</a></p>';
-			}
 
 			if(pageData.metadata.length > 0 || pageData.externalLinks.length > 0 || pageData.education.length > 0 || pageData.recognition.length > 0 || pageData.children.length > 0 || pageData.connectedNodes.length > 0){
 				pageContent.innerHTML += tabsHTML;
@@ -756,6 +810,45 @@ const Page = {
         if (!Map.data) return null;
         return findData(Map.data, uri);
     },
+
+	isInformationNode(node) {
+		// Check if this node is Information type or has Information as ancestor
+		if (!node) return false;
+		
+		// Check if this is the Information node itself
+		if (node.type === 'information' || node.uuid === 'info-path' || node.title === 'Information') {
+			return true;
+		}
+		
+		// Check if any ancestor is Information
+		const checkAncestor = (currentNode, targetUri) => {
+			if (!Map.data) return false;
+			
+			const findNodeWithParent = (node, uri, parent = null) => {
+				if (node.uri === uri) return { node, parent };
+				if (node.children) {
+					for (const child of node.children) {
+						const result = findNodeWithParent(child, uri, node);
+						if (result) return result;
+					}
+				}
+				return null;
+			};
+			
+			let current = findNodeWithParent(Map.data, currentNode.uri);
+			while (current && current.parent) {
+				if (current.parent.type === 'information' || 
+					current.parent.uuid === 'info-path' || 
+					current.parent.title === 'Information') {
+					return true;
+				}
+				current = findNodeWithParent(Map.data, current.parent.uri);
+			}
+			return false;
+		};
+		
+		return checkAncestor(node, node.uri);
+	},
 
 	findNodeByUUID(node, uuid) {
 		if (node.uuid === uuid) return node;
