@@ -77,6 +77,34 @@ log('🔌', 'Supabase client initialized', {
     hasKey: !!supabaseKey 
 });
 
+// =============================================================================
+// HELPER FUNCTION - GENERATE SUPABASE STORAGE URL
+// =============================================================================
+
+/**
+ * Generates a public Supabase Storage URL for a file path.
+ * If the path is already a full URL (starts with http), returns it as-is.
+ * 
+ * @param {string} filePath - The file path in storage (e.g., 'photography/taipei/image.jpg')
+ * @param {string} bucket - The storage bucket name (default: 'portfolio-media')
+ * @returns {string} The full public URL to access the file
+ */
+function getStorageUrl(filePath, bucket = 'portfolio-media') {
+    // If it's already a full URL, return as-is
+    if (filePath && (filePath.startsWith('http://') || filePath.startsWith('https://'))) {
+        return filePath;
+    }
+    
+    // Generate Supabase Storage public URL
+    // Format: https://PROJECT_REF.supabase.co/storage/v1/object/public/BUCKET/PATH
+    if (supabaseUrl && filePath) {
+        return `${supabaseUrl}/storage/v1/object/public/${bucket}/${filePath}`;
+    }
+    
+    // Fallback to original path if something is missing
+    return filePath || '';
+}
+
 
 // =============================================================================
 // STEP 2: MAIN FUNCTION - FETCH ALL PORTFOLIO DATA
@@ -292,11 +320,11 @@ function transformNode(
         })),
         
         media: (mediaMap[nodeId] || []).map(m => ({
-            url: m.original_url || m.file_path,
+            url: getStorageUrl(m.original_url || m.file_path),
             alt: m.alt_text || '',
             type: m.media_type || 'image',
-            smallImage: m.small_url || '',
-            largeImage: m.large_url || '',
+            smallImage: getStorageUrl(m.small_url || m.file_path),
+            largeImage: getStorageUrl(m.large_url || m.file_path),
             externalLink: m.external_link || '',
             externalLinkText: m.external_link_text || ''
         })),

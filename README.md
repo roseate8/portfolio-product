@@ -149,6 +149,30 @@ The portfolio data is stored in Supabase with these tables:
 - **Migration Script:** `backend/migrate_real_data.sql`
 - **Database Setup:** `docs/SUPABASE_SETUP_GUIDE.md`
 - **Implementation:** `docs/SUPABASE_IMPLEMENTATION_SUMMARY.md`
+- **Photography with Storage:** `docs/PHOTOGRAPHY_SUPABASE_STORAGE.md`
+
+---
+
+## ✨ Features
+
+### 📸 Photography Collections
+- **Taipei:** 5 photos from MBA exchange in Taiwan
+- **Bangalore:** 3 photos from Garden City
+- Images stored in Supabase Storage (CDN-optimized)
+- Automatic URL generation and lazy loading
+- Easy to add new locations
+
+### 🗺️ Interactive Node Graph
+- D3.js-powered visualization
+- First-level hierarchy rendering
+- Click any node to explore its content
+- Path back to root always visible
+
+### 📝 Dynamic Content Management
+- All content managed through Supabase
+- 8-table database architecture
+- Real-time updates without code changes
+- Fallback to static JSON if needed
 
 ---
 
