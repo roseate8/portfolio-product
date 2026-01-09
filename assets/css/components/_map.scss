@@ -351,18 +351,14 @@
 				opacity:1;
 			}
 
-			.node.visited:not(.current-node) h2 {
-				text-decoration:line-through;
-				text-decoration-color: $black;
-				text-decoration-style:solid;
-			}
+		.node.visited:not(.current-node) h2 {
+			// Strikethrough removed
+		}
 
-			.node.visited:not(.current-node) h3,
-			.node.connected-node.visited:not(.current-node) h2 {
-				text-decoration:line-through;
-				text-decoration-color: $grey;
-				text-decoration-style:solid;
-			}
+		.node.visited:not(.current-node) h3,
+		.node.connected-node.visited:not(.current-node) h2 {
+			// Strikethrough removed
+		}
 
 			// .node-label h2::after,
 			// .node-label h3::after { content: ""; display: block; }

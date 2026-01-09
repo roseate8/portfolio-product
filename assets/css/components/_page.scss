@@ -152,24 +152,27 @@
 					
 				}
 
-				.page-main-title h4 {
-					margin-top:2px;
-					@include tinyTypeSans;
-				}
+			.page-main-title h4 {
+				margin-top:2px;
+				@include tinyTypeSans;
+			}
 
-				.page-main-title .email {
-					margin-top:10px;
-					position:relative;
-				}
+			.page-main-title .email {
+				margin-top:10px;
+				position:relative;
+				text-transform:none; // Don't uppercase email addresses
+			}
 
-				.page-main-title .telephone {
-					position:relative;
-				}
+			.page-main-title .telephone {
+				position:relative;
+				text-transform:none; // Don't uppercase phone numbers
+			}
 
-				.page-main-title .email a,
-				.page-main-title .telephone a {
-					color:$grey;
-				}
+			.page-main-title .email a,
+			.page-main-title .telephone a {
+				color:$grey;
+				text-transform:none; // Don't uppercase links
+			}
 
 					.email:before {
 						content:'E';
@@ -534,13 +537,14 @@
 								text-indent:0 !important;
 							}
 
-						.meta-title,
-						.link-address {
-							@include tinyTypeSans;
-							color:$grey;
-							margin-top:2px;
-							display:block;
-						}
+					.meta-title,
+					.link-address {
+						@include tinyTypeSans;
+						text-transform:none; // Don't uppercase URLs and emails
+						color:$grey;
+						margin-top:2px;
+						display:block;
+					}
 
 							.item-id span {
 								display:none;
@@ -569,17 +573,13 @@
 								top:0; left:1.5px;
 							}
 
-							.index-link.visited h2 {
-								text-decoration:line-through;
-								text-decoration-color: $black;
-								text-decoration-style:solid;
-							}
+						.index-link.visited h2 {
+							// Strikethrough removed
+						}
 
-							.index-link.visited h3 {
-								text-decoration:line-through;
-								text-decoration-color: $grey;
-								text-decoration-style:solid;
-							}
+						.index-link.visited h3 {
+							// Strikethrough removed
+						}
 
 						.item-id.highlighted {
 							animation: blink 1s infinite;
@@ -768,6 +768,54 @@
 
 	.media-index-4.show-media-item {
 		bottom:10%; left:5%;
+	}
+
+.media-index-5 {
+	top:45%; left:5%;
+}
+
+	.media-index-5.show-media-item {
+		top:35%; left:2%;
+	}
+
+.media-index-6 {
+	top:8%; left:55%;
+}
+
+	.media-index-6.show-media-item {
+		top:3%; left:48%;
+	}
+
+.media-index-7 {
+	bottom:45%; right:8%;
+}
+
+	.media-index-7.show-media-item {
+		bottom:38%; right:3%;
+	}
+
+.media-index-8 {
+	top:60%; right:12%;
+}
+
+	.media-index-8.show-media-item {
+		top:52%; right:7%;
+	}
+
+.media-index-9 {
+	bottom:55%; left:8%;
+}
+
+	.media-index-9.show-media-item {
+		bottom:48%; left:3%;
+	}
+
+.media-index-10 {
+	top:30%; right:25%;
+}
+
+	.media-index-10.show-media-item {
+		top:23%; right:18%;
 	}
 
 	.media-item img,

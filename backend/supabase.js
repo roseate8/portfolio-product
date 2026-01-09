@@ -372,7 +372,10 @@ function buildTree(nodes) {
         } else {
             const parent = nodeMap[node._parentId];
             if (parent) {
-                parent.children.push(node);
+                // Only add children that are featured (visible in graph)
+                if (node.isFeatured === true) {
+                    parent.children.push(node);
+                }
             }
         }
     });

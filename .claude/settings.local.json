@@ -12,7 +12,9 @@
       "Bash(Where-Object { $_Name -eq \"nul\" })",
       "Bash(Select-Object FullName)",
       "Bash(claude mcp add:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(timeout:*)",
+      "Bash(git reset:*)"
     ]
   }
 }

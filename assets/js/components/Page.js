@@ -243,13 +243,13 @@ const Page = {
 			});
 	
 			// Shuffle index classes
-			const indexClasses = ['media-index-1', 'media-index-2', 'media-index-3', 'media-index-4'];
+			const indexClasses = ['media-index-1', 'media-index-2', 'media-index-3', 'media-index-4', 'media-index-5', 'media-index-6', 'media-index-7', 'media-index-8', 'media-index-9', 'media-index-10'];
 	
 			// Loop through each media item and create HTML
 			media.forEach((item, index) => {
 				const mediaItem = document.createElement('div');
 				mediaItem.classList.add('media-item');
-				mediaItem.classList.add(indexClasses[index % 4]);
+				mediaItem.classList.add(indexClasses[index % 10]);
 	
 				// Check the type and create appropriate HTML
 				if (item.type.startsWith('image')) {
@@ -620,6 +620,57 @@ const Page = {
 							</div>
 						</div>
 					` : ''}
+					${pageData.uuid === 'info-path' && (pageData.telephone || pageData.email || (pageData.externalLinks && pageData.externalLinks.length > 0)) ? `
+						<div class="page-tab tab-links ${openAllTabs ? 'tab-open' : ''}">
+							<div class="tab-titles">
+								<span class="tab-icon icon-links"></span>
+								<span class="tab-title">Contact Me</span>
+								<span class="tab-indicator"></span>
+							</div>
+							<div class="tab-content">
+								<ul class="list">
+									${pageData.telephone ? `
+										<li>
+											<a href="tel:${pageData.telephone}" class="external-link">
+												<span class="item-id"></span>
+												<span class="item-title">
+													<span>phone</span>
+													<span class="link-address">${pageData.telephone}</span>
+												</span>
+											</a>
+										</li>
+									` : ''}
+									${pageData.email ? `
+										<li>
+											<a href="mailto:${pageData.email}" class="external-link">
+												<span class="item-id"></span>
+												<span class="item-title">
+													<span>email</span>
+													<span class="link-address">${pageData.email}</span>
+												</span>
+											</a>
+										</li>
+									` : ''}
+									${pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks.map(link => {
+										const url = new URL(link.link);
+										// Show domain + path for better context (e.g., "linkedin.com/in/rudram-piplad")
+										const displayUrl = url.hostname.replace(/^www\./, '') + url.pathname;
+										return `
+											<li>
+												<a href="${link.link}" class="external-link" target="_blank">
+													<span class="item-id"></span>
+													<span class="item-title">
+														<span>${link.title}</span>
+														<span class="link-address">${displayUrl}</span>
+													</span>
+												</a>
+											</li>
+										`;
+									}).join('') : ''}
+								</ul>
+							</div>
+						</div>
+					` : ''}
 					${pageData.recognition && pageData.recognition.length > 0 ? `
 						<div class="page-tab tab-links ${openAllTabs ? 'tab-open' : ''}">
 							<div class="tab-titles">
@@ -664,7 +715,7 @@ const Page = {
 							</div>
 						</div>
 					` : ''}
-					${pageData.externalLinks && pageData.externalLinks.length > 0 ? `
+					${pageData.externalLinks && pageData.externalLinks.length > 0 && pageData.uuid !== 'info-path' ? `
 						<div class="page-tab tab-links ${openAllTabs || shouldOpenFurtherReading ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-links"></span>

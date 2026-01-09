@@ -150,6 +150,7 @@ The portfolio data is stored in Supabase with these tables:
 - **Database Setup:** `docs/SUPABASE_SETUP_GUIDE.md`
 - **Implementation:** `docs/SUPABASE_IMPLEMENTATION_SUMMARY.md`
 - **Photography with Storage:** `docs/PHOTOGRAPHY_SUPABASE_STORAGE.md`
+- **Information Node Reorganization:** `docs/INFORMATION_NODE_REORGANIZATION.md`
 
 ---
 

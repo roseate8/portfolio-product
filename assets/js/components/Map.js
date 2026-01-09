@@ -560,8 +560,9 @@ const Map = {
             return isDateValid && isFeaturedValid;
         });
     
-        // CHANGED: Only show first-level children (remove grandchildren)
-        // EXCEPT for specific second-level nodes on homepage
+        // CHANGED: Only show first-level children from current node
+        // When at root: show special featured second-level nodes (AI Agents, Photography)
+        // When at any other node: show first-level children, but keep THEIR children intact
         const isRootNode = node.uri === '/' || node.uuid === 'root-0';
         
         node.children.forEach(child => {
@@ -586,10 +587,9 @@ const Map = {
                     }
                     return false;
                 });
-            } else {
-                // For all other cases, clear grandchildren
-                child.children = [];
             }
+            // For non-root nodes, DON'T clear grandchildren - they should be visible
+            // when you click into that child node
         });
     },
 
@@ -696,6 +696,12 @@ const Map = {
 
     filterNodes(clickedNode) {
         console.log('🎯 Node clicked:', clickedNode.title, '- building path to root + first-level children');
+        console.log('🔍 Clicked node children count:', clickedNode.children?.length || 0);
+        if (clickedNode.children && clickedNode.children.length > 0) {
+            clickedNode.children.forEach(child => {
+                console.log('  - Child:', child.title, 'has', child.children?.length || 0, 'grandchildren');
+            });
+        }
         let filteredData = {};
     
         // Function to find ancestors and ensure correct hierarchy
