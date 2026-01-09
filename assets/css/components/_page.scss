@@ -574,11 +574,11 @@
 							}
 
 						.index-link.visited h2 {
-							// Strikethrough removed
+							color: $grey; // Make visited links gray (same as footnotes)
 						}
 
 						.index-link.visited h3 {
-							// Strikethrough removed
+							color: $grey; // Make visited links gray (same as footnotes)
 						}
 
 						.item-id.highlighted {

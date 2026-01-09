@@ -267,6 +267,7 @@ const Map = {
             if (d.target.data.isHighlighted === true || d.target.data.isHighlighted === "true") classes += " highlighted-link";
             if (d.target.data.isSecondary === true || d.target.data.isSecondary === "true") classes += " secondary-link";
             if (d.target.data.isConnected === true || d.target.data.isConnected === "true") classes += " connected-link";
+            if (Page.visitedUris.includes(d.target.data.uri)) classes += " visited-link"; // Add visited class to links
             if(d.target.data.type) classes += ` node-type-${d.target.data.type}`;
             return classes;
         };

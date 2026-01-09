@@ -352,12 +352,25 @@
 			}
 
 		.node.visited:not(.current-node) h2 {
-			// Strikethrough removed
+			color: $grey; // Make visited nodes gray (same as footnotes)
 		}
 
 		.node.visited:not(.current-node) h3,
 		.node.connected-node.visited:not(.current-node) h2 {
-			// Strikethrough removed
+			color: $grey; // Make visited nodes gray (same as footnotes)
+		}
+
+		// Make the entire node fill match background color for visited nodes
+		.node.visited:not(.current-node) .node-inner {
+			// Use background color for fill, making icons blend into the background
+			background-color: $bg !important;
+			background-image: none !important; // Remove any icon images
+			// No border added - keep original shape
+		}
+
+		.node.visited:not(.current-node).information-node .node-inner {
+			background: $bg !important; // Background color fill
+			// Keep original border/shape
 		}
 
 			// .node-label h2::after,
@@ -397,6 +410,12 @@
 		stroke-dasharray:2,10;
 		stroke-width: 2px;
 		stroke: $grey;
+	}
+
+	// Make links to visited nodes gray
+	.link.visited-link {
+		stroke: $grey;
+		opacity: 0.5;
 	}
 
 	.slider-container {
