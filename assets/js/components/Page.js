@@ -30,6 +30,23 @@ const Page = {
 		}
 
 		const rootNode = Map.data;
+		
+		// Populate Index tab
+		this.populateIndexTab(rootNode);
+		
+		// Populate Initiatives tab (bets & side projects)
+		this.populateInitiativesTab(rootNode);
+		
+		// Populate Work tab (positions held)
+		this.populateWorkTab(rootNode);
+		
+		// Populate Paths tab (first-level branches)
+		this.populatePathsTab(rootNode);
+		
+		console.log('✅ All homepage tabs populated');
+	},
+
+	populateIndexTab(rootNode) {
 		const indexTabContent = document.querySelector('.page-index .tab-open .tab-content');
 		
 		if (!indexTabContent) {
@@ -40,26 +57,202 @@ const Page = {
 		// Use description if available, otherwise use summary
 		let content = '';
 		if (rootNode.description) {
-			// Extract just the first paragraph for the homepage
-			const tempDiv = document.createElement('div');
-			tempDiv.innerHTML = rootNode.description;
-			const firstParagraph = tempDiv.querySelector('p');
-			content = firstParagraph ? firstParagraph.innerHTML : rootNode.description;
+			// Use the full description HTML
+			content = rootNode.description;
 		} else if (rootNode.summary) {
-			content = rootNode.summary;
+			content = `<p>${rootNode.summary}</p>`;
 		} else {
-			content = 'Welcome to my portfolio.';
+			content = '<p>Welcome to my portfolio.</p>';
 		}
 
 		// Add link to Information node if it exists
-		const infoNode = rootNode.children?.find(child => child.type === 'information');
+		const infoNode = rootNode.children?.find(child => child.type === 'information' || child.uuid === 'info-path');
 		const infoLink = infoNode 
-			? ` — <a href="${infoNode.uri}" data-uri="${infoNode.uri}" class="index-link">more information</a>`
+			? ` <a href="${infoNode.uri}" data-uri="${infoNode.uri}" class="index-link">more about me →</a>`
 			: '';
 
-		indexTabContent.innerHTML = `<p>${content}${infoLink}</p>`;
+		indexTabContent.innerHTML = `${content}<p>${infoLink}</p>`;
 		
-		console.log('✅ Homepage index populated with:', content.substring(0, 50) + '...');
+		console.log('✅ Index tab populated');
+	},
+
+	populateInitiativesTab(rootNode) {
+		const initiativesList = document.getElementById('initiatives-list');
+		
+		if (!initiativesList) {
+			console.log('⚠️ Initiatives list not found');
+			return;
+		}
+
+		// Find the Bets path which contains initiatives
+		const betsPath = rootNode.children?.find(child => child.uuid === 'bets-path');
+		
+		if (!betsPath || !betsPath.children || betsPath.children.length === 0) {
+			console.log('⚠️ No bets/initiatives found');
+			initiativesList.innerHTML = '<li>No initiatives found</li>';
+			return;
+		}
+
+		// Build list of initiatives from bets
+		let html = '';
+		betsPath.children.forEach(initiative => {
+			const dateRange = this.formatDateRange(initiative.originDate, initiative.endDate);
+			html += `
+				<li>
+					<a href="${initiative.uri}" class="index-link" data-uri="${initiative.uri}">
+						<span class="item-id"><span></span></span>
+						<span class="item-title">
+							<h2>${initiative.title}</h2>
+							<h3>${initiative.summary || ''}</h3>
+							${dateRange ? `<h4>${dateRange}</h4>` : ''}
+						</span>
+					</a>
+				</li>
+			`;
+		});
+
+		initiativesList.innerHTML = html;
+		console.log('✅ Initiatives tab populated with', betsPath.children.length, 'items');
+	},
+
+	populateWorkTab(rootNode) {
+		const workList = document.getElementById('work-list');
+		
+		if (!workList) {
+			console.log('⚠️ Work list not found');
+			return;
+		}
+
+		// Collect work positions from Product Work, Consulting paths
+		const workPositions = [];
+		
+		// Product Work path
+		const productPath = rootNode.children?.find(child => child.uuid === 'product-path');
+		if (productPath && productPath.children) {
+			productPath.children.forEach(company => {
+				workPositions.push({
+					title: company.title,
+					summary: company.summary || '',
+					description: this.extractFirstSentence(company.description),
+					originDate: company.originDate,
+					endDate: company.endDate,
+					uri: company.uri,
+					type: 'Product'
+				});
+			});
+		}
+
+		// Consulting path
+		const consultingPath = rootNode.children?.find(child => child.uuid === 'consulting-path');
+		if (consultingPath && consultingPath.children) {
+			consultingPath.children.forEach(company => {
+				workPositions.push({
+					title: company.title,
+					summary: company.summary || '',
+					description: this.extractFirstSentence(company.description),
+					originDate: company.originDate,
+					endDate: company.endDate,
+					uri: company.uri,
+					type: 'Consulting'
+				});
+			});
+		}
+
+		// Sort by date (most recent first)
+		workPositions.sort((a, b) => {
+			const dateA = a.originDate ? new Date(a.originDate) : new Date(0);
+			const dateB = b.originDate ? new Date(b.originDate) : new Date(0);
+			return dateB - dateA;
+		});
+
+		if (workPositions.length === 0) {
+			workList.innerHTML = '<li>No work positions found</li>';
+			return;
+		}
+
+		// Build list
+		let html = '';
+		workPositions.forEach(position => {
+			const dateRange = this.formatDateRange(position.originDate, position.endDate);
+			html += `
+				<li>
+					<a href="${position.uri}" class="index-link" data-uri="${position.uri}">
+						<span class="item-id"><span></span></span>
+						<span class="item-title">
+							<h2>${position.title}</h2>
+							<h3>${position.summary}</h3>
+							${dateRange ? `<h4>${dateRange}</h4>` : ''}
+						</span>
+					</a>
+				</li>
+			`;
+		});
+
+		workList.innerHTML = html;
+		console.log('✅ Work tab populated with', workPositions.length, 'positions');
+	},
+
+	populatePathsTab(rootNode) {
+		const pathsList = document.getElementById('paths-list');
+		
+		if (!pathsList) {
+			console.log('⚠️ Paths list not found');
+			return;
+		}
+
+		// Get first-level children (main branches), excluding information
+		const mainPaths = rootNode.children?.filter(child => 
+			child.type === 'path' && child.uuid !== 'info-path'
+		) || [];
+
+		if (mainPaths.length === 0) {
+			pathsList.innerHTML = '<li>No paths found</li>';
+			return;
+		}
+
+		// Build list
+		let html = '';
+		mainPaths.forEach(path => {
+			html += `
+				<li>
+					<a href="${path.uri}" class="index-link" data-uri="${path.uri}">
+						<span class="item-id"><span></span></span>
+						<span class="item-title">
+							<h2>${path.title}</h2>
+							<h3>${path.summary || ''}</h3>
+						</span>
+					</a>
+				</li>
+			`;
+		});
+
+		pathsList.innerHTML = html;
+		console.log('✅ Paths tab populated with', mainPaths.length, 'paths');
+	},
+
+	formatDateRange(originDate, endDate) {
+		if (!originDate) return '';
+		
+		const originYear = new Date(originDate).getFullYear();
+		const endYear = endDate ? new Date(endDate).getFullYear() : 'Present';
+		
+		if (originYear === endYear) {
+			return originYear.toString();
+		}
+		return `${originYear} – ${endYear}`;
+	},
+
+	extractFirstSentence(htmlContent) {
+		if (!htmlContent) return '';
+		
+		// Create temp element to extract text
+		const tempDiv = document.createElement('div');
+		tempDiv.innerHTML = htmlContent;
+		const text = tempDiv.textContent || tempDiv.innerText || '';
+		
+		// Get first sentence (up to first period, question mark, or exclamation)
+		const match = text.match(/^[^.!?]+[.!?]/);
+		return match ? match[0] : text.substring(0, 150) + '...';
 	},
 
 	animateHomePage(path) {
