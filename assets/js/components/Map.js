@@ -213,7 +213,7 @@ const Map = {
         //   - 0.55 = slightly right of center
         //   - 0.65 = far right
         // centerY: Vertical center (usually height / 2)
-        const centerX = window.innerWidth > 768 ? window.innerWidth * 0.52 : width / 2;
+        const centerX = window.innerWidth > 768 ? window.innerWidth * 0.63 : width / 2;
         const centerY = height / 2;
 
         // -----------------------------------------------------------------------
@@ -919,9 +919,9 @@ const Map = {
             // Keep SVG at full viewport size - branches can render anywhere
             svgElement.setAttribute('width', window.innerWidth);
             svgElement.setAttribute('height', window.innerHeight);
-            
-            // Keep center slightly right of center (52% of viewport)
-            const centerX = window.innerWidth > 768 ? window.innerWidth * 0.52 : window.innerWidth / 2;
+
+            // Keep center slightly right of center (63% of viewport)
+            const centerX = window.innerWidth > 768 ? window.innerWidth * 0.63 : window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
             Map.simulation.force("center", d3.forceCenter(centerX, centerY));
             Map.simulation.alpha(0.3).restart();

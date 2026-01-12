@@ -100,7 +100,9 @@ svg.map-lines {
 			top: 50%; left: 50%;
 			transform: translate(-50%, -50%);
 			transition:transform 100ms ease-in-out;
-			
+			background: $bg; // White fill to appear above branches
+			border-radius: 50%; // Make the fill circular
+			z-index: 1; // Ensure nodes appear above branches
 		}
 
 		.node:hover .node-inner {
