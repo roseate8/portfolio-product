@@ -123,38 +123,42 @@ const Page = {
 			return;
 		}
 
-		// Collect work positions from Product Work, Consulting paths
+		// Collect work positions from Industry Work (formerly Product Work)
+		// Industry Work now contains: ThoughtSpot, Policybazaar, and Consulting branch
 		const workPositions = [];
 		
-		// Product Work path
-		const productPath = rootNode.children?.find(child => child.uuid === 'product-path');
-		if (productPath && productPath.children) {
-			productPath.children.forEach(company => {
-				workPositions.push({
-					title: company.title,
-					summary: company.summary || '',
-					description: this.extractFirstSentence(company.description),
-					originDate: company.originDate,
-					endDate: company.endDate,
-					uri: company.uri,
-					type: 'Product'
-				});
-			});
-		}
-
-		// Consulting path
-		const consultingPath = rootNode.children?.find(child => child.uuid === 'consulting-path');
-		if (consultingPath && consultingPath.children) {
-			consultingPath.children.forEach(company => {
-				workPositions.push({
-					title: company.title,
-					summary: company.summary || '',
-					description: this.extractFirstSentence(company.description),
-					originDate: company.originDate,
-					endDate: company.endDate,
-					uri: company.uri,
-					type: 'Consulting'
-				});
+		// Industry Work path (uuid: product-path, renamed to Industry Work)
+		const industryPath = rootNode.children?.find(child => child.uuid === 'product-path');
+		if (industryPath && industryPath.children) {
+			industryPath.children.forEach(company => {
+				// Check if this is the Consulting sub-branch
+				if (company.uuid === 'consulting-path') {
+					// Add Consulting's children (Tata, Chisel)
+					if (company.children) {
+						company.children.forEach(consultingCompany => {
+							workPositions.push({
+								title: consultingCompany.title,
+								summary: consultingCompany.summary || '',
+								description: this.extractFirstSentence(consultingCompany.description),
+								originDate: consultingCompany.originDate,
+								endDate: consultingCompany.endDate,
+								uri: consultingCompany.uri,
+								type: 'Consulting'
+							});
+						});
+					}
+				} else {
+					// Regular company under Industry Work (ThoughtSpot, Policybazaar)
+					workPositions.push({
+						title: company.title,
+						summary: company.summary || '',
+						description: this.extractFirstSentence(company.description),
+						originDate: company.originDate,
+						endDate: company.endDate,
+						uri: company.uri,
+						type: 'Product'
+					});
+				}
 			});
 		}
 
@@ -200,9 +204,14 @@ const Page = {
 			return;
 		}
 
-		// Get first-level children (main branches), excluding information
+		// Get first-level children (main branches)
+		// Exclude: info-path (Information), and any that have been moved to sub-branches
+		// Note: After restructuring, consulting-path, visual-path, and footnotes-path 
+		// are now nested under other paths and won't appear as root children
 		const mainPaths = rootNode.children?.filter(child => 
-			child.type === 'path' && child.uuid !== 'info-path'
+			child.type === 'path' && 
+			child.uuid !== 'info-path' &&
+			child.uuid !== 'footnotes-path' // In case migration hasn't run yet
 		) || [];
 
 		if (mainPaths.length === 0) {

@@ -191,27 +191,96 @@ const Map = {
         const svgElement = document.querySelector('svg');
         const svg = d3.select("svg.map-lines");
 
-        let width = window.innerWidth > 768 ? window.innerWidth * 0.55 : window.innerWidth * 0.9;
-        const height = window.innerWidth > 768 ? window.innerHeight - Map.edgeBuffer : window.innerWidth * 0.75;
+        // =======================================================================
+        // GRAPH LAYOUT PARAMETERS - Edit these to adjust the graph appearance
+        // =======================================================================
+        
+        // Full viewport dimensions for rendering area
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
-        svgElement.setAttribute('width', window.innerWidth);
+        // Set SVG to cover full viewport
+        svgElement.setAttribute('width', width);
         svgElement.setAttribute('height', height);
+        svgElement.style.width = '100vw';
+        svgElement.style.height = '100vh';
 
-        if (everything) {
-            width = window.innerWidth;
-        }
+        // -----------------------------------------------------------------------
+        // POSITIONING: Where the graph center is located
+        // -----------------------------------------------------------------------
+        // centerX: Horizontal center of the graph (in pixels from left edge)
+        //   - 0.5 = center of screen
+        //   - 0.55 = slightly right of center
+        //   - 0.65 = far right
+        // centerY: Vertical center (usually height / 2)
+        const centerX = window.innerWidth > 768 ? window.innerWidth * 0.52 : width / 2;
+        const centerY = height / 2;
 
-        const minDistance = width * 0.92;
-        const maxDistance = width * 0.5;
-        const radius = window.innerWidth > 768 ? width * 0.1 : 20;
-        const distance = window.innerWidth > 768 ? 70 : 30;
+        // -----------------------------------------------------------------------
+        // LINK DISTANCES: How far apart connected nodes are
+        // -----------------------------------------------------------------------
+        // Larger values = nodes further apart, more spread out graph
+        // Smaller values = nodes closer together, more compact graph
+        const linkDistance = (d) => {
+            if (d.source.depth === 0) {
+                // Root to first-level branches - more spread
+                return window.innerWidth > 768 ? 140 : 70;
+            } else if (d.source.depth === 1) {
+                // First to second level
+                return window.innerWidth > 768 ? 100 : 50;
+            }
+            // Deeper levels
+            return window.innerWidth > 768 ? 70 : 40;
+        };
 
-
-            Map.simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(d => d.id).distance(distance).strength(0.1))
-            .force("charge", d3.forceManyBody().strength(-400).distanceMax(300).distanceMin(10))
-            .force("center", d3.forceCenter(width / 2, height / 2))
-            // .force("collide", d3.forceCollide().radius(d => radius).iterations(10))
+        // -----------------------------------------------------------------------
+        // COLLISION: Prevents nodes from overlapping
+        // -----------------------------------------------------------------------
+        // nodeRadius: Minimum distance between node centers (in pixels)
+        //   - Larger = more space between nodes
+        //   - Should be at least half the node visual size
+        const nodeRadius = window.innerWidth > 768 ? 55 : 35;
+        
+        // -----------------------------------------------------------------------
+        // FORCE SIMULATION - The physics engine that positions nodes
+        // -----------------------------------------------------------------------
+        Map.simulation = d3.forceSimulation()
+        
+            // LINK FORCE: Pulls connected nodes toward each other
+            // - distance: Target distance between linked nodes (see linkDistance above)
+            // - strength: How strongly links pull (0-1)
+            //   - 0.1 = weak pull, nodes can drift apart
+            //   - 0.5 = moderate pull, balanced
+            //   - 1.0 = strong pull, nodes stay close to target distance
+            .force("link", d3.forceLink()
+                .id(d => d.id)
+                .distance(linkDistance)
+                .strength(0.5))
+            
+            // CHARGE FORCE: Repulsion between ALL nodes (like magnets)
+            // - strength: Negative = repel, Positive = attract
+            //   - -100 = weak repulsion, tight clusters
+            //   - -300 = moderate repulsion, balanced
+            //   - -600 = strong repulsion, spread out
+            // - distanceMax: Repulsion stops beyond this distance (pixels)
+            // - distanceMin: Prevents extreme forces when nodes very close
+            .force("charge", d3.forceManyBody()
+                .strength(-400)
+                .distanceMax(400)
+                .distanceMin(20))
+            
+            // CENTER FORCE: Pulls the whole graph toward a point
+            // - First param: x position, Second param: y position
+            .force("center", d3.forceCenter(centerX, centerY))
+            
+            // COLLISION FORCE: Prevents nodes from overlapping
+            // - radius: Minimum distance between node centers
+            // - strength: How hard nodes push apart (0-1)
+            // - iterations: More = more accurate but slower
+            .force("collide", d3.forceCollide()
+                .radius(nodeRadius)
+                .strength(1.0)
+                .iterations(4))
 
         
 
@@ -255,6 +324,16 @@ const Map = {
         // Remove old links
         link.exit().remove();
 
+        // Build set of ancestor URIs for the current node (path back to root)
+        const ancestorUris = new Set();
+        if (Map.currentNode) {
+            let current = nodes.find(n => n.data.uri === Map.currentNode.uri);
+            while (current && current.parent) {
+                ancestorUris.add(current.parent.data.uri);
+                current = current.parent;
+            }
+        }
+
         // Utility function to generate class names for links
         const getLinkClasses = (d) => {
             let classes = "link";
@@ -269,6 +348,12 @@ const Map = {
             if (d.target.data.isConnected === true || d.target.data.isConnected === "true") classes += " connected-link";
             if (Page.visitedUris.includes(d.target.data.uri)) classes += " visited-link"; // Add visited class to links
             if(d.target.data.type) classes += ` node-type-${d.target.data.type}`;
+            
+            // Ancestor links: links from root toward the current node (always black)
+            const isAncestorLink = ancestorUris.has(d.source.data.uri) || 
+                                   (Map.currentNode && d.target.data.uri === Map.currentNode.uri && ancestorUris.has(d.source.data.uri));
+            if (isAncestorLink || d.source.depth === 0) classes += " ancestor-link";
+            
             return classes;
         };
 
@@ -295,26 +380,23 @@ const Map = {
             
         };
 
+        // Animation timing - all elements appear together after a short delay
+        // Using same delay for both links and nodes ensures synchronized appearance
+        const animationDelay = 100; // Small uniform delay for all elements
+
         // Add new links
-        let linkDelay = 1000;
         const linkEnter = link.enter().append("path")
             .attr("class", d => getLinkClasses(d))
             .attr("d", getPath)
             .each(function(d, i) {
                 const initialClasses = getLinkClasses(d);
                 const visibilityClasses = getNewLinkVisibilityClasses(d);
-                // Set a delay before adding the visibility class
                 d3.select(this).attr("class", `${initialClasses}`);
                 if (visibilityClasses.includes('newly-visible')) {
-                    // If the node is newly-visible, apply the visibility class after the delay
                     setTimeout(() => {
                         d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, linkDelay);
-        
-                    // Increment the delay by 250ms for the next newly-visible node
-                    linkDelay += 100;
+                    }, animationDelay);
                 } else {
-                    // Apply the visibility class immediately if not newly-visible
                     d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
                 }
             });
@@ -326,18 +408,12 @@ const Map = {
             .each(function(d, i) {
                 const initialClasses = getLinkClasses(d);
                 const visibilityClasses = getNewLinkVisibilityClasses(d);
-                // Set a delay before adding the visibility class
                 d3.select(this).attr("class", `${initialClasses}`);
                 if (visibilityClasses.includes('newly-visible')) {
-                    // If the node is newly-visible, apply the visibility class after the delay
                     setTimeout(() => {
                         d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, linkDelay);
-        
-                    // Increment the delay by 250ms for the next newly-visible node
-                    linkDelay += 100;
+                    }, animationDelay);
                 } else {
-                    // Apply the visibility class immediately if not newly-visible
                     d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
                 }
             });
@@ -380,27 +456,20 @@ const Map = {
         // Remove old nodes
         node.exit().remove();
 
-        // Add new nodes
-        let nodeDelay = 500;
+        // Add new nodes - using same timing as links for synchronized appearance
         const nodeEnter = node.enter().append('div')
             .attr('data-theme-id', d => d.data.themeId)
             .attr('data-uri', d => d.data.uri)
-            .attr('data-url', d => d.data.isExternalLink === true || d.data.isExternalLink === "true" ? d.data.url : null)  // Add data-url for external links
+            .attr('data-url', d => d.data.isExternalLink === true || d.data.isExternalLink === "true" ? d.data.url : null)
             .each(function(d, i) {
                 const initialClasses = getNodeClasses(d);
                 const visibilityClasses = getNewNodeVisibilityClasses(d);
-                // Set a delay before adding the visibility class
                 d3.select(this).attr("class", `${initialClasses}`);
                 if (visibilityClasses.includes('newly-visible')) {
-                    // If the node is newly-visible, apply the visibility class after the delay
                     setTimeout(() => {
                         d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, nodeDelay);
-        
-                    // Increment the delay by 250ms for the next newly-visible node
-                    nodeDelay += 100;
+                    }, animationDelay);
                 } else {
-                    // Apply the visibility class immediately if not newly-visible
                     d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
                 }
             })
@@ -430,22 +499,16 @@ const Map = {
         nodeEnter.merge(node)
             .attr('data-theme-id', d => d.data.themeId)
             .attr('data-uri', d => d.data.uri)
-            .attr('data-url', d => d.data.isExternalLink === true || d.data.isExternalLink === "true" ? d.data.url : null)  // Add data-url for external links
+            .attr('data-url', d => d.data.isExternalLink === true || d.data.isExternalLink === "true" ? d.data.url : null)
             .each(function(d, i) {
                 const initialClasses = getNodeClasses(d);
                 const visibilityClasses = getNewNodeVisibilityClasses(d);
-                // Set a delay before adding the visibility class
                 d3.select(this).attr("class", `${initialClasses}`);
                 if (visibilityClasses.includes('newly-visible')) {
-                    // If the node is newly-visible, apply the visibility class after the delay
                     setTimeout(() => {
                         d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, nodeDelay);
-        
-                    // Increment the delay by 250ms for the next newly-visible node
-                    nodeDelay += 100;
+                    }, animationDelay);
                 } else {
-                    // Apply the visibility class immediately if not newly-visible
                     d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
                 }
             })
@@ -568,23 +631,54 @@ const Map = {
         
         node.children.forEach(child => {
             if (isRootNode && child.children && child.children.length > 0) {
-                // Special case: Keep specific second-level nodes on homepage
-                const featuredSecondLevelUUIDs = ['agents-path', 'photo-1']; // AI Agents, Photography
+                // Special case: Keep specific nodes visible on homepage
+                // These appear as visible nodes connected to their parent branches
+                const featuredHomepageUUIDs = [
+                    'ts-path',         // ThoughtSpot (under Industry Work)
+                    'photo-1',         // Photography (under Visual Practice -> Spatial)
+                    'xrproto-path',    // XR Prototypes (under Spatial & Perception)
+                    'visual-path',     // Visual Practice (to show Photography under it)
+                    'agents-path',     // AI Agents (under AI Systems)
+                    'trajectory-path', // Trajectory/Education (under Information)
+                    'iitm-path'        // IIT Madras (under Trajectory -> Information)
+                ];
+                
+                // Helper function to check if a node should be visible
+                const shouldShowNode = (node) => {
+                    const originDate = node.originDate ? new Date(node.originDate) : new Date('2018-01-01');
+                    const expirationDate = node.expirationDate ? new Date(node.expirationDate) : null;
+                    const isDateValid = originDate <= selectedDateObj && (!expirationDate || expirationDate > selectedDateObj);
+                    const isFeaturedValid = node.isFeatured === true || node.isFeatured === "true";
+                    return isDateValid && isFeaturedValid && featuredHomepageUUIDs.includes(node.uuid);
+                };
                 
                 child.children = child.children.filter(grandchild => {
-                    if (featuredSecondLevelUUIDs.includes(grandchild.uuid)) {
-                        // Also check date validity for these second-level nodes
-                        const originDate = grandchild.originDate ? new Date(grandchild.originDate) : new Date('2018-01-01');
-                        const expirationDate = grandchild.expirationDate ? new Date(grandchild.expirationDate) : null;
-                        const isDateValid = originDate <= selectedDateObj && (!expirationDate || expirationDate > selectedDateObj);
-                        const isFeaturedValid = grandchild.isFeatured === true || grandchild.isFeatured === "true";
+                    if (shouldShowNode(grandchild)) {
+                        console.log(`✨ Keeping featured node: ${grandchild.title}`);
                         
-                        if (isDateValid && isFeaturedValid) {
-                            console.log(`✨ Keeping featured second-level node: ${grandchild.title}`);
-                            // Clear this grandchild's children to keep it at 2 levels max
-                            grandchild.children = [];
-                            return true;
+                        // Check if this grandchild has any featured great-grandchildren
+                        if (grandchild.children && grandchild.children.length > 0) {
+                            grandchild.children = grandchild.children.filter(greatGrandchild => {
+                                if (shouldShowNode(greatGrandchild)) {
+                                    console.log(`✨ Keeping featured third-level node: ${greatGrandchild.title}`);
+                                    
+                                    // Check for fourth level (e.g., IIT Madras under Trajectory under Information)
+                                    if (greatGrandchild.children && greatGrandchild.children.length > 0) {
+                                        greatGrandchild.children = greatGrandchild.children.filter(level4Child => {
+                                            if (shouldShowNode(level4Child)) {
+                                                console.log(`✨ Keeping featured fourth-level node: ${level4Child.title}`);
+                                                level4Child.children = [];
+                                                return true;
+                                            }
+                                            return false;
+                                        });
+                                    }
+                                    return true;
+                                }
+                                return false;
+                            });
                         }
+                        return true;
                     }
                     return false;
                 });
@@ -818,13 +912,18 @@ const Map = {
             const easedProgress = this.easeOutExpo(progress);
 
             const currentWidth = initialWidth + (targetWidth - initialWidth) * easedProgress;
-            mapContainer.style.width = `${currentWidth}px`;
+            // Don't resize the container - keep it full viewport
+            // mapContainer.style.width = `${currentWidth}px`;
 
             const svgElement = document.querySelector('svg.map-lines');
-            const svgHeight = mapContainer.clientHeight - Map.edgeBuffer;
-            svgElement.setAttribute('width', currentWidth);
-            svgElement.setAttribute('height', svgHeight);
-            Map.simulation.force("center", d3.forceCenter(currentWidth / 2, svgHeight / 2));
+            // Keep SVG at full viewport size - branches can render anywhere
+            svgElement.setAttribute('width', window.innerWidth);
+            svgElement.setAttribute('height', window.innerHeight);
+            
+            // Keep center slightly right of center (52% of viewport)
+            const centerX = window.innerWidth > 768 ? window.innerWidth * 0.52 : window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            Map.simulation.force("center", d3.forceCenter(centerX, centerY));
             Map.simulation.alpha(0.3).restart();
 
             // pageContainers.forEach(pageContainer => {

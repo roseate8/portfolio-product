@@ -1,17 +1,30 @@
 .map-container {
 	position: fixed;
-	top: 0; left: 30vw;
-	width:70vw; height:100vh;
-	transition:top 600ms, left 600ms, height 600ms;
+	top: 0; left: 0;
+	width: 100vw; height: 100vh;
+	// Graph can render anywhere, but forces will keep it mostly on the right
+	transition: top 600ms, left 600ms, height 600ms;
 	animation: mapIn 3000ms forwards;
-	z-index:1;
+	z-index: 1;
+	overflow: visible; // Allow nodes/links to render anywhere
 	@include mobile {
-		pointer-events:none;
-		position:relative;
-		animation:none;
-		height:80vw;
-		display:none;
+		pointer-events: none;
+		position: relative;
+		animation: none;
+		height: 80vw;
+		display: none;
 	}
+}
+
+// Ensure SVG fills the entire viewport for rendering branches
+svg.map-lines {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: visible; // Allow paths to extend beyond bounds
+	pointer-events: none; // Let clicks pass through to nodes
 }
 
 @keyframes mapIn {
@@ -194,6 +207,22 @@
 			background: url(../img/secondary-node-artifact.svg) no-repeat center center;
 		}
 
+
+		// Recognition nodes use the same icons as research nodes
+		.node.node-type-recognition .node-inner {
+			background: url(../img/node-research.svg) no-repeat center center;
+			width:20px; height:20px;
+		}
+
+		.node.current-node.node-type-recognition .node-inner {
+			background: url(../img/coloured-node-research.svg) no-repeat center center !important;
+		}
+
+		.node.secondary-node.node-type-recognition .node-inner,
+		.node.connected-node.node-type-recognition .node-inner {
+			background: url(../img/secondary-node-research.svg) no-repeat center center;
+		}
+
 	.node.highlighted-node:not(.current-node) .node-inner:after {
 		content:'';
 		// @include bodyTypeMono();
@@ -360,17 +389,25 @@
 			color: $grey; // Make visited nodes gray (same as footnotes)
 		}
 
-		// Make the entire node fill match background color for visited nodes
-		.node.visited:not(.current-node) .node-inner {
-			// Use background color for fill, making icons blend into the background
-			background-color: $bg !important;
-			background-image: none !important; // Remove any icon images
-			// No border added - keep original shape
+		// Visited nodes use secondary (gray) icon variants
+		.node.visited:not(.current-node).node-type-research .node-inner {
+			background: url(../img/secondary-node-research.svg) no-repeat center center;
+		}
+		.node.visited:not(.current-node).node-type-initiative .node-inner {
+			background: url(../img/secondary-node-initiative.svg) no-repeat center center;
+		}
+		.node.visited:not(.current-node).node-type-path .node-inner {
+			background: url(../img/secondary-node-path.svg) no-repeat center center;
+		}
+		.node.visited:not(.current-node).node-type-artifact .node-inner {
+			background: url(../img/secondary-node-artifact.svg) no-repeat center center;
+		}
+		.node.visited:not(.current-node).node-type-recognition .node-inner {
+			background: url(../img/secondary-node-research.svg) no-repeat center center;
 		}
 
 		.node.visited:not(.current-node).information-node .node-inner {
-			background: $bg !important; // Background color fill
-			// Keep original border/shape
+			background: $grey !important; // Gray fill for visited information nodes
 		}
 
 			// .node-label h2::after,
@@ -407,8 +444,8 @@
 	}
 
 	.link.connected-link {
-		stroke-dasharray:2,10;
-		stroke-width: 2px;
+		stroke-dasharray:3,6;
+		stroke-width: 1px;
 		stroke: $grey;
 	}
 
@@ -416,6 +453,13 @@
 	.link.visited-link {
 		stroke: $grey;
 		opacity: 0.5;
+	}
+
+	// Ancestor links (path back to root) are always solid black
+	.link.ancestor-link {
+		stroke: $black !important;
+		stroke-dasharray: 0 !important;
+		opacity: 1 !important;
 	}
 
 	.slider-container {
