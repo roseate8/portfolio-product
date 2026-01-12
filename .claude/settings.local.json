@@ -14,7 +14,8 @@
       "Bash(claude mcp add:*)",
       "Bash(git rm:*)",
       "Bash(timeout:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(pkill:*)"
     ]
   }
 }
