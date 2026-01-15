@@ -332,4 +332,10 @@ This graph structure is stored in Supabase with the following tables:
 - `node_recognition` - 4 recognition/award entries
 - `node_connections` - 7 cross-connections between nodes
 
+### Fallback System
+
 A fallback JSON file (`assets/data/portfolio.json`) mirrors this structure for offline availability.
+
+**Data Source Indicator:** A small black dot appears in the bottom-left corner of the viewport when the site is using the JSON fallback instead of Supabase. This helps diagnose connection issues:
+- No dot → Supabase connected successfully
+- Black dot → JSON fallback in use
