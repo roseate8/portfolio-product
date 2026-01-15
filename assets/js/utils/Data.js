@@ -68,6 +68,10 @@ export const Data = {
     basePath: document.body?.dataset?.basepath || '',
     useSupabase: CONFIG.useSupabase,
     useStaticData: !CONFIG.useSupabase,
+    
+    // Data source tracking - set after buildData() completes
+    // Values: 'supabase', 'json-fallback', 'json-direct', 'unknown'
+    dataSource: 'unknown',
 
     // =========================================================================
     // MAIN FUNCTION: buildData()
@@ -165,6 +169,9 @@ export const Data = {
             allNodes.map(node => node.originDate).filter(date => date)
         )].sort((a, b) => new Date(a) - new Date(b));
 
+        // Store the data source for external access
+        this.dataSource = dataSource;
+
         // Final summary
         log('✅', '=== DATA LOAD COMPLETE ===');
         log('📊', 'Summary:', {
@@ -174,7 +181,7 @@ export const Data = {
             uniqueDates: uniqueDates.length
         });
 
-        return { data, uniqueDates };
+        return { data, uniqueDates, dataSource };
     },
 
     // =========================================================================

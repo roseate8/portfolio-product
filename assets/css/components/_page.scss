@@ -892,3 +892,18 @@
 		transition: all 0.5s ease; /* Smooth transition for scaling and moving */
 		object-fit: contain; /* Maintain aspect ratio */
 	}
+
+// Data source indicator - shows when using JSON fallback instead of Supabase
+// Fixed to the bottom-left corner of the viewport (on grey background)
+.data-source-indicator {
+	position: fixed;
+	bottom: 15px;
+	left: 15px;
+	width: 8px;
+	height: 8px;
+	background-color: #000;
+	border-radius: 50%;
+	z-index: 1000;
+	pointer-events: none;
+	opacity: 0.5;
+}

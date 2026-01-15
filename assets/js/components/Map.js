@@ -34,7 +34,7 @@ const Map = {
                     return;
                 }
                 
-                const { data, uniqueDates } = result;
+                const { data, uniqueDates, dataSource } = result;
                 
                 if (!data) {
                     console.error('❌ No data in result!');
@@ -50,6 +50,9 @@ const Map = {
                 this.data = data;
                 this.uniqueDates = uniqueDates;
                 this.isDataInitialized = true;
+                
+                // Show JSON fallback indicator if not using Supabase
+                this.showDataSourceIndicator(dataSource);
                 
                 // Populate homepage index with root node data
                 Page.populateHomePageIndex();
@@ -93,6 +96,21 @@ const Map = {
             Page.openPage(initialUri);
         } else {
             Page.closePage();
+        }
+    },
+
+    showDataSourceIndicator(dataSource) {
+        // Show a small black dot in the bottom-left corner of the viewport
+        // when data is loaded from JSON fallback instead of Supabase
+        if (dataSource !== 'supabase') {
+            const indicator = document.createElement('div');
+            indicator.className = 'data-source-indicator';
+            indicator.title = `Data source: ${dataSource}`;
+            
+            // Append to body (viewport level, on grey background)
+            document.body.appendChild(indicator);
+            
+            console.log('⚫ JSON fallback indicator shown (data source:', dataSource, ')');
         }
     },
 

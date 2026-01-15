@@ -15,7 +15,10 @@
       "Bash(git rm:*)",
       "Bash(timeout:*)",
       "Bash(git reset:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(npm install:*)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_publishable_keys"
     ]
   }
 }
