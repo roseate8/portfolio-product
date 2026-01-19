@@ -843,7 +843,20 @@ const Map = {
         // Set up the clicked node and its direct children (but not grandchildren)
         const clickedNodeCopy = { ...clickedNode, children: [] };
         if (clickedNode.children) {
-            clickedNodeCopy.children = clickedNode.children.map(child => ({ ...child, children: [] }));
+            // Special case: For Information node, preserve specific grandchildren (IIT Madras, IIM Bangalore)
+            const isInformationNode = clickedNode.type === 'information' || clickedNode.uuid === 'info-path';
+
+            clickedNodeCopy.children = clickedNode.children.map(child => {
+                // If we're on Information node and this is the Education path, keep only IIT and IIM children
+                if (isInformationNode && child.uuid === 'education-path') {
+                    const educationChildren = child.children ? child.children.filter(grandchild =>
+                        grandchild.uuid === 'iitm-path' || grandchild.uuid === 'iimb-path'
+                    ).map(grandchild => ({ ...grandchild, children: [] })) : [];
+                    return { ...child, children: educationChildren };
+                }
+                // Otherwise, just copy the child without grandchildren
+                return { ...child, children: [] };
+            });
         }
     
         // Add connected nodes

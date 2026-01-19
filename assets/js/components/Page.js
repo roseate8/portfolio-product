@@ -321,6 +321,13 @@ const Page = {
 				event.preventDefault();
 			}
 
+			if(target.closest('.contact-links-toggle')) {
+				const contentInner = target.closest('.page-content-inner');
+				contentInner.classList.toggle('contact-links-open');
+				Page.animatePageHeight();
+				event.preventDefault();
+			}
+
 		});
 
 		document.addEventListener('mouseenter', (event) => {
@@ -718,6 +725,9 @@ const Page = {
 						${pageData.role ? `<h4 class="role">${pageData.role}</h4>` : ``}
 						${pageData.type === 'information' ? `<h4 class="email"><a href="mailto:${pageData.email}">${pageData.email}</a></h4>` : ''}
 						${pageData.type === 'information' && pageData.telephone ? `<h4 class="telephone"><a href="tel:${pageData.telephone}">${pageData.telephone}</a></h4>` : ''}
+						${pageData.type === 'information' && pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks
+							.filter(link => ['LinkedIn', 'GitHub', 'Behance', 'Medium'].includes(link.title))
+							.map(link => `<h4 class="social-link" data-platform="${link.title}"><a href="${link.link}" target="_blank">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>`).join('') : ''}
 						${pageData.type !== 'path' && pageData.type !== 'information' ? `<h4>${formatDateRange(pageData.originDate, pageData.endDate)}</h4>` : ''}
 					</div>
 				</div>
@@ -765,10 +775,58 @@ const Page = {
 				return tempContainer.innerHTML;
 			}
 
+			// Function to add Contact Links button inline with description for Contact Me page
+			function addContactLinksButton(description) {
+				const tempContainer = document.createElement('div');
+				tempContainer.innerHTML = description;
+				const lastElement = tempContainer.lastElementChild;
+				if (lastElement) {
+					let lastElementHTML = lastElement.innerHTML;
+					const regex = /([.,!?;:])\s*$/;
+					if (regex.test(lastElementHTML)) {
+						lastElementHTML = lastElementHTML.replace(regex, ' <button class="contact-links-toggle"><span>contact links</span></button>$1');
+					} else {
+						lastElementHTML = `${lastElementHTML} <button class="contact-links-toggle"><span>contact links</span></button>`;
+					}
+					lastElement.innerHTML = lastElementHTML;
+				}
+				return tempContainer.innerHTML;
+			}
+
+			// Generate expanded contact links HTML for Contact Me node
+			const contactLinksExpandedHTML = pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? `
+				<div class="contact-links-expanded">
+					<ul class="list contact-links-list">
+						${pageData.externalLinks
+							.filter(link => !link.link.startsWith('mailto:') && !link.link.startsWith('tel:'))
+							.map(link => {
+								try {
+									const url = new URL(link.link);
+									const displayUrl = url.hostname.replace(/^www\./, '') + url.pathname.replace(/\/$/, '');
+									return `
+										<li>
+											<a href="${link.link}" class="external-link contact-social-link" target="_blank">
+												<span class="item-id"></span>
+												<span class="item-title">
+													<span class="link-title-arrow">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></span>
+													<span class="link-address">${displayUrl}</span>
+												</span>
+											</a>
+										</li>
+									`;
+								} catch(e) {
+									return '';
+								}
+							}).join('')}
+					</ul>
+				</div>
+			` : '';
+
 			let contentInnerHTML = `
 				<div class="page-content-inner">
-					${pageData.description ? `${pageData.extendedDescription ? addReadMoreButton(pageData.description) : pageData.description}` : ''}
+					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(pageData.description, pageData.externalLinks) : (pageData.extendedDescription ? addReadMoreButton(pageData.description) : pageData.description)}` : ''}
 					${pageData.extendedDescription ? `<div class="extended-description">${pageData.extendedDescription}</div>` : ''}
+					${contactLinksExpandedHTML}
 					${pageData.footnotes && pageData.footnotes.length > 0 ? `
 						<ul class="footnotes">
 							${pageData.footnotes.map((footnote, index) => `
@@ -781,7 +839,7 @@ const Page = {
 					` : ''}
 				</div>
 			`;
-			if(pageData.description || pageData.extendedDescription || (pageData.footnotes && pageData.footnotes.length > 0)){
+			if(pageData.description || pageData.extendedDescription || (pageData.footnotes && pageData.footnotes.length > 0) || pageData.uuid === 'contact-1'){
 				pageContent.innerHTML += contentInnerHTML;
 			}
 	
@@ -789,11 +847,13 @@ const Page = {
 			// Determine which tabs should be open by default
 			// For Information branch: ALL tabs open
 			// For other nodes: Only first relevant tab opens
+			// Exception: Contact Me and Connections tabs on info-path should be collapsed
+			const isInfoPath = pageData.uuid === 'info-path';
 			const openAllTabs = isInformationBranch;
 			const shouldOpenFurtherReading = isInformationBranch && pageData.externalLinks && pageData.externalLinks.length > 0;
 			const shouldOpenEducation = !isInformationBranch && pageData.education && pageData.education.length > 0;
-			
-			console.log(`📑 Tab settings: isInformationBranch=${isInformationBranch}, openAllTabs=${openAllTabs}`);
+
+			console.log(`📑 Tab settings: isInformationBranch=${isInformationBranch}, isInfoPath=${isInfoPath}, openAllTabs=${openAllTabs}`);
 			
 			let tabsHTML = `
 				<div class="tabs">
@@ -807,23 +867,39 @@ const Page = {
 							<div class="tab-content">
 								<ul class="list">
 									${pageData.education.map(entry => {
-										return `
-											<li>
-												<span class="item-id"></span>
-												<span class="item-title">
-													<h2>${entry.title}</h2>
-													<h3>${entry.subtitle}</h3>
-													<h3>${entry.year}</h3>
-												</span>
-											</li>
-										`;
+										const hasLink = entry.linkUri && entry.linkUri.trim() !== '';
+										if (hasLink) {
+											return `
+												<li>
+													<a href="${entry.linkUri}" class="index-link" data-uri="${entry.linkUri}">
+														<span class="item-id"></span>
+														<span class="item-title education-item">
+															<span class="edu-institute">${entry.institute}</span>
+															<span class="edu-major">${entry.major}</span>
+															<span class="edu-degree">${entry.degree}<br>${entry.dates}</span>
+														</span>
+													</a>
+												</li>
+											`;
+										} else {
+											return `
+												<li>
+													<span class="item-id"></span>
+													<span class="item-title education-item">
+														<span class="edu-institute">${entry.institute}</span>
+														<span class="edu-major">${entry.major}</span>
+														<span class="edu-degree">${entry.degree}<br>${entry.dates}</span>
+													</span>
+												</li>
+											`;
+										}
 									}).join('')}
 								</ul>
 							</div>
 						</div>
 					` : ''}
 					${pageData.uuid === 'info-path' && (pageData.telephone || pageData.email || (pageData.externalLinks && pageData.externalLinks.length > 0)) ? `
-						<div class="page-tab tab-links ${openAllTabs ? 'tab-open' : ''}">
+						<div class="page-tab tab-links ${openAllTabs && !isInfoPath ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-links"></span>
 								<span class="tab-title">Contact Me</span>
@@ -917,7 +993,7 @@ const Page = {
 							</div>
 						</div>
 					` : ''}
-					${pageData.externalLinks && pageData.externalLinks.length > 0 && pageData.uuid !== 'info-path' ? `
+					${pageData.externalLinks && pageData.externalLinks.length > 0 && pageData.uuid !== 'info-path' && pageData.uuid !== 'contact-1' ? `
 						<div class="page-tab tab-links ${openAllTabs || shouldOpenFurtherReading ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-links"></span>
@@ -947,7 +1023,7 @@ const Page = {
 						</div>
 					` : ''}
 					${pageData.children && pageData.children.length > 0 || pageData.connectedNodes && pageData.connectedNodes.length > 0 ? `
-						<div class="page-tab tab-connections ${openAllTabs ? 'tab-open' : ''}">
+						<div class="page-tab tab-connections ${openAllTabs && !isInfoPath ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-connections"></span>
 								<span class="tab-title">Connections</span>

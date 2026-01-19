@@ -166,26 +166,67 @@
 			.page-main-title .telephone {
 				position:relative;
 				text-transform:none; // Don't uppercase phone numbers
+				margin-top:5px;
 			}
 
 			.page-main-title .email a,
-			.page-main-title .telephone a {
+			.page-main-title .telephone a,
+			.page-main-title .social-link a {
 				color:$grey;
 				text-transform:none; // Don't uppercase links
+				text-decoration:underline;
 			}
 
-					.email:before {
-						content:'E';
+			.page-main-title .social-link {
+				position:relative;
+				text-transform:none;
+				margin-top:5px;
+			}
+
+			.page-main-title .social-link .arrow-icon {
+				width:0.85em;
+				height:0.85em;
+				margin-left:2px;
+				vertical-align:baseline;
+			}
+
+					.email:before,
+					.telephone:before,
+					.social-link:before {
+						content:'';
 						position:absolute;
-						left:-23px;
-						color:$grey;
+						left:-20px;
+						width:12px;
+						height:12px;
+						background-size:contain;
+						background-repeat:no-repeat;
+						background-position:center;
+						filter:grayscale(100%);
+						opacity:0.6;
+					}
+
+					.email:before {
+						background-image:url(../img/icon-email.svg);
 					}
 
 					.telephone:before {
-						content:'T';
-						position:absolute;
-						left:-23px;
-						color:$grey;
+						background-image:url(../img/icon-telephone.svg);
+					}
+
+					.social-link[data-platform="LinkedIn"]:before {
+						background-image:url(../img/logos/LinkedIn_icon.svg.png);
+					}
+
+					.social-link[data-platform="GitHub"]:before {
+						background-image:url(../img/logos/Octicons-mark-github.svg);
+					}
+
+					.social-link[data-platform="Behance"]:before {
+						background-image:url(../img/logos/behance-circle-logo-icon.webp);
+					}
+
+					.social-link[data-platform="Medium"]:before {
+						background-image:url(../img/logos/Medium_logo_Monogram.svg.png);
 					}
 
 				.close-page {
@@ -613,7 +654,69 @@
 								margin-top:2px;
 							}
 
+							// Education-specific styling
+							.item-title.education-item {
+								.edu-institute {
+									@include smallTypeSans;
+									color:$black;
+									display:block;
+								}
+								.edu-major {
+									@include smallTypeSans;
+									color:$grey;
+									display:block;
+									margin-top:2px;
+								}
+								.edu-degree {
+									@include tinyTypeSans;
+									color:$grey;
+									display:block;
+									margin-top:2px;
+								}
+							}
+
+				// Contact links in main content area (for Contact Me node)
+				.contact-links-list {
+					margin-top:15px;
+					display:flex;
+					flex-direction:column;
+					gap:10px;
+					
+					li {
+						display:flex;
+						flex-direction:column;
+					}
+					
+					a.contact-social-link {
+						display:flex;
+						flex-direction:row;
+						
+						.link-title-arrow {
+							text-decoration:underline;
+							text-decoration-style:solid;
+							text-underline-offset:2px;
+							text-decoration-thickness:1px;
 							
+							.arrow {
+								font-family:$fontMono;
+								margin-left:4px;
+								display:inline-block;
+							}
+
+							.arrow-icon {
+								width:1em;
+								height:1em;
+								fill:currentColor;
+								display:inline-block;
+								flex-shrink:0;
+							}
+						}
+						
+						&:hover .link-title-arrow {
+							text-decoration-style:dashed;
+						}
+					}
+				}
 
 				.footnotes {
 					margin-top:10px;
@@ -691,6 +794,29 @@
 	}
 
 	.extended-description-open .extended-description {
+		display:block;
+	}
+
+	.contact-links-toggle {
+		@include smallTypeSans;
+		display:inline;
+		color:$grey;
+		text-decoration:underline;
+		text-decoration-color:$grey;
+		cursor:pointer;
+		vertical-align:baseline;
+	}
+
+	.contact-links-toggle:hover {
+		text-decoration-style:dashed;
+	}
+
+	.contact-links-expanded {
+		display:none;
+		margin-top:10px;
+	}
+
+	.contact-links-open .contact-links-expanded {
 		display:block;
 	}
 

@@ -330,9 +330,11 @@ function transformNode(
         })),
         
         education: (educationMap[nodeId] || []).map(edu => ({
-            title: edu.title,
-            subtitle: edu.subtitle || '',
-            year: edu.year || ''
+            institute: edu.title,
+            major: edu.subtitle || '',
+            degree: edu.degree || '',
+            dates: edu.year || '',
+            linkUri: edu.link_uri || ''
         })),
         
         recognition: (recognitionMap[nodeId] || []).map(rec => ({
