@@ -59,8 +59,42 @@ Format for each node:
 
 ### Subsections
 
+**Start**
+>Just curious: Welcome. Click around the graph. Start with [[Photography]] maybe; that has the most life to it.  I think what I worked on [[AI Systems]] would interest if you want to see how I think about building."
+>Hiring: I'm selectively exploring. I care about AI products that need to earn trust, not just engagement.
+>To collaborate: Open to interesting problems in Product Strategy, AI systems, perception-aware interfaces, or... Photography.
+
+
 **Work**
-> Product Manager at ThoughtSpot, working on AI-powered enterprise search. Before this: Policybazaar (15M monthly users), two startups, VR research at IIT Madras.
+> 
+(List of positions held with links to the respective nodes)
+ThoughtSpot
+Product Manager II – Vector, Navigation and Discovery
+June 2025 – present
+
+Chisel
+Product Consultant (Part time) – PM AI Agent
+Apr – Jun 2025
+
+Tata Group (TCS – CPG & Retail)
+Management Consultant – Summer Associate
+Apr – May 2024
+
+Policybazaar
+Associate Product Manager – Growth & CX
+Jan 2022 - May 2023
+
+HCL
+Software Developer – Digital Transformation & Industry 4.0
+Aug 2021 – Jan 2022
+
+Swiggy – SuprDaily
+Supply Chain Design Intern
+May - July 2021
+
+Caval
+Co-founder (Product Design)
+2017-2019
 
 **Looking for**
 > Problems where AI capability exists but user trust doesn't. Teams that ship to production, not just demos. Roles where I can own both the technical architecture and the user experience.

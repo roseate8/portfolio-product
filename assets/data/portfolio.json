@@ -69,8 +69,8 @@
           "email": "",
           "telephone": "",
           "overview": "Academic background and qualifications",
-          "description": "<p>My academic journey spanning engineering and management.</p>",
-          "extendedDescription": "",
+          "description": "<p>Recently completed an MBA at IIM Bangalore, following a dual degree (BTech + MTech) from IIT Madras. Currently exploring interests in Product and Strategy, with photography as a serious side pursuit.</p>",
+          "extendedDescription": "<p>My academic journey has given me the chance to deep-dive into areas like biomedical design, AR/VR rendering pipelines, and Product Design—each shaping how I think about building things that respect both technical constraints and human experience.</p>",
           "originDate": "2016-01-01",
           "endDate": "",
           "expirationDate": "",
@@ -81,7 +81,11 @@
           "media": [],
           "type": "path",
           "externalLinks": [],
-          "metadata": [],
+          "metadata": [
+            {"title": "IIM Bangalore", "subtitle": "MBA (Post Graduate Programme) • QS Worldwide Rank 31"},
+            {"title": "Exchange Programme", "subtitle": "NCCU College of Commerce, Taipei • FT MiM Worldwide Rank 96"},
+            {"title": "IIT Madras", "subtitle": "BTech & MTech in Engineering Design (Specialization: Biomedical Design)"}
+          ],
           "education": [],
           "recognition": [],
           "footnotes": [],
