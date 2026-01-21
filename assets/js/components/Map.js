@@ -368,9 +368,13 @@ const Map = {
             if(d.target.data.type) classes += ` node-type-${d.target.data.type}`;
             
             // Ancestor links: links from root toward the current node (always black)
-            const isAncestorLink = ancestorUris.has(d.source.data.uri) || 
+            // BUT: Don't add ancestor-link on initial page load (when no node is selected)
+            //      because it has opacity:1 !important which overrides the animation
+            const isAncestorLink = ancestorUris.has(d.source.data.uri) ||
                                    (Map.currentNode && d.target.data.uri === Map.currentNode.uri && ancestorUris.has(d.source.data.uri));
-            if (isAncestorLink || d.source.depth === 0) classes += " ancestor-link";
+            if (Map.currentNode && (isAncestorLink || d.source.depth === 0)) {
+                classes += " ancestor-link";
+            }
             
             return classes;
         };
@@ -389,18 +393,40 @@ const Map = {
             if (!d.curveDirection) {
                 d.curveDirection = (d.source.y > d.target.y) ? -30 : 30;
             }
-            
+
             if(d.target.data.type === 'path'){
-                Map.createAngledPath(d.source, d.target, d.curveDirection);
+                return Map.createAngledPath(d.source, d.target, d.curveDirection);
             } else {
-                Map.createStraightPath(d.source, d.target, d.curveDirection);
+                return Map.createStraightPath(d.source, d.target, d.curveDirection);
             }
-            
+
         };
 
-        // Animation timing - all elements appear together after a short delay
-        // Using same delay for both links and nodes ensures synchronized appearance
-        const animationDelay = 100; // Small uniform delay for all elements
+        // Animation timing
+        // Root appears first, then children appear at random scattered intervals
+        const getRootDelay = () => 100;
+        const rootAppearanceDelay = 100;
+
+        // Generate random delays for each node
+        // Using object instead of Map() to avoid naming conflict with Map module
+        const childDelays = {};
+        nodes.forEach(d => {
+            // If this node was already visible, don't animate it
+            if (Map.previousNodes.has(d.data.uri)) {
+                childDelays[d.data.uri] = 0; // No delay for existing nodes
+            } else {
+                // New node - assign animation delay
+                if (d.depth === 0) {
+                    // Root node
+                    childDelays[d.data.uri] = getRootDelay();
+                } else {
+                    // Child node - random delay between 150-700ms
+                    const randomDelay = rootAppearanceDelay + Math.random() * 550 + 50;
+                    childDelays[d.data.uri] = randomDelay;
+                }
+            }
+        });
+
 
         // Add new links
         const linkEnter = link.enter().append("path")
@@ -411,30 +437,20 @@ const Map = {
                 const visibilityClasses = getNewLinkVisibilityClasses(d);
                 d3.select(this).attr("class", `${initialClasses}`);
                 if (visibilityClasses.includes('newly-visible')) {
+                    // Links appear with their target node at the same random delay
+                    const targetUri = d.target.data.uri;
+                    const delay = childDelays[targetUri] || getRootDelay();
                     setTimeout(() => {
                         d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, animationDelay);
+                    }, delay);
                 } else {
                     d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
                 }
             });
 
-        // Merge new and existing links and update their attributes
-        linkEnter.merge(link)
-            .attr("class", d => getLinkClasses(d))
-            .attr("d", getPath)
-            .each(function(d, i) {
-                const initialClasses = getLinkClasses(d);
-                const visibilityClasses = getNewLinkVisibilityClasses(d);
-                d3.select(this).attr("class", `${initialClasses}`);
-                if (visibilityClasses.includes('newly-visible')) {
-                    setTimeout(() => {
-                        d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, animationDelay);
-                } else {
-                    d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                }
-            });
+        // Update existing links - only update path, don't touch visibility classes
+        link
+            .attr("d", getPath);
 
 
         // Utility function to generate class names for nodes
@@ -484,9 +500,11 @@ const Map = {
                 const visibilityClasses = getNewNodeVisibilityClasses(d);
                 d3.select(this).attr("class", `${initialClasses}`);
                 if (visibilityClasses.includes('newly-visible')) {
+                    // Get the pre-generated random delay for this node
+                    const delay = childDelays[d.data.uri] || getRootDelay();
                     setTimeout(() => {
                         d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, animationDelay);
+                    }, delay);
                 } else {
                     d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
                 }
@@ -513,23 +531,11 @@ const Map = {
             .attr('class', 'node-label')
             .html(d => `<h2>${d.data.title}</h2><br><h3>${d.data.summary}</h3>`);
 
-        // Merge new and existing nodes and update classes and labels
-        nodeEnter.merge(node)
+        // Update existing nodes - only update attributes, don't touch visibility classes
+        node
             .attr('data-theme-id', d => d.data.themeId)
             .attr('data-uri', d => d.data.uri)
             .attr('data-url', d => d.data.isExternalLink === true || d.data.isExternalLink === "true" ? d.data.url : null)
-            .each(function(d, i) {
-                const initialClasses = getNodeClasses(d);
-                const visibilityClasses = getNewNodeVisibilityClasses(d);
-                d3.select(this).attr("class", `${initialClasses}`);
-                if (visibilityClasses.includes('newly-visible')) {
-                    setTimeout(() => {
-                        d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                    }, animationDelay);
-                } else {
-                    d3.select(this).attr("class", `${initialClasses} ${visibilityClasses}`);
-                }
-            })
             .select('.node-label')
             .html(d => `<span><h2>${d.data.title}</h2><br><h3>${d.data.summary}</h3></span>`);
         
