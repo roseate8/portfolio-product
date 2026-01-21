@@ -1,10 +1,29 @@
-// Main SCSS entry point for Vite
-// This file imports all partials in the correct order
+// =============================================================================
+// Main SCSS Entry Point
+// =============================================================================
+// 
+// This file imports all partials in the correct order.
+// The glass styles must be imported AFTER page styles to override backgrounds.
+//
+// @author Portfolio Project
+// =============================================================================
 
+// -----------------------------------------------------------------------------
+// Foundation - Variables, resets, and typography
+// -----------------------------------------------------------------------------
 @import 'variables';
 @import 'defaults';
 @import 'type';
 @import 'global';
+
+// -----------------------------------------------------------------------------
+// Components - Page-specific styles
+// -----------------------------------------------------------------------------
 @import 'components/map';
 @import 'components/page';
+
+// -----------------------------------------------------------------------------
+// Effects - Glass and visual effects (must be last to override backgrounds)
+// -----------------------------------------------------------------------------
+@import 'components/glass';
 

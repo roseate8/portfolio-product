@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  // Enable React plugin for JSX transformation
+  plugins: [react()],
+  
   root: '.',
   publicDir: 'public',
+  
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -12,6 +17,18 @@ export default defineConfig({
       }
     }
   },
+  
+  // Optimize Three.js and related dependencies for proper bundling
+  optimizeDeps: {
+    include: [
+      'three',
+      'three-stdlib',
+      '@react-three/fiber',
+      '@shadergradient/react',
+      'camera-controls'
+    ]
+  },
+  
   css: {
     preprocessorOptions: {
       scss: {
@@ -23,6 +40,7 @@ export default defineConfig({
       }
     }
   },
+  
   server: {
     port: 3000,
     open: true

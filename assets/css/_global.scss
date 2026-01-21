@@ -7,17 +7,41 @@ body {
 	width:100%; height:100%;
 	-webkit-text-size-adjust: 100%;
 	zoom:1;
-	background:#fff; 
+	background: transparent; // Allow gradient to show through
 	color:$black;
 	overflow:hidden;
 	-webkit-font-smoothing: antialiased;
 	text-wrap: pretty;
-	background: $bg;
 	@include mobile {
 		// overflow:auto;
 		// overflow-x:hidden;
 		padding-bottom:2.5vw;
 	}
+}
+
+// =============================================================================
+// GRADIENT BACKGROUND LAYER
+// =============================================================================
+
+/**
+ * Gradient background container
+ * This div hosts the React-mounted ShaderGradient
+ */
+#gradient-root {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+}
+
+/**
+ * Main app container
+ * Sits above the gradient with transparent background
+ */
+#app {
+	position: relative;
+	z-index: 1;
+	background: transparent;
 }
 
 a {color:$black; border:0; text-decoration:none;}

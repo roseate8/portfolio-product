@@ -1,0 +1,96 @@
+/**
+ * @fileoverview Glassmorphism Styles
+ * 
+ * CSS-based glass effects for content containers.
+ * 
+ * EDIT THESE VALUES to adjust the glass appearance:
+ */
+
+// =============================================================================
+// GLASS CONFIGURATION - EDIT THESE
+// =============================================================================
+
+// Blur intensity (higher = more frosted)
+$glass-blur: 24px;
+
+// Background opacity (0 = fully transparent, 1 = solid)
+$glass-bg-opacity: 0.65;
+
+// Background tint color
+$glass-bg-color: rgba(255, 255, 255, $glass-bg-opacity);
+
+// Border settings
+$glass-border-color: rgba(255, 255, 255, 0.4);
+$glass-border-width: 1px;
+
+// =============================================================================
+// GLASS MIXIN
+// =============================================================================
+
+@mixin glass-effect() {
+  background: $glass-bg-color;
+  backdrop-filter: blur($glass-blur) saturate(180%);
+  -webkit-backdrop-filter: blur($glass-blur) saturate(180%);
+  border: $glass-border-width solid $glass-border-color;
+}
+
+// =============================================================================
+// APPLY TO PAGE ELEMENTS
+// =============================================================================
+
+.main-content {
+  @include glass-effect();
+  background-color: $glass-bg-color !important;
+  border: none !important; // Prevent border from affecting height calculation
+}
+
+.header-content {
+  @include glass-effect();
+  background-color: $glass-bg-color !important;
+  
+  &:hover {
+    background: rgba(255, 255, 255, $glass-bg-opacity + 0.1) !important;
+  }
+}
+
+.group {
+  background-color: transparent !important;
+}
+
+// Hide the white gradient fade at bottom (causes visual artifacts with glass)
+.page-container::after {
+  display: none !important;
+}
+
+// =============================================================================
+// UTILITY CLASS
+// =============================================================================
+
+.glass {
+  @include glass-effect();
+}
+
+// =============================================================================
+// RESPONSIVE
+// =============================================================================
+
+@include mobile {
+  .main-content,
+  .header-content {
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    background: rgba(255, 255, 255, 0.8) !important;
+  }
+}
+
+// =============================================================================
+// FALLBACK
+// =============================================================================
+
+@supports not (backdrop-filter: blur(1px)) {
+  .main-content,
+  .header-content,
+  .glass {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+}
