@@ -254,7 +254,7 @@ svg.map-lines {
 			// @include bodyTypeMono();
 			@include tinyTypeSans();
 			position:absolute;
-			background:$bg;
+			background:rgb(229, 230, 228);
 			width:4px; height:4px;
 			border-radius:50%;
 			top:50%; left:50%;
@@ -344,7 +344,7 @@ svg.map-lines {
 
 			.node-label h2 {
 				@include smallTypeSans();
-				background:$bg;
+				background:rgb(229, 230, 228);
 				display:inline;
 				border-radius:5px;
 				padding:1px 3px;
@@ -357,7 +357,7 @@ svg.map-lines {
 				@include tinyTypeSans();
 				color:$grey;
 				border-radius:3px;
-				background:$bg;
+				background:rgb(229, 230, 228);
 				display:inline;
 				padding:1px 3px;
 				position:relative;
@@ -597,7 +597,7 @@ svg.map-lines {
 				font-size:10px;
 				font-weight:500;
 				// background:#fff;
-				background:$bg;
+				background:rgb(229, 230, 228);
 				border-radius:3px;
 				padding:2px 3px 3px;
 				user-select:none;
