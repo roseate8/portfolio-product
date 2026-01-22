@@ -1,5 +1,6 @@
 import Map from '../components/Map.js';
 import Page from '../components/Page.js';
+import Analytics from './Analytics.js';
 
 const Router = {
     basePath: document.body.dataset.basepath || window.location.origin,
@@ -65,6 +66,9 @@ const Router = {
             Map.initialize(null, sliderValue);
         } 
         else {
+            // Track direct URL navigation
+            // Note: Map.initialize will load the node data, then we track
+            // This is handled in Map.setCurrentNodeByUri after data loads
             Map.initialize(path, sliderValue);
         }
     },

@@ -1,9 +1,10 @@
-// File: components/Map.js
+// File: components/Page.js
 import * as d3 from 'd3';
 import Map from './Map.js';
 import Router from '../utils/Router.js';
 import Data from '../utils/Data.js';
 import Slider from './Slider.js';
+import Analytics, { EXPANSION_TYPES, CLICK_TYPES } from '../utils/Analytics.js';
 
 const Page = {
 
@@ -288,14 +289,57 @@ const Page = {
 			if (target.classList.contains('a')) {
 				event.preventDefault();
 			}
+			
+			// Track external/outbound link clicks
+			const externalLink = target.closest('.external-link') || target.closest('.contact-social-link');
+			if (externalLink) {
+				const href = externalLink.getAttribute('href') || '';
+				const linkText = externalLink.textContent?.toLowerCase().trim() || '';
+				const currentUri = window.location.pathname.replace(/^\//, '');
+				const pageData = Page.findPageDataByUri(currentUri);
+				
+				// Determine click type and destination
+				let clickType = CLICK_TYPES.SOCIAL;
+				let destination = linkText.split('\n')[0].trim(); // Get first line (title)
+				
+				if (href.startsWith('mailto:')) {
+					clickType = CLICK_TYPES.CONTACT;
+					destination = 'email';
+				} else if (href.startsWith('tel:')) {
+					clickType = CLICK_TYPES.CONTACT;
+					destination = 'phone';
+				} else if (href.includes('linkedin')) {
+					destination = 'linkedin';
+				} else if (href.includes('github')) {
+					destination = 'github';
+				} else if (href.includes('behance')) {
+					destination = 'behance';
+				} else if (href.includes('medium')) {
+					destination = 'medium';
+				} else if (href.includes('resume') || href.includes('.pdf')) {
+					clickType = CLICK_TYPES.RESUME;
+					destination = 'resume_pdf';
+				}
+				
+				Analytics.trackOutboundClicked(clickType, destination, href, pageData);
+			}
 
 			if (target.closest('.tab-titles')) {
 				const container = target.closest('.tabs');
-                if(target.closest('.page-tab').classList.contains('tab-open')) {
-                    target.closest('.page-tab').classList.remove('tab-open');
+				const pageTab = target.closest('.page-tab');
+				const wasOpen = pageTab.classList.contains('tab-open');
+				
+                if(wasOpen) {
+                    pageTab.classList.remove('tab-open');
                 } else {
                     container.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('tab-open'));
-				    target.closest('.page-tab').classList.add('tab-open');
+				    pageTab.classList.add('tab-open');
+					
+					// Track tab expansion
+					const tabTitle = pageTab.querySelector('.tab-title')?.textContent || 'Unknown';
+					const currentUri = window.location.pathname.replace(/^\//, '');
+					const pageData = Page.findPageDataByUri(currentUri);
+					Analytics.trackContentExpanded(pageData, EXPANSION_TYPES.TAB, tabTitle);
                 }
 
 				Page.animatePageHeight();
@@ -315,6 +359,11 @@ const Page = {
 			}
 
 			if(target.closest('.read-more')) {
+				// Track read more expansion
+				const currentUri = window.location.pathname.replace(/^\//, '');
+				const pageData = Page.findPageDataByUri(currentUri);
+				Analytics.trackContentExpanded(pageData, EXPANSION_TYPES.READ_MORE);
+				
 				target.closest('.page-content-inner').classList.add('extended-description-open');
 				target.closest('.read-more').remove();
 				Page.animatePageHeight();
@@ -323,7 +372,16 @@ const Page = {
 
 			if(target.closest('.contact-links-toggle')) {
 				const contentInner = target.closest('.page-content-inner');
+				const wasOpen = contentInner.classList.contains('contact-links-open');
 				contentInner.classList.toggle('contact-links-open');
+				
+				// Track contact links expansion (only when opening)
+				if (!wasOpen) {
+					const currentUri = window.location.pathname.replace(/^\//, '');
+					const pageData = Page.findPageDataByUri(currentUri);
+					Analytics.trackContentExpanded(pageData, EXPANSION_TYPES.CONTACT_LINKS);
+				}
+				
 				Page.animatePageHeight();
 				event.preventDefault();
 			}
@@ -356,8 +414,39 @@ const Page = {
 				Page.animatePageHeight();
 			}
 		});
-
 		
+		// Scroll milestone tracking
+		const mainContent = document.querySelector('.main-content');
+		if (mainContent) {
+			let scrollTimeout;
+			mainContent.addEventListener('scroll', () => {
+				// Debounce scroll tracking
+				clearTimeout(scrollTimeout);
+				scrollTimeout = setTimeout(() => {
+					if (!Page.pageOpen) return;
+					
+					const scrollTop = mainContent.scrollTop;
+					const scrollHeight = mainContent.scrollHeight;
+					const clientHeight = mainContent.clientHeight;
+					const scrollableHeight = scrollHeight - clientHeight;
+					
+					if (scrollableHeight <= 0) return;
+					
+					const scrollPercent = Math.round((scrollTop / scrollableHeight) * 100);
+					
+					// Check milestones
+					const milestones = [25, 50, 75, 100];
+					const currentUri = window.location.pathname.replace(/^\//, '');
+					const pageData = Page.findPageDataByUri(currentUri);
+					
+					for (const milestone of milestones) {
+						if (scrollPercent >= milestone) {
+							Analytics.trackScrollMilestone(pageData, milestone, scrollHeight, clientHeight);
+						}
+					}
+				}, 100);
+			});
+		}
 	},
 
 	updateVisitedLinks(uri) {
@@ -550,6 +639,11 @@ const Page = {
 						const video = mediaItem.querySelector('video');
 						const media = image || video;
 						const mediaRect = media.getBoundingClientRect(); // Get the media's original size and position
+						
+						// Track media view
+						const mediaType = image ? 'image' : 'video';
+						const mediaAlt = image?.alt || '';
+						Analytics.trackMediaViewed(pageData, mediaType, index, mediaAlt);
 					
 						// Clone the media element
 						const clonedMedia = media.cloneNode(true);

@@ -18,7 +18,8 @@
       "Bash(pkill:*)",
       "Bash(npm install:*)",
       "mcp__supabase__list_projects",
-      "mcp__supabase__get_publishable_keys"
+      "mcp__supabase__get_publishable_keys",
+      "Bash(git checkout:*)"
     ]
   }
 }

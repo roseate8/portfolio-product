@@ -27,6 +27,7 @@
 
 // Import the Supabase fetch function from the backend folder
 import { fetchPortfolioData } from '../../../backend/supabase.js';
+import Analytics from './Analytics.js';
 
 // =============================================================================
 // CONFIGURATION
@@ -171,6 +172,9 @@ export const Data = {
 
         // Store the data source for external access
         this.dataSource = dataSource;
+        
+        // Notify Analytics of the data source
+        Analytics.setDataSource(dataSource);
 
         // Final summary
         log('✅', '=== DATA LOAD COMPLETE ===');
