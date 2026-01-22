@@ -21,7 +21,7 @@
  * Enable/disable the gradient background.
  * When false, shows the default grey background instead.
  */
-export const enabled = false;
+export const enabled = true;
 
 // =============================================================================
 // TYPE DEFINITIONS (for IDE IntelliSense)
@@ -160,7 +160,7 @@ export const rotation = {
  * Higher pixelDensity improves quality but impacts performance.
  */
 export const rendering = {
-  brightness: 1.2,        // Overall brightness (0.5 = dim, 2.0 = bright)
+  brightness: 1.35,       // Overall brightness (0.5 = dim, 2.0 = bright)
   reflection: 0.1,        // Surface reflectivity (0 = matte, 1 = mirror)
   
   /** @type {LightType} */
