@@ -3,6 +3,7 @@ import Data from '../utils/Data.js';
 import Router from '../utils/Router.js';
 import Map from './Map.js';
 import Page from './Page.js';
+import Analytics from '../utils/Analytics.js';
 
 const Slider = {
     initialize(map, sliderValue) {
@@ -46,6 +47,10 @@ const Slider = {
             if (selectedDate !== lastSelectedDate) {
                 if (lastSelectedDate !== null) {
                     this.map.updateMap(selectedDate);
+                    
+                    // Track timeline change
+                    const direction = new Date(selectedDate) > new Date(lastSelectedDate) ? 'forward' : 'backward';
+                    Analytics.trackTimelineChanged(parseInt(stepIndex), selectedDate, direction);
                 }
                 lastSelectedDate = selectedDate;
             }

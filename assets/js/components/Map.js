@@ -5,6 +5,7 @@ import Router from '../utils/Router.js';
 import Data from '../utils/Data.js';
 import Slider from './Slider.js';
 import Page from './Page.js';
+import Analytics, { VIEW_SOURCES } from '../utils/Analytics.js';
 
 const mapContainer = document.querySelector('.map-container');
 
@@ -141,6 +142,8 @@ const Map = {
                     // If clicking root node with nothing selected, open root page
                     else if (isRootNode && !Map.currentNode) {
                         console.log('📄 Opening root node page');
+                        // Track node view
+                        Analytics.trackNodeViewed(clickedNode, VIEW_SOURCES.GRAPH_CLICK, Map.currentNode);
                         const sliderValue = document.querySelector('.date-slider').value;
                         Map.currentNode = clickedNode;
                         Router.navigate({ sliderValue }, clickedUri);
@@ -149,6 +152,8 @@ const Map = {
                     // New non-root node clicked - open its page and filter
                     else {
                         console.log('📄 Opening page for:', clickedNode.title);
+                        // Track node view
+                        Analytics.trackNodeViewed(clickedNode, VIEW_SOURCES.GRAPH_CLICK, Map.currentNode);
                         const sliderValue = document.querySelector('.date-slider').value;
                         Map.currentNode = clickedNode;
                         this.filterAndRender(clickedNode);
@@ -167,6 +172,8 @@ const Map = {
                 const clickedNode = this.findNodeById(this.data, clickedUri);
 
                 if (clickedNode) {
+                    // Track node view from index link
+                    Analytics.trackNodeViewed(clickedNode, VIEW_SOURCES.INDEX_LINK, Map.currentNode);
                     const sliderValue = document.querySelector('.date-slider').value;
                     Map.currentNode = clickedNode;
                     this.filterAndRender(clickedNode);
@@ -918,6 +925,8 @@ const Map = {
     setCurrentNodeByUri(uri) {
         const node = this.findNodeById(this.data, uri);
         if (node) {
+            // Track direct URL navigation
+            Analytics.trackNodeViewed(node, VIEW_SOURCES.DIRECT_URL, null);
             Map.currentNode = node;
             this.filterAndRender(node);
         } else {

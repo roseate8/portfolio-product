@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.89.0",
     "camera-controls": "^3.1.2",
     "d3": "^7.8.5",
+    "posthog-js": "^1.333.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "roughjs": "^4.6.6",
