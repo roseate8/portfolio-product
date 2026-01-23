@@ -916,10 +916,42 @@ const Page = {
 				</div>
 			` : '';
 
+			// Generate inline list for Bets path (shows children directly, matches Education tab styling)
+			const betsChildrenHTML = pageData.uuid === 'bets-path' && pageData.children && pageData.children.length > 0 ? `
+				<div class="tabs">
+					<div class="page-tab tab-links tab-open">
+						<div class="tab-titles">
+							<span class="tab-icon icon-initiative"></span>
+							<span class="tab-title">Initiatives</span>
+							<span class="tab-indicator"></span>
+						</div>
+						<div class="tab-content">
+							<ul class="list">
+								${pageData.children.map(child => {
+									const dateRange = this.formatDateRange(child.originDate, child.endDate);
+									return `
+										<li>
+											<a href="${child.uri}" class="index-link" data-uri="${child.uri}">
+												<span class="item-id"></span>
+												<span class="item-title">
+													<h2>${child.title}</h2>
+													<h3>${child.summary || ''}</h3>
+													${dateRange ? `<h4>${dateRange}</h4>` : ''}
+												</span>
+											</a>
+										</li>
+									`;
+								}).join('')}
+							</ul>
+						</div>
+					</div>
+				</div>
+			` : '';
+
 			let contentInnerHTML = `
 				<div class="page-content-inner">
-					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(pageData.description, pageData.externalLinks) : (pageData.extendedDescription ? addReadMoreButton(pageData.description) : pageData.description)}` : ''}
-					${pageData.extendedDescription ? `<div class="extended-description">${pageData.extendedDescription}</div>` : ''}
+					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(pageData.description, pageData.externalLinks) : (pageData.extendedDescription && pageData.uuid !== 'bets-path' ? addReadMoreButton(pageData.description) : pageData.description)}` : ''}
+					${pageData.extendedDescription && pageData.uuid !== 'bets-path' ? `<div class="extended-description">${pageData.extendedDescription}</div>` : ''}
 					${contactLinksExpandedHTML}
 					${pageData.footnotes && pageData.footnotes.length > 0 ? `
 						<ul class="footnotes">
@@ -933,8 +965,13 @@ const Page = {
 					` : ''}
 				</div>
 			`;
-			if(pageData.description || pageData.extendedDescription || (pageData.footnotes && pageData.footnotes.length > 0) || pageData.uuid === 'contact-1'){
+			if(pageData.description || pageData.extendedDescription || (pageData.footnotes && pageData.footnotes.length > 0) || pageData.uuid === 'contact-1' || pageData.uuid === 'bets-path'){
 				pageContent.innerHTML += contentInnerHTML;
+			}
+			
+			// Add Bets initiatives list after content but before other tabs
+			if(pageData.uuid === 'bets-path'){
+				pageContent.innerHTML += betsChildrenHTML;
 			}
 	
 			// Add tabs
@@ -943,6 +980,7 @@ const Page = {
 			// For other nodes: Only first relevant tab opens
 			// Exception: Contact Me and Connections tabs on info-path should be collapsed
 			const isInfoPath = pageData.uuid === 'info-path';
+			const isBetsPath = pageData.uuid === 'bets-path';
 			const openAllTabs = isInformationBranch;
 			const shouldOpenFurtherReading = isInformationBranch && pageData.externalLinks && pageData.externalLinks.length > 0;
 			const shouldOpenEducation = !isInformationBranch && pageData.education && pageData.education.length > 0;
@@ -951,6 +989,30 @@ const Page = {
 			
 			let tabsHTML = `
 				<div class="tabs">
+					${pageData.subsections && pageData.subsections.length > 0 ? 
+						pageData.subsections.map(sub => `
+							<div class="page-tab tab-subsection ${openAllTabs && !sub.isCollapsedByDefault ? 'tab-open' : ''}">
+								<div class="tab-titles">
+									<span class="tab-icon icon-meta"></span>
+									<span class="tab-title">${sub.title}</span>
+									<span class="tab-indicator"></span>
+								</div>
+								<div class="tab-content">
+									<div class="subsection-content">${sub.content}</div>
+									${sub.footnotes && sub.footnotes.length > 0 ? `
+										<ul class="footnotes subsection-footnotes">
+											${sub.footnotes.map((fn, i) => `
+												<li class="footnote">
+													<span class="footnote-id">${i + 1}.</span>
+													<span class="footnote-content">${fn}</span>
+												</li>
+											`).join('')}
+										</ul>
+									` : ''}
+								</div>
+							</div>
+						`).join('') 
+					: ''}
 					${pageData.education && pageData.education.length > 0 ? `
 						<div class="page-tab tab-links ${openAllTabs || shouldOpenEducation ? 'tab-open' : ''}">
 							<div class="tab-titles">
@@ -1068,25 +1130,6 @@ const Page = {
 							</div>
 						</div>
 					` : ''}
-					${pageData.metadata && pageData.metadata.length > 0 ? `
-						<div class="page-tab tab-metadata ${openAllTabs ? 'tab-open' : ''}">
-							<div class="tab-titles">
-								<span class="tab-icon icon-meta"></span>
-								<span class="tab-title">Details</span>
-								<span class="tab-indicator"></span>
-							</div>
-							<div class="tab-content">
-								<ul class="list">
-									${pageData.metadata.map(meta => `
-										<li>
-											<span class="meta-subtitle">${meta.subtitle}</span>
-											<span class="meta-title">${meta.title}</span>
-										</li>
-									`).join('')}
-								</ul>
-							</div>
-						</div>
-					` : ''}
 					${pageData.externalLinks && pageData.externalLinks.length > 0 && pageData.uuid !== 'info-path' && pageData.uuid !== 'contact-1' ? `
 						<div class="page-tab tab-links ${openAllTabs || shouldOpenFurtherReading ? 'tab-open' : ''}">
 							<div class="tab-titles">
@@ -1116,40 +1159,11 @@ const Page = {
 							</div>
 						</div>
 					` : ''}
-					${pageData.children && pageData.children.length > 0 || pageData.connectedNodes && pageData.connectedNodes.length > 0 ? `
-						<div class="page-tab tab-connections ${openAllTabs && !isInfoPath ? 'tab-open' : ''}">
-							<div class="tab-titles">
-								<span class="tab-icon icon-connections"></span>
-								<span class="tab-title">Connections</span>
-								<span class="tab-indicator"></span>
-							</div>
-							<div class="tab-content">
-								<ul class="list">
-									${[
-										...(pageData.children || []),
-										...(pageData.connectedNodes ? pageData.connectedNodes.map(uuid => this.findNodeByUUID(Map.data, uuid)).filter(node => node !== null) : [])
-									]
-									.sort((a, b) => a.title.localeCompare(b.title))
-									.map(node => `
-										<li>
-											<a href="${node.uri}" class="index-link" data-uri="${node.uri}">
-												<span class="item-id"><span></span></span>
-												<span class="item-title">
-													<h2>${node.title}</h2>
-													<h3>${node.type}</h3>
-												</span>
-											</a>
-										</li>
-									`).join('')}
-								</ul>
-							</div>
-						</div>
-					` : ''}
 					
 				</div>
 			`;
 
-			if(pageData.metadata.length > 0 || pageData.externalLinks.length > 0 || pageData.education.length > 0 || pageData.recognition.length > 0 || pageData.children.length > 0 || pageData.connectedNodes.length > 0){
+			if(pageData.externalLinks.length > 0 || pageData.education.length > 0 || pageData.recognition.length > 0 || (pageData.subsections && pageData.subsections.length > 0)){
 				pageContent.innerHTML += tabsHTML;
 			}
 
