@@ -32,6 +32,7 @@ $glass-border-width: 1px;
   backdrop-filter: blur($glass-blur) saturate(180%);
   -webkit-backdrop-filter: blur($glass-blur) saturate(180%);
   border: $glass-border-width solid $glass-border-color;
+  box-shadow: 0 4px 20px rgba(20, 30, 60, 0.06);
 }
 
 // =============================================================================

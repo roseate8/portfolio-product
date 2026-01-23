@@ -145,7 +145,9 @@ export async function fetchPortfolioData() {
             educationResult,
             recognitionResult,
             footnotesResult,
-            connectionsResult
+            connectionsResult,
+            subsectionsResult,
+            subsectionFootnotesResult
         ] = await Promise.all([
             supabase.from('nodes').select('*').order('sort_order'),
             supabase.from('node_links').select('*').order('sort_order'),
@@ -154,7 +156,9 @@ export async function fetchPortfolioData() {
             supabase.from('node_education').select('*').order('sort_order'),
             supabase.from('node_recognition').select('*').order('sort_order'),
             supabase.from('node_footnotes').select('*').order('sort_order'),
-            supabase.from('node_connections').select('*')
+            supabase.from('node_connections').select('*'),
+            supabase.from('node_subsections').select('*').order('sort_order'),
+            supabase.from('subsection_footnotes').select('*').order('sort_order')
         ]);
 
         const fetchTime = Math.round(performance.now() - startTime);
@@ -179,6 +183,8 @@ export async function fetchPortfolioData() {
         const recognition = recognitionResult.data || [];
         const footnotes = footnotesResult.data || [];
         const connections = connectionsResult.data || [];
+        const subsections = subsectionsResult.data || [];
+        const subsectionFootnotes = subsectionFootnotesResult.data || [];
 
         // Log what we got
         log('📊', 'Data received from Supabase:', {
@@ -189,7 +195,9 @@ export async function fetchPortfolioData() {
             education: education.length,
             recognition: recognition.length,
             footnotes: footnotes.length,
-            connections: connections.length
+            connections: connections.length,
+            subsections: subsections.length,
+            subsectionFootnotes: subsectionFootnotes.length
         });
 
         // =====================================================================
@@ -204,6 +212,13 @@ export async function fetchPortfolioData() {
         const recognitionMap = groupByNodeId(recognition);
         const footnotesMap = groupByNodeId(footnotes);
         const connectionsMap = groupByNodeId(connections, 'source_node_id');
+        const subsectionsMap = groupByNodeId(subsections);
+        
+        // Group subsection footnotes by subsection_id
+        const subsectionFootnotesMap = groupByNodeId(subsectionFootnotes, 'subsection_id');
+        
+        // Debug: Log subsection footnotes mapping
+        log('📝', 'Subsection footnotes map:', subsectionFootnotesMap);
 
         // Transform each node into the format the frontend expects
         log('🔄', 'Transforming nodes to frontend format...');
@@ -215,7 +230,9 @@ export async function fetchPortfolioData() {
             educationMap,
             recognitionMap,
             footnotesMap,
-            connectionsMap
+            connectionsMap,
+            subsectionsMap,
+            subsectionFootnotesMap
         ));
 
         // Build the tree structure
@@ -275,7 +292,9 @@ function transformNode(
     educationMap,
     recognitionMap,
     footnotesMap,
-    connectionsMap
+    connectionsMap,
+    subsectionsMap,
+    subsectionFootnotesMap
 ) {
     const nodeId = node.id;
     
@@ -348,6 +367,20 @@ function transformNode(
         })),
         
         connectedNodes: (connectionsMap[nodeId] || []).map(conn => conn.target_node_uuid),
+        
+        // Subsections (collapsible content tabs)
+        subsections: (subsectionsMap[nodeId] || []).map(sub => {
+            const subFootnotes = subsectionFootnotesMap[sub.id] || [];
+            if (subFootnotes.length > 0) {
+                console.log(`[DEBUG] Subsection "${sub.title}" has ${subFootnotes.length} footnotes`, subFootnotes);
+            }
+            return {
+                title: sub.title,
+                content: sub.content,
+                isCollapsedByDefault: sub.is_collapsed_by_default || false,
+                footnotes: subFootnotes.map(fn => fn.footnote)
+            };
+        }),
         
         // Internal fields for tree building
         _id: node.id,
