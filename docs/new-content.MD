@@ -919,20 +919,5 @@
 
 Everything else. The content is solid—voice, honesty, and technical depth are working.
 
----
-
-## Implementation Notes
-
-### Subsection Rendering Strategy
-
-For the content area, subsections can be rendered as:
-
-1. **Natural paragraphs** (no headers needed for short content)
-2. **Subtle section breaks** (if content is longer)
-3. **Metadata displayed as structured key-value pairs** (already implemented)
-4. **Links section at bottom** (already implemented)
-
-**Don't over-structure.** Most artifact nodes only need 2-3 paragraphs with natural flow. Headers like "Context:" or "What I Built:" can be implicit in the writing, not explicit in the UI.
-
 ### Node Type Icons
 Keep the current visual treatment for now.
