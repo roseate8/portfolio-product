@@ -19,7 +19,8 @@
       "Bash(npm install:*)",
       "mcp__supabase__list_projects",
       "mcp__supabase__get_publishable_keys",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "mcp__supabase__list_tables"
     ]
   }
 }
