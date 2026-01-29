@@ -16,7 +16,7 @@ const Page = {
 		// only runs once
 		this.setupListeners();
 		this.populateHomePageIndex();
-		// this.animateHomePage(path);
+		this.setupBreadcrumbKeyboardNav();
 	},
 
 	populateHomePageIndex() {
@@ -1320,265 +1320,164 @@ const Page = {
 	// =========================================================================
 	// BREADCRUMB NAVIGATION
 	// =========================================================================
-	// 
-	// Breadcrumbs show the hierarchical path from Home to the current page,
-	// enabling users to understand their location and navigate back up the tree.
-	// 
-	// Data source: Uses Map.data which is populated from Supabase via Data.js.
-	// The tree structure contains nodes with uri, title, uuid, type, and children.
-	//
-	// Architecture:
-	// 1. getBreadcrumbPath() - Traverses the tree to find the ancestor chain
-	// 2. buildBreadcrumbHTML() - Generates accessible HTML from the path
-	// 3. Click handling is in Map.js (listens for .breadcrumb-link clicks)
-	//
-	// =========================================================================
+	
+	// Cache for computed paths (cleared when data changes)
+	breadcrumbCache: new Map(),
 
-	/**
-	 * Escapes HTML special characters to prevent XSS attacks.
-	 * Essential for user-generated content or dynamic titles.
-	 * 
-	 * @param {string} text - The text to escape
-	 * @returns {string} HTML-safe escaped text
-	 * @private
-	 */
+	// Clears the breadcrumb cache (call when Map.data updates)
+	clearBreadcrumbCache() {
+		this.breadcrumbCache.clear();
+	},
+
+	// Escape HTML to prevent XSS
 	escapeHtml(text) {
 		if (!text) return '';
-		const htmlEscapeMap = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#039;'
-		};
-		return String(text).replace(/[&<>"']/g, char => htmlEscapeMap[char]);
+		return String(text)
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
 	},
 
-	/**
-	 * Retrieves the breadcrumb path from the root node to a target node.
-	 * 
-	 * Uses depth-first search with path accumulation to find the target URI.
-	 * Optimized to avoid creating new arrays on each recursion by using
-	 * a mutable path array with push/pop operations.
-	 * 
-	 * @param {string} targetUri - The URI of the node to find (e.g., 'nodes/work/thoughtspot')
-	 * @returns {Array<BreadcrumbItem>} Array of breadcrumb items from root to target
-	 * 
-	 * @typedef {Object} BreadcrumbItem
-	 * @property {string} title - Display title (root shows as 'Home')
-	 * @property {string} uri - Node URI for navigation
-	 * @property {string} uuid - Unique node identifier
-	 * @property {string} type - Node type (path, artifact, research, etc.)
-	 * 
-	 * @example
-	 * // Returns: [{title: 'Home', uri: '/', ...}, {title: 'Product Work', ...}, {title: 'ThoughtSpot', ...}]
-	 * getBreadcrumbPath('nodes/work/thoughtspot')
-	 */
+	// Get breadcrumb path with caching
 	getBreadcrumbPath(targetUri) {
-		// Guard clause: Ensure the node tree is loaded from Supabase
-		if (!Map.data) {
-			console.warn('[Breadcrumb] Map.data not available - Supabase data may not be loaded');
-			return [];
-		}
-
-		// Guard clause: Validate input
-		if (!targetUri || typeof targetUri !== 'string') {
-			return [];
+		if (!Map.data || !targetUri) return [];
+		
+		// Check cache first
+		if (this.breadcrumbCache.has(targetUri)) {
+			return this.breadcrumbCache.get(targetUri);
 		}
 		
-		// Mutable path array for performance (avoids spreading on each recursion)
-		const ancestorPath = [];
+		// Build path via DFS
+		const path = [];
+		const found = this.findPathToNode(Map.data, targetUri, path);
 		
-		/**
-		 * Depth-first search to find the target node while tracking the path.
-		 * Uses push/pop for O(1) path manipulation instead of O(n) array spreading.
-		 * 
-		 * @param {Object} currentNode - Current node being examined
-		 * @returns {boolean} True if target was found in this subtree
-		 */
-		const findNodeAndBuildPath = (currentNode) => {
-			// Add current node to the path
-			ancestorPath.push(currentNode);
-			
-			// Base case: Found the target node
-			if (currentNode.uri === targetUri) {
-				return true;
-			}
-			
-			// Recursive case: Search children
-			if (currentNode.children && Array.isArray(currentNode.children)) {
-				for (const childNode of currentNode.children) {
-					if (findNodeAndBuildPath(childNode)) {
-						return true; // Target found in this subtree
-					}
-				}
-			}
-			
-			// Backtrack: Target not in this subtree, remove from path
-			ancestorPath.pop();
-			return false;
-		};
+		if (!found) return [];
 		
-		// Start search from root node
-		const targetFound = findNodeAndBuildPath(Map.data);
-		
-		if (!targetFound) {
-			console.warn(`[Breadcrumb] Node not found in tree: ${targetUri}`);
-			return [];
-		}
-		
-		// Transform internal node objects to breadcrumb display format
-		return ancestorPath.map(node => ({
-			title: this.getBreadcrumbDisplayTitle(node),
+		// Transform to display format
+		const result = path.map(node => ({
+			title: node.uuid === 'root-0' ? 'Home' : (node.title || 'Untitled'),
 			uri: node.uri || '',
-			uuid: node.uuid || '',
-			type: node.type || ''
+			uuid: node.uuid || ''
 		}));
+		
+		// Cache the result
+		this.breadcrumbCache.set(targetUri, result);
+		return result;
 	},
 
-	/**
-	 * Determines the display title for a breadcrumb item.
-	 * Handles special cases like the root node and fallback for missing titles.
-	 * 
-	 * @param {Object} node - The node object from Map.data
-	 * @returns {string} Human-readable title for the breadcrumb
-	 * @private
-	 */
-	getBreadcrumbDisplayTitle(node) {
-		// Special case: Root node displays as "Home" for clarity
-		const isRootNode = node.uuid === 'root-0' || node.uri === '' || node.uri === '/';
-		if (isRootNode) {
-			return 'Home';
+	// DFS to find path (uses push/pop for performance)
+	findPathToNode(node, targetUri, path) {
+		path.push(node);
+		if (node.uri === targetUri) return true;
+		
+		if (node.children) {
+			for (const child of node.children) {
+				if (this.findPathToNode(child, targetUri, path)) return true;
+			}
 		}
 		
-		// Use title, fall back to uuid if title is missing
-		return node.title || node.uuid || 'Untitled';
+		path.pop();
+		return false;
 	},
 
-	/**
-	 * Generates accessible HTML markup for breadcrumb navigation.
-	 * 
-	 * Responsive behavior:
-	 * - Desktop (>768px): Full breadcrumb trail with separators
-	 * - Mobile (≤768px): Simplified back link to parent node
-	 * 
-	 * Accessibility features:
-	 * - Uses <nav> with aria-label for screen readers
-	 * - Current page is a <span> (not clickable) for semantic correctness
-	 * - All interactive elements are keyboard accessible via <a> tags
-	 * 
-	 * @param {Array<BreadcrumbItem>} breadcrumbPath - Path from getBreadcrumbPath()
-	 * @returns {string} HTML string ready for DOM insertion, or empty string if no breadcrumb needed
-	 * 
-	 * @example
-	 * // Desktop output:
-	 * // <nav class="breadcrumb" aria-label="Breadcrumb">
-	 * //   <a href="/" class="breadcrumb-link">Home</a>
-	 * //   <span class="breadcrumb-separator">/</span>
-	 * //   <span class="breadcrumb-current">ThoughtSpot</span>
-	 * // </nav>
-	 */
-	buildBreadcrumbHTML(breadcrumbPath) {
-		// Guard clause: No breadcrumb needed for root or invalid input
-		if (!breadcrumbPath || !Array.isArray(breadcrumbPath) || breadcrumbPath.length <= 1) {
-			return '';
+	// Truncate path for deep hierarchies: Home / ... / Parent / Current
+	truncatePath(path, maxVisible = 4) {
+		if (path.length <= maxVisible) return path;
+		
+		// Keep: first item, ellipsis marker, second-to-last, last
+		return [
+			path[0],
+			{ title: '...', uri: '', uuid: '', isEllipsis: true },
+			path[path.length - 2],
+			path[path.length - 1]
+		];
+	},
+
+	// Build breadcrumb HTML
+	buildBreadcrumbHTML(path) {
+		if (!path || path.length <= 1) return '';
+		
+		const isMobile = window.innerWidth <= 768;
+		
+		if (isMobile) {
+			const parent = path[path.length - 2];
+			return `
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="${this.escapeHtml(parent.uri)}" data-uri="${this.escapeHtml(parent.uri)}" class="breadcrumb-link">
+						← ${this.escapeHtml(parent.title)}
+					</a>
+				</nav>
+				${this.buildSchemaMarkup(path)}
+			`;
 		}
 		
-		const MOBILE_BREAKPOINT = 768;
-		const isMobileViewport = window.innerWidth <= MOBILE_BREAKPOINT;
+		// Truncate for deep paths
+		const displayPath = this.truncatePath(path);
 		
-		// Mobile: Show simplified back navigation to parent
-		if (isMobileViewport) {
-			return this.buildMobileBreadcrumbHTML(breadcrumbPath);
-		}
-		
-		// Desktop: Show full breadcrumb trail
-		return this.buildDesktopBreadcrumbHTML(breadcrumbPath);
-	},
-
-	/**
-	 * Builds mobile-optimized breadcrumb showing only a back link to parent.
-	 * This saves horizontal space and provides a touch-friendly target.
-	 * 
-	 * @param {Array<BreadcrumbItem>} breadcrumbPath - Full breadcrumb path
-	 * @returns {string} HTML string for mobile breadcrumb
-	 * @private
-	 */
-	buildMobileBreadcrumbHTML(breadcrumbPath) {
-		const parentNodeIndex = breadcrumbPath.length - 2;
-		const parentNode = breadcrumbPath[parentNodeIndex];
-		
-		const escapedTitle = this.escapeHtml(parentNode.title);
-		const escapedUri = this.escapeHtml(parentNode.uri);
-		
-		return `
-			<nav class="breadcrumb" aria-label="Breadcrumb navigation">
-				<a href="${escapedUri}" 
-				   data-uri="${escapedUri}" 
-				   class="breadcrumb-link breadcrumb-back"
-				   aria-label="Go back to ${escapedTitle}">
-					<span class="breadcrumb-arrow" aria-hidden="true">←</span>
-					<span class="breadcrumb-parent-title">${escapedTitle}</span>
-				</a>
-			</nav>
-		`;
-	},
-
-	/**
-	 * Builds desktop breadcrumb trail showing the full path with separators.
-	 * 
-	 * @param {Array<BreadcrumbItem>} breadcrumbPath - Full breadcrumb path
-	 * @returns {string} HTML string for desktop breadcrumb
-	 * @private
-	 */
-	buildDesktopBreadcrumbHTML(breadcrumbPath) {
-		const lastItemIndex = breadcrumbPath.length - 1;
-		const SEPARATOR_HTML = '<span class="breadcrumb-separator" aria-hidden="true">/</span>';
-		
-		const breadcrumbItems = breadcrumbPath.map((item, index) => {
-			const isCurrentPage = index === lastItemIndex;
-			const escapedTitle = this.escapeHtml(item.title);
+		const items = displayPath.map((item, i) => {
+			const isLast = i === displayPath.length - 1;
+			const escaped = this.escapeHtml(item.title);
 			const escapedUri = this.escapeHtml(item.uri);
 			
-			if (isCurrentPage) {
-				// Current page: Non-interactive span with aria-current for accessibility
-				return `<span class="breadcrumb-current" aria-current="page">${escapedTitle}</span>`;
+			if (item.isEllipsis) {
+				return `<span class="breadcrumb-ellipsis">…</span>`;
 			}
-			
-			// Ancestor pages: Clickable links for navigation
-			return `<a href="${escapedUri}" data-uri="${escapedUri}" class="breadcrumb-link">${escapedTitle}</a>`;
+			if (isLast) {
+				return `<span class="breadcrumb-current" aria-current="page">${escaped}</span>`;
+			}
+			return `<a href="${escapedUri}" data-uri="${escapedUri}" class="breadcrumb-link" tabindex="0">${escaped}</a>`;
 		});
 		
 		return `
-			<nav class="breadcrumb" aria-label="Breadcrumb navigation">
-				${breadcrumbItems.join(SEPARATOR_HTML)}
+			<nav class="breadcrumb" aria-label="Breadcrumb" role="navigation">
+				<ol class="breadcrumb-list">
+					${items.map(html => `<li>${html}</li>`).join('')}
+				</ol>
 			</nav>
+			${this.buildSchemaMarkup(path)}
 		`;
-	}
+	},
 
-	// =========================================================================
-	// FUTURE IMPROVEMENTS (Not Implemented)
-	// =========================================================================
-	//
-	// 1. BREADCRUMB TRUNCATION FOR DEEP HIERARCHIES
-	//    When path exceeds 4+ items, show: Home / ... / Parent / Current
-	//    Implementation: Add a "truncateBreadcrumb(path, maxItems)" function
-	//
-	// 2. SCHEMA.ORG STRUCTURED DATA
-	//    Add JSON-LD for SEO benefits with breadcrumb schema markup
-	//    https://schema.org/BreadcrumbList
-	//
-	// 3. BREADCRUMB CACHING
-	//    Cache computed paths in a Map<uri, path> to avoid repeated traversals
-	//    Clear cache when Map.data changes
-	//
-	// 4. KEYBOARD NAVIGATION
-	//    Add arrow key navigation between breadcrumb items
-	//
-	// 5. ANIMATION ON NAVIGATION
-	//    Smooth transition when breadcrumb updates after navigation
-	//
-	// =========================================================================
+	// Schema.org JSON-LD for SEO
+	buildSchemaMarkup(path) {
+		if (!path || path.length < 2) return '';
+		
+		const baseUrl = window.location.origin;
+		const items = path.map((item, index) => ({
+			"@type": "ListItem",
+			"position": index + 1,
+			"name": item.title,
+			"item": item.uri ? `${baseUrl}/${item.uri}` : baseUrl
+		}));
+		
+		const schema = {
+			"@context": "https://schema.org",
+			"@type": "BreadcrumbList",
+			"itemListElement": items
+		};
+		
+		return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+	},
+
+	// Setup keyboard navigation for breadcrumbs
+	setupBreadcrumbKeyboardNav() {
+		document.addEventListener('keydown', (e) => {
+			const activeEl = document.activeElement;
+			if (!activeEl?.classList.contains('breadcrumb-link')) return;
+			
+			const links = Array.from(document.querySelectorAll('.breadcrumb-link'));
+			const currentIndex = links.indexOf(activeEl);
+			
+			if (e.key === 'ArrowRight' && currentIndex < links.length - 1) {
+				e.preventDefault();
+				links[currentIndex + 1].focus();
+			} else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+				e.preventDefault();
+				links[currentIndex - 1].focus();
+			}
+		});
+	}
 
 
     

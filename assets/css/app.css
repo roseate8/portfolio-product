@@ -1851,11 +1851,7 @@ p button:hover span {
   object-fit: contain; /* Maintain aspect ratio */
 }
 
-/* Breadcrumb Navigation
-   - Smaller than body text (10px) to stay subtle
-   - All grey (#888) to not compete with content
-   - Margin-bottom only for spacing (no border/line)
-   - Simple underline on hover like a standard hyperlink */
+/* Breadcrumb Navigation */
 
 .breadcrumb {
   font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -1864,6 +1860,56 @@ p button:hover span {
   letter-spacing: 0.02em;
   color: #888;
   margin-bottom: 18px;
+  animation: breadcrumbFadeIn 200ms ease-out;
+}
+
+@keyframes breadcrumbFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb-list li {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-list li:not(:last-child)::after {
+  content: "/";
+  color: #aaa;
+  margin: 0 5px;
+}
+
+.breadcrumb-link {
+  color: #888;
+  text-decoration: none;
+  transition: color 100ms;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-link:focus {
+  outline: none;
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: #888;
+}
+
+.breadcrumb-ellipsis {
+  color: #aaa;
 }
 
 @media (max-width: 768px) {
@@ -1871,33 +1917,5 @@ p button:hover span {
     font-size: 10px;
     margin-bottom: 14px;
   }
-}
-
-.breadcrumb-link {
-  color: #888;
-  text-decoration: none;
-}
-
-.breadcrumb-link:hover {
-  text-decoration: underline;
-}
-
-.breadcrumb-separator {
-  color: #aaa;
-  margin: 0 5px;
-}
-
-.breadcrumb-current {
-  color: #888;
-}
-
-.breadcrumb-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.breadcrumb-arrow {
-  font-size: 10px;
 }
 
