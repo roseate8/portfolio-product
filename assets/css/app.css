@@ -1851,112 +1851,53 @@ p button:hover span {
   object-fit: contain; /* Maintain aspect ratio */
 }
 
-/* =============================================================================
-   BREADCRUMB NAVIGATION
-   =============================================================================
-   
-   Hierarchical navigation showing the path from Home to current page.
-   Example: Home / Product Work / ThoughtSpot / Boundaryless
-   
-   Design System Integration:
-   - Font: Space Grotesk 11px uppercase (matches .tab-title, .item-id)
-   - Colors: #888 (links), #111 (current/hover), #ccc (separator)
-   - Border: Dashed 1px #ddd (subtle separation from content below)
-   
-   Responsive Behavior:
-   - Desktop (>768px): Full trail with "/" separators
-   - Mobile (≤768px): Simplified "← Parent" back link
-   
-   Accessibility:
-   - Uses <nav> with aria-label
-   - aria-current="page" on current item
-   - aria-hidden on decorative separators
-   
-   ============================================================================= */
+/* Breadcrumb Navigation
+   - Smaller than body text (10px) to stay subtle
+   - All grey (#888) to not compete with content
+   - Margin-bottom only for spacing (no border/line)
+   - Simple underline on hover like a standard hyperlink */
 
-/* Container: Semantic <nav> element */
 .breadcrumb {
-  /* Typography - matches existing label style (see .tab-title) */
   font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 11px;
-  line-height: 1.45em;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  
-  /* Spacing - creates visual separation from page title below */
-  margin-bottom: 15px;
-  padding-bottom: 12px;
-  
-  /* Border - dashed line matches tab separators in design system */
-  border-bottom: 1px dashed #ddd;
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: #888;
+  margin-bottom: 18px;
 }
 
-/* Mobile adjustments - slightly tighter spacing */
 @media (max-width: 768px) {
   .breadcrumb {
-    margin-bottom: 12px;
-    padding-bottom: 10px;
+    font-size: 10px;
+    margin-bottom: 14px;
   }
 }
 
-/* Clickable ancestor links - subdued by default, prominent on hover */
 .breadcrumb-link {
   color: #888;
   text-decoration: none;
-  transition: color 150ms ease;
 }
 
-.breadcrumb-link:hover,
-.breadcrumb-link:focus {
-  color: #111;
+.breadcrumb-link:hover {
   text-decoration: underline;
-  text-decoration-style: solid;
-  text-underline-offset: 2px;
-  outline: none; /* Custom focus state via color change */
 }
 
-/* Focus visible for keyboard navigation (accessibility) */
-.breadcrumb-link:focus-visible {
-  outline: 2px solid #111;
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Separator between breadcrumb items - purely decorative */
 .breadcrumb-separator {
-  color: #ccc;
-  margin: 0 6px;
-  user-select: none;
-  pointer-events: none;
+  color: #aaa;
+  margin: 0 5px;
 }
 
-/* Current page indicator - not clickable, emphasised */
 .breadcrumb-current {
-  color: #111;
-  cursor: default;
-  font-weight: 400; /* Same weight as links for visual consistency */
+  color: #888;
 }
 
-/* -----------------------------------------------------------------------------
-   Mobile-specific: Back link style
-   ----------------------------------------------------------------------------- */
-
-/* Back link container - horizontal layout for arrow + text */
 .breadcrumb-back {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
-/* Back arrow - uses system font for consistent arrow rendering */
 .breadcrumb-arrow {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 12px;
-  line-height: 1;
-}
-
-/* Parent title in mobile breadcrumb */
-.breadcrumb-parent-title {
-  /* Inherits font from .breadcrumb */
+  font-size: 10px;
 }
 
