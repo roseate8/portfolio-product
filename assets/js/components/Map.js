@@ -184,6 +184,24 @@ const Map = {
                 event.preventDefault();
             }
 
+            // Handle breadcrumb link clicks
+            if (target.closest('.breadcrumb-link')) {
+                const clickedUri = target.closest('.breadcrumb-link').getAttribute('data-uri');
+                const clickedNode = this.findNodeById(this.data, clickedUri);
+
+                if (clickedNode) {
+                    // Track node view from breadcrumb
+                    Analytics.trackNodeViewed(clickedNode, VIEW_SOURCES.BREADCRUMB, Map.currentNode);
+                    const sliderValue = document.querySelector('.date-slider').value;
+                    Map.currentNode = clickedNode;
+                    this.filterAndRender(clickedNode);
+                    Router.navigate({ sliderValue }, clickedUri);
+                    Page.openPage(clickedUri);
+                }
+
+                event.preventDefault();
+            }
+
 			
 		});
 

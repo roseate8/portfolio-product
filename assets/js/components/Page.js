@@ -790,7 +790,10 @@ const Page = {
 			const isInformationBranch = this.isInformationNode(pageData);
 			console.log(`📄 Building page for ${pageData.title}, isInformationBranch: ${isInformationBranch}`);
 
-			
+			// Build breadcrumb path
+			const breadcrumbPath = this.getBreadcrumbPath(uri);
+			const breadcrumbHTML = this.buildBreadcrumbHTML(breadcrumbPath);
+			console.log(`🍞 Breadcrumb path:`, breadcrumbPath.map(p => p.title).join(' / '));
 
 			// Remove existing .page-content
 			const mainContentInner = document.querySelector('.main-content-inner');
@@ -804,6 +807,11 @@ const Page = {
 			const pageContent = document.createElement('div');
 			pageContent.className = 'page-content group';
 	
+			// Add breadcrumb navigation
+			if (breadcrumbHTML) {
+				pageContent.innerHTML += breadcrumbHTML;
+			}
+
 			// Add titles
 			let titlesHTML = `
 				<div class="page-titles">
@@ -1296,6 +1304,86 @@ const Page = {
 			}
 		}
 		return null;
+	},
+
+	/**
+	 * Get the breadcrumb path for a given node URI
+	 * Returns an array of ancestors from root to current node
+	 * @param {string} uri - The URI of the current node
+	 * @returns {Array} Array of {title, uri, uuid} objects from root to current
+	 */
+	getBreadcrumbPath(uri) {
+		if (!Map.data) return [];
+		
+		const path = [];
+		
+		// Helper to find a node and its parent chain
+		const findNodeWithPath = (node, targetUri, ancestors = []) => {
+			if (node.uri === targetUri) {
+				return [...ancestors, node];
+			}
+			if (node.children) {
+				for (const child of node.children) {
+					const result = findNodeWithPath(child, targetUri, [...ancestors, node]);
+					if (result) return result;
+				}
+			}
+			return null;
+		};
+		
+		const fullPath = findNodeWithPath(Map.data, uri, []);
+		
+		if (!fullPath) return [];
+		
+		// Convert to breadcrumb format
+		return fullPath.map(node => ({
+			title: node.uuid === 'root-0' ? 'Home' : node.title,
+			uri: node.uri,
+			uuid: node.uuid,
+			type: node.type
+		}));
+	},
+
+	/**
+	 * Build breadcrumb HTML from path array
+	 * @param {Array} path - Array of breadcrumb items
+	 * @returns {string} HTML string for breadcrumb navigation
+	 */
+	buildBreadcrumbHTML(path) {
+		if (!path || path.length <= 1) return ''; // Don't show breadcrumb for root
+		
+		const isMobile = window.innerWidth <= 768;
+		
+		if (isMobile && path.length > 1) {
+			// Mobile: Show only back button to parent
+			const parent = path[path.length - 2];
+			return `
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="${parent.uri}" data-uri="${parent.uri}" class="breadcrumb-link breadcrumb-back">
+						<span class="breadcrumb-arrow">←</span> ${parent.title}
+					</a>
+				</nav>
+			`;
+		}
+		
+		// Desktop: Full breadcrumb trail
+		const items = path.map((item, index) => {
+			const isLast = index === path.length - 1;
+			const isFirst = index === 0;
+			
+			if (isLast) {
+				// Current page - not clickable
+				return `<span class="breadcrumb-current">${item.title}</span>`;
+			}
+			
+			return `<a href="${item.uri}" data-uri="${item.uri}" class="breadcrumb-link">${item.title}</a>`;
+		});
+		
+		return `
+			<nav class="breadcrumb" aria-label="Breadcrumb">
+				${items.join('<span class="breadcrumb-separator">/</span>')}
+			</nav>
+		`;
 	}
 
 

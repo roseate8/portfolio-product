@@ -1851,3 +1851,57 @@ p button:hover span {
   object-fit: contain; /* Maintain aspect ratio */
 }
 
+/* Breadcrumb Navigation */
+.breadcrumb {
+  font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.45em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #ddd;
+}
+@media (max-width: 768px) {
+  .breadcrumb {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+}
+
+.breadcrumb-link {
+  color: #888;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.breadcrumb-link:hover {
+  color: #111;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-underline-offset: 2px;
+}
+
+.breadcrumb-separator {
+  color: #ccc;
+  margin: 0 6px;
+  user-select: none;
+}
+
+.breadcrumb-current {
+  color: #111;
+  cursor: default;
+}
+
+/* Mobile breadcrumb - back link style */
+.breadcrumb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.breadcrumb-arrow {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+

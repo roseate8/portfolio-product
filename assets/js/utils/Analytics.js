@@ -59,6 +59,7 @@ const VIEW_SOURCES = Object.freeze({
     INDEX_LINK: 'index_link',
     CONNECTION_LINK: 'connection_link',
     DIRECT_URL: 'direct_url',
+    BREADCRUMB: 'breadcrumb',
 });
 
 /**
