@@ -1321,12 +1321,12 @@ const Page = {
 	// BREADCRUMB NAVIGATION
 	// =========================================================================
 	
-	// Cache for computed paths (cleared when data changes)
-	breadcrumbCache: new Map(),
+	// Cache for computed paths (using object since Map component shadows built-in Map)
+	breadcrumbCache: {},
 
 	// Clears the breadcrumb cache (call when Map.data updates)
 	clearBreadcrumbCache() {
-		this.breadcrumbCache.clear();
+		this.breadcrumbCache = {};
 	},
 
 	// Escape HTML to prevent XSS
@@ -1344,8 +1344,8 @@ const Page = {
 		if (!Map.data || !targetUri) return [];
 		
 		// Check cache first
-		if (this.breadcrumbCache.has(targetUri)) {
-			return this.breadcrumbCache.get(targetUri);
+		if (this.breadcrumbCache[targetUri]) {
+			return this.breadcrumbCache[targetUri];
 		}
 		
 		// Build path via DFS
@@ -1362,7 +1362,7 @@ const Page = {
 		}));
 		
 		// Cache the result
-		this.breadcrumbCache.set(targetUri, result);
+		this.breadcrumbCache[targetUri] = result;
 		return result;
 	},
 
