@@ -16,7 +16,7 @@ const Page = {
 		// only runs once
 		this.setupListeners();
 		this.populateHomePageIndex();
-		// this.animateHomePage(path);
+		this.setupBreadcrumbKeyboardNav();
 	},
 
 	populateHomePageIndex() {
@@ -790,7 +790,20 @@ const Page = {
 			const isInformationBranch = this.isInformationNode(pageData);
 			console.log(`📄 Building page for ${pageData.title}, isInformationBranch: ${isInformationBranch}`);
 
+			// -----------------------------------------------------------------
+			// BREADCRUMB GENERATION
+			// -----------------------------------------------------------------
+			// Build the ancestor path from root to current node, then generate
+			// accessible HTML. Breadcrumbs are hidden for root-level pages.
+			// Data source: Map.data (populated from Supabase via Data.js)
+			// -----------------------------------------------------------------
+			const breadcrumbPath = this.getBreadcrumbPath(uri);
+			const breadcrumbHTML = this.buildBreadcrumbHTML(breadcrumbPath);
 			
+			// Debug logging (useful for development)
+			if (breadcrumbPath.length > 0) {
+				console.log(`🍞 Breadcrumb: ${breadcrumbPath.map(item => item.title).join(' → ')}`);
+			}
 
 			// Remove existing .page-content
 			const mainContentInner = document.querySelector('.main-content-inner');
@@ -804,6 +817,12 @@ const Page = {
 			const pageContent = document.createElement('div');
 			pageContent.className = 'page-content group';
 	
+			// Insert breadcrumb navigation at the top of page content
+			// (Only rendered for non-root pages; root returns empty HTML)
+			if (breadcrumbHTML) {
+				pageContent.innerHTML += breadcrumbHTML;
+			}
+
 			// Add titles
 			let titlesHTML = `
 				<div class="page-titles">
@@ -1296,6 +1315,168 @@ const Page = {
 			}
 		}
 		return null;
+	},
+
+	// =========================================================================
+	// BREADCRUMB NAVIGATION
+	// =========================================================================
+	
+	// Cache for computed paths (using object since Map component shadows built-in Map)
+	breadcrumbCache: {},
+
+	// Clears the breadcrumb cache (call when Map.data updates)
+	clearBreadcrumbCache() {
+		this.breadcrumbCache = {};
+	},
+
+	// Escape HTML to prevent XSS
+	escapeHtml(text) {
+		if (!text) return '';
+		return String(text)
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
+	},
+
+	// Get breadcrumb path with caching
+	getBreadcrumbPath(targetUri) {
+		if (!Map.data || !targetUri) return [];
+		
+		// Check cache first
+		if (this.breadcrumbCache[targetUri]) {
+			return this.breadcrumbCache[targetUri];
+		}
+		
+		// Build path via DFS
+		const path = [];
+		const found = this.findPathToNode(Map.data, targetUri, path);
+		
+		if (!found) return [];
+		
+		// Transform to display format
+		const result = path.map(node => ({
+			title: node.uuid === 'root-0' ? 'Home' : (node.title || 'Untitled'),
+			uri: node.uri || '',
+			uuid: node.uuid || ''
+		}));
+		
+		// Cache the result
+		this.breadcrumbCache[targetUri] = result;
+		return result;
+	},
+
+	// DFS to find path (uses push/pop for performance)
+	findPathToNode(node, targetUri, path) {
+		path.push(node);
+		if (node.uri === targetUri) return true;
+		
+		if (node.children) {
+			for (const child of node.children) {
+				if (this.findPathToNode(child, targetUri, path)) return true;
+			}
+		}
+		
+		path.pop();
+		return false;
+	},
+
+	// Truncate path for deep hierarchies: Home / ... / Parent / Current
+	truncatePath(path, maxVisible = 4) {
+		if (path.length <= maxVisible) return path;
+		
+		// Keep: first item, ellipsis marker, second-to-last, last
+		return [
+			path[0],
+			{ title: '...', uri: '', uuid: '', isEllipsis: true },
+			path[path.length - 2],
+			path[path.length - 1]
+		];
+	},
+
+	// Build breadcrumb HTML
+	buildBreadcrumbHTML(path) {
+		if (!path || path.length <= 1) return '';
+		
+		const isMobile = window.innerWidth <= 768;
+		
+		if (isMobile) {
+			const parent = path[path.length - 2];
+			return `
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="${this.escapeHtml(parent.uri)}" data-uri="${this.escapeHtml(parent.uri)}" class="breadcrumb-link">
+						← ${this.escapeHtml(parent.title)}
+					</a>
+				</nav>
+				${this.buildSchemaMarkup(path)}
+			`;
+		}
+		
+		// Truncate for deep paths
+		const displayPath = this.truncatePath(path);
+		
+		const items = displayPath.map((item, i) => {
+			const isLast = i === displayPath.length - 1;
+			const escaped = this.escapeHtml(item.title);
+			const escapedUri = this.escapeHtml(item.uri);
+			
+			if (item.isEllipsis) {
+				return `<span class="breadcrumb-ellipsis">…</span>`;
+			}
+			if (isLast) {
+				return `<span class="breadcrumb-current" aria-current="page">${escaped}</span>`;
+			}
+			return `<a href="${escapedUri}" data-uri="${escapedUri}" class="breadcrumb-link" tabindex="0">${escaped}</a>`;
+		});
+		
+		return `
+			<nav class="breadcrumb" aria-label="Breadcrumb" role="navigation">
+				<ol class="breadcrumb-list">
+					${items.map(html => `<li>${html}</li>`).join('')}
+				</ol>
+			</nav>
+			${this.buildSchemaMarkup(path)}
+		`;
+	},
+
+	// Schema.org JSON-LD for SEO
+	buildSchemaMarkup(path) {
+		if (!path || path.length < 2) return '';
+		
+		const baseUrl = window.location.origin;
+		const items = path.map((item, index) => ({
+			"@type": "ListItem",
+			"position": index + 1,
+			"name": item.title,
+			"item": item.uri ? `${baseUrl}/${item.uri}` : baseUrl
+		}));
+		
+		const schema = {
+			"@context": "https://schema.org",
+			"@type": "BreadcrumbList",
+			"itemListElement": items
+		};
+		
+		return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+	},
+
+	// Setup keyboard navigation for breadcrumbs
+	setupBreadcrumbKeyboardNav() {
+		document.addEventListener('keydown', (e) => {
+			const activeEl = document.activeElement;
+			if (!activeEl?.classList.contains('breadcrumb-link')) return;
+			
+			const links = Array.from(document.querySelectorAll('.breadcrumb-link'));
+			const currentIndex = links.indexOf(activeEl);
+			
+			if (e.key === 'ArrowRight' && currentIndex < links.length - 1) {
+				e.preventDefault();
+				links[currentIndex + 1].focus();
+			} else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+				e.preventDefault();
+				links[currentIndex - 1].focus();
+			}
+		});
 	}
 
 

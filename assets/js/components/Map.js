@@ -184,6 +184,44 @@ const Map = {
                 event.preventDefault();
             }
 
+            // -----------------------------------------------------------------
+            // BREADCRUMB NAVIGATION HANDLER
+            // -----------------------------------------------------------------
+            // Handles clicks on ancestor links in the breadcrumb trail.
+            // Navigates to the clicked ancestor node, updating:
+            // - Map visualization (recenters on clicked node)
+            // - Page content (opens the ancestor's page)
+            // - URL (pushes to browser history for back/forward navigation)
+            // - Analytics (tracks navigation source as 'breadcrumb')
+            // -----------------------------------------------------------------
+            const clickedBreadcrumbLink = target.closest('.breadcrumb-link');
+            if (clickedBreadcrumbLink) {
+                const destinationUri = clickedBreadcrumbLink.getAttribute('data-uri');
+                const destinationNode = this.findNodeById(this.data, destinationUri);
+
+                if (destinationNode) {
+                    // Track analytics before navigation
+                    Analytics.trackNodeViewed(destinationNode, VIEW_SOURCES.BREADCRUMB, Map.currentNode);
+                    
+                    // Get current slider value to preserve timeline state
+                    const sliderElement = document.querySelector('.date-slider');
+                    const currentSliderValue = sliderElement ? sliderElement.value : 0;
+                    
+                    // Update application state
+                    Map.currentNode = destinationNode;
+                    this.filterAndRender(destinationNode);
+                    
+                    // Update URL and render the page
+                    Router.navigate({ sliderValue: currentSliderValue }, destinationUri);
+                    Page.openPage(destinationUri);
+                } else {
+                    console.warn(`[Breadcrumb] Node not found for URI: ${destinationUri}`);
+                }
+
+                // Prevent default anchor behavior (page reload)
+                event.preventDefault();
+            }
+
 			
 		});
 
