@@ -967,10 +967,14 @@ const Page = {
 				</div>
 			` : '';
 
+			// Build PDF thumbnail for Information node
+			const resumePdfHTML = pageData.uuid === 'info-path' ? this.buildResumePdfThumbnail() : '';
+
 			let contentInnerHTML = `
 				<div class="page-content-inner">
 					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(pageData.description, pageData.externalLinks) : (pageData.extendedDescription && pageData.uuid !== 'bets-path' ? addReadMoreButton(pageData.description) : pageData.description)}` : ''}
 					${pageData.extendedDescription && pageData.uuid !== 'bets-path' ? `<div class="extended-description">${pageData.extendedDescription}</div>` : ''}
+					${resumePdfHTML}
 					${contactLinksExpandedHTML}
 					${pageData.footnotes && pageData.footnotes.length > 0 ? `
 						<ul class="footnotes">
@@ -984,7 +988,7 @@ const Page = {
 					` : ''}
 				</div>
 			`;
-			if(pageData.description || pageData.extendedDescription || (pageData.footnotes && pageData.footnotes.length > 0) || pageData.uuid === 'contact-1' || pageData.uuid === 'bets-path'){
+			if(pageData.description || pageData.extendedDescription || (pageData.footnotes && pageData.footnotes.length > 0) || pageData.uuid === 'contact-1' || pageData.uuid === 'bets-path' || pageData.uuid === 'info-path'){
 				pageContent.innerHTML += contentInnerHTML;
 			}
 			
@@ -1477,6 +1481,44 @@ const Page = {
 				links[currentIndex - 1].focus();
 			}
 		});
+	},
+
+	// =========================================================================
+	// PDF THUMBNAIL
+	// =========================================================================
+
+	/**
+	 * Builds a Google Drive-style PDF thumbnail card for the resume.
+	 * Shown only on the Information node.
+	 * 
+	 * @returns {string} HTML for PDF thumbnail card
+	 */
+	buildResumePdfThumbnail() {
+		const supabaseUrl = 'https://eeuvtdgwdjerdsumowmx.supabase.co';
+		const resumePath = 'resume/rudram-piplad-resume.pdf';
+		const resumeUrl = `${supabaseUrl}/storage/v1/object/public/portfolio-media/${resumePath}`;
+		const fileSize = '158 KB';
+		
+		return `
+			<a href="${resumeUrl}" target="_blank" class="pdf-thumbnail" rel="noopener noreferrer">
+				<div class="pdf-thumbnail-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M14 2V8H20" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</div>
+				<div class="pdf-thumbnail-content">
+					<div class="pdf-thumbnail-title">Resume</div>
+					<div class="pdf-thumbnail-subtitle">Rudram Piplad</div>
+					<div class="pdf-thumbnail-meta">PDF · ${fileSize}</div>
+				</div>
+				<div class="pdf-thumbnail-action">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z" fill="#888"/>
+					</svg>
+				</div>
+			</a>
+		`;
 	}
 
 
