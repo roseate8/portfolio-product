@@ -1488,36 +1488,75 @@ const Page = {
 	// =========================================================================
 
 	/**
-	 * Builds a Google Drive-style PDF thumbnail card for the resume.
-	 * Shown only on the Information node.
+	 * Builds a compact PDF thumbnail card for the resume.
+	 * Displays on Information node below main content.
+	 * 
+	 * Design: Transparent card with grey border, black hover state
+	 * Layout: Icon | Title/Subtitle/Meta | External link arrow
 	 * 
 	 * @returns {string} HTML for PDF thumbnail card
 	 */
 	buildResumePdfThumbnail() {
-		const supabaseUrl = 'https://eeuvtdgwdjerdsumowmx.supabase.co';
-		const resumePath = 'resume/rudram-piplad-resume.pdf';
-		const resumeUrl = `${supabaseUrl}/storage/v1/object/public/portfolio-media/${resumePath}`;
-		const fileSize = '158 KB';
+		const config = {
+			supabaseUrl: 'https://eeuvtdgwdjerdsumowmx.supabase.co',
+			bucketName: 'portfolio-media',
+			filePath: 'resume/rudram-piplad-resume.pdf',
+			title: 'Resume',
+			fileSize: '158 KB'
+		};
+		
+		const resumeUrl = `${config.supabaseUrl}/storage/v1/object/public/${config.bucketName}/${config.filePath}`;
 		
 		return `
-			<a href="${resumeUrl}" target="_blank" class="pdf-thumbnail" rel="noopener noreferrer">
-				<div class="pdf-thumbnail-icon">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-						<path d="M14 2V8H20" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					</svg>
-				</div>
+			<a href="${resumeUrl}" 
+			   target="_blank" 
+			   class="pdf-thumbnail" 
+			   rel="noopener noreferrer"
+			   aria-label="Download resume PDF (${config.fileSize})">
+				${this.buildPdfIcon()}
 				<div class="pdf-thumbnail-content">
-					<div class="pdf-thumbnail-title">Resume</div>
-					<div class="pdf-thumbnail-subtitle">Rudram Piplad</div>
-					<div class="pdf-thumbnail-meta">PDF · ${fileSize}</div>
+					<div class="pdf-thumbnail-title">${config.title}</div>
+					<div class="pdf-thumbnail-meta">PDF · ${config.fileSize}</div>
 				</div>
-				<div class="pdf-thumbnail-action">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z" fill="#888"/>
-					</svg>
-				</div>
+				${this.buildExternalLinkIcon()}
 			</a>
+		`;
+	},
+
+	/**
+	 * SVG icon for PDF document (file with folded corner)
+	 * @returns {string} SVG markup
+	 */
+	buildPdfIcon() {
+		return `
+			<div class="pdf-thumbnail-icon">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" 
+						  stroke="#888" 
+						  stroke-width="1.8" 
+						  stroke-linecap="round" 
+						  stroke-linejoin="round"/>
+					<path d="M14 2V8H20" 
+						  stroke="#888" 
+						  stroke-width="1.8" 
+						  stroke-linecap="round" 
+						  stroke-linejoin="round"/>
+				</svg>
+			</div>
+		`;
+	},
+
+	/**
+	 * SVG icon for external link (arrow pointing up-right)
+	 * @returns {string} SVG markup
+	 */
+	buildExternalLinkIcon() {
+		return `
+			<div class="pdf-thumbnail-action">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z" fill="#888"/>
+				</svg>
+			</div>
 		`;
 	}
 

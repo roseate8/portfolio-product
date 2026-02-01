@@ -1096,84 +1096,79 @@
 	color: #bbb;
 }
 
-// PDF Thumbnail (Google Drive style)
+// ============================================================================
+// PDF THUMBNAIL
+// ============================================================================
+// Compact file card for resume download on Information node
+// Design: Transparent with grey border, black on hover
+// Layout: [Icon] [Title/Subtitle/Meta] [Arrow]
+
 .pdf-thumbnail {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 14px 16px;
-	background: $white;
-	border: 1px solid #e5e5e5;
-	border-radius: 7px;
+	gap: 10px;
+	padding: 10px 12px;
+	background: transparent;
+	border: 1.5px solid $grey;
+	border-radius: 5px;
 	margin-top: 16px;
 	text-decoration: none;
-	transition: background-color 150ms, border-color 150ms;
+	transition: border-color 150ms;
+	box-sizing: border-box;
 	
+	// Hover state: only border changes to black
 	&:hover {
-		background: #fafafa;
-		border-color: #ddd;
+		border-color: $black;
 	}
 }
 
+// Left: Document icon (file with folded corner)
 .pdf-thumbnail-icon {
 	flex-shrink: 0;
-	width: 24px;
-	height: 24px;
+	width: 20px;
+	height: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	
 	svg {
-		width: 24px;
-		height: 24px;
+		width: 20px;
+		height: 20px;
 	}
 }
 
+// Center: Text content (title, subtitle, metadata)
 .pdf-thumbnail-content {
 	flex: 1;
-	min-width: 0;
+	min-width: 0; // Allows text truncation if needed
 }
 
 .pdf-thumbnail-title {
 	font-family: $fontSans;
 	font-size: 13px;
 	line-height: 1.3;
-	letter-spacing: -0.01em;
+	letter-spacing: 0.01em;
 	color: $black;
 	font-weight: 400;
 }
 
-.pdf-thumbnail-subtitle {
-	font-family: $fontSans;
-	font-size: 11px;
-	line-height: 1.4;
-	letter-spacing: 0.02em;
-	color: $grey;
-	margin-top: 2px;
-}
-
 .pdf-thumbnail-meta {
 	font-family: $fontSans;
-	font-size: 10px;
+	font-size: 11px;
 	line-height: 1.3;
 	letter-spacing: 0.02em;
-	color: #aaa;
+	color: $grey;
 	margin-top: 3px;
 }
 
+// Right: External link arrow (↗)
 .pdf-thumbnail-action {
 	flex-shrink: 0;
-	width: 16px;
-	height: 16px;
-	opacity: 0.6;
-	transition: opacity 150ms;
-	
-	.pdf-thumbnail:hover & {
-		opacity: 1;
-	}
+	width: 14px;
+	height: 14px;
 	
 	svg {
-		width: 16px;
-		height: 16px;
+		width: 14px;
+		height: 14px;
 	}
 }
