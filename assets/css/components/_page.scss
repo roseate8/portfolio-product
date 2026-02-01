@@ -1096,7 +1096,13 @@
 	color: #bbb;
 }
 
-// PDF Thumbnail (Google Drive style)
+// ============================================================================
+// PDF THUMBNAIL
+// ============================================================================
+// Compact file card for resume download on Information node
+// Design: Transparent with grey border, black on hover
+// Layout: [Icon] [Title/Subtitle/Meta] [Arrow]
+
 .pdf-thumbnail {
 	display: flex;
 	align-items: center;
@@ -1109,6 +1115,7 @@
 	text-decoration: none;
 	transition: border-color 150ms;
 	
+	// Hover state: grey → black for all elements
 	&:hover {
 		border-color: $black;
 		
@@ -1122,6 +1129,7 @@
 	}
 }
 
+// Left: Document icon (file with folded corner)
 .pdf-thumbnail-icon {
 	flex-shrink: 0;
 	width: 20px;
@@ -1140,9 +1148,10 @@
 	}
 }
 
+// Center: Text content (title, subtitle, metadata)
 .pdf-thumbnail-content {
 	flex: 1;
-	min-width: 0;
+	min-width: 0; // Allows text truncation if needed
 }
 
 .pdf-thumbnail-title {
@@ -1172,6 +1181,7 @@
 	margin-top: 2px;
 }
 
+// Right: External link arrow (↗)
 .pdf-thumbnail-action {
 	flex-shrink: 0;
 	width: 14px;
