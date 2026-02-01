@@ -1115,17 +1115,9 @@
 	text-decoration: none;
 	transition: border-color 150ms;
 	
-	// Hover state: grey → black for all elements
+	// Hover state: only border changes to black
 	&:hover {
 		border-color: $black;
-		
-		.pdf-thumbnail-icon svg path {
-			stroke: $black;
-		}
-		
-		.pdf-thumbnail-action svg path {
-			fill: $black;
-		}
 	}
 }
 
@@ -1141,10 +1133,6 @@
 	svg {
 		width: 20px;
 		height: 20px;
-		
-		path {
-			transition: stroke 150ms;
-		}
 	}
 }
 
@@ -1181,9 +1169,5 @@
 	svg {
 		width: 14px;
 		height: 14px;
-		
-		path {
-			transition: fill 150ms;
-		}
 	}
 }
