@@ -1114,6 +1114,7 @@
 	margin-top: 16px;
 	text-decoration: none;
 	transition: border-color 150ms;
+	box-sizing: border-box;
 	
 	// Hover state: only border changes to black
 	&:hover {
