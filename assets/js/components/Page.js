@@ -1502,7 +1502,6 @@ const Page = {
 			bucketName: 'portfolio-media',
 			filePath: 'resume/rudram-piplad-resume.pdf',
 			title: 'Resume',
-			subtitle: 'Rudram Piplad',
 			fileSize: '158 KB'
 		};
 		
@@ -1517,7 +1516,6 @@ const Page = {
 				${this.buildPdfIcon()}
 				<div class="pdf-thumbnail-content">
 					<div class="pdf-thumbnail-title">${config.title}</div>
-					<div class="pdf-thumbnail-subtitle">${config.subtitle}</div>
 					<div class="pdf-thumbnail-meta">PDF · ${config.fileSize}</div>
 				</div>
 				${this.buildExternalLinkIcon()}

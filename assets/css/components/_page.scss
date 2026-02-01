@@ -1156,29 +1156,20 @@
 
 .pdf-thumbnail-title {
 	font-family: $fontSans;
-	font-size: 11px;
+	font-size: 13px;
 	line-height: 1.3;
 	letter-spacing: 0.01em;
 	color: $black;
 	font-weight: 400;
 }
 
-.pdf-thumbnail-subtitle {
+.pdf-thumbnail-meta {
 	font-family: $fontSans;
-	font-size: 10px;
+	font-size: 11px;
 	line-height: 1.3;
 	letter-spacing: 0.02em;
 	color: $grey;
-	margin-top: 1px;
-}
-
-.pdf-thumbnail-meta {
-	font-family: $fontSans;
-	font-size: 9px;
-	line-height: 1.3;
-	letter-spacing: 0.02em;
-	color: #aaa;
-	margin-top: 2px;
+	margin-top: 3px;
 }
 
 // Right: External link arrow (↗)
