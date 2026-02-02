@@ -1515,8 +1515,8 @@ const Page = {
 			   aria-label="Download resume PDF (${config.fileSize})">
 				${this.buildPdfIcon()}
 				<div class="pdf-thumbnail-content">
-					<div class="pdf-thumbnail-title">${config.title}</div>
-					<div class="pdf-thumbnail-meta">PDF · ${config.fileSize}</div>
+					<span class="pdf-thumbnail-title">${config.title}</span>
+					<span class="pdf-thumbnail-meta">PDF · ${config.fileSize}</span>
 				</div>
 				${this.buildExternalLinkIcon()}
 			</a>

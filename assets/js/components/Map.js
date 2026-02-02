@@ -10,6 +10,95 @@ import Analytics, { VIEW_SOURCES } from '../utils/Analytics.js';
 const mapContainer = document.querySelector('.map-container');
 
 const Map = {
+    // =======================================================================
+    // CONFIGURATION - Edit these values to customize the graph
+    // =======================================================================
+    config: {
+        // Graph center position (0.5 = center, 0.66 = right of center)
+        centerXMultiplier: 0.66,
+        
+        // Initial spawn positions by hierarchy depth
+        // Positioned to create a natural, layered appearance with varying radii
+        initialPositions: {
+            // Root node at center
+            root: { x: 0, y: 0 },
+
+            // First level children: avoid top/bottom, focus on sides and diagonals
+            depth1: [
+                { x: 95, y: -85 },       // Top-right diagonal
+                { x: 135, y: -40 },      // Right-upper
+                { x: 140, y: 25 },       // Right-center
+                { x: 130, y: 75 },       // Right-lower
+                { x: 85, y: 110 },       // Bottom-right diagonal
+                { x: -90, y: 105 },      // Bottom-left diagonal
+                { x: -125, y: 70 },      // Left-lower
+                { x: -140, y: 10 },      // Left-center
+                { x: -135, y: -55 },     // Left-upper
+                { x: -85, y: -95 }       // Top-left diagonal
+            ],
+
+            // Second level (grandchildren): inner layer, fill gaps between depth1
+            depth2: [
+                { x: 70, y: -70 },       // Top-right diagonal inner
+                { x: 105, y: -15 },      // Right-upper inner
+                { x: 110, y: 50 },       // Right-lower inner
+                { x: 60, y: 90 },        // Bottom-right inner
+                { x: 0, y: 95 },         // Bottom-center inner
+                { x: -65, y: 85 },       // Bottom-left inner
+                { x: -105, y: 45 },      // Left-lower inner
+                { x: -110, y: -10 },     // Left-upper inner
+                { x: -100, y: -65 },     // Left-upper inner
+                { x: -55, y: -85 },      // Top-left inner
+                { x: 0, y: -90 },        // Top-center inner
+                { x: 110, y: 15 }        // Right-center inner (extra)
+            ],
+
+            // Third level (great-grandchildren): outer ring, avoid extreme top/bottom
+            depth3: [
+                { x: 125, y: -165 },     // Top-right
+                { x: 200, y: -130 },     // Upper-right
+                { x: 245, y: -60 },      // Far right-upper
+                { x: 255, y: 30 },       // Far right-center
+                { x: 235, y: 110 },      // Far right-lower
+                { x: 180, y: 170 },      // Right-bottom
+                { x: 105, y: 205 },      // Bottom-right
+                { x: -10, y: 215 },      // Bottom-center
+                { x: -120, y: 200 },     // Bottom-left
+                { x: -190, y: 160 },     // Left-bottom
+                { x: -240, y: 95 },      // Far left-lower
+                { x: -255, y: 15 },      // Far left-center
+                { x: -245, y: -70 },     // Far left-upper
+                { x: -195, y: -140 },    // Left-top
+                { x: -115, y: -175 },    // Top-left
+                { x: 5, y: -185 }        // Top-center
+            ]
+        },
+        
+        // Boundary constraints (keep nodes within visible area)
+        bounds: {
+            minXMultiplier: 0.42,     // Desktop: 42% from left (avoids content panel)
+            minXMobile: 80,           // Mobile: 80px from left
+            edgeBuffer: 80            // Distance from screen edges (top/right/bottom)
+        },
+        
+        // Link distances between connected nodes
+        linkDistances: {
+            rootToFirstLevel: { desktop: 140, mobile: 70 },
+            firstToSecondLevel: { desktop: 100, mobile: 50 },
+            deeperLevels: { desktop: 70, mobile: 40 }
+        },
+        
+        // Force simulation parameters
+        forces: {
+            chargeStrength: -400,     // Repulsion between nodes (more negative = more spread)
+            chargeDistanceMax: 400,   // Maximum distance for repulsion
+            chargeDistanceMin: 20,    // Minimum distance for repulsion
+            collideRadius: { desktop: 55, mobile: 35 },  // Collision detection radius
+            collideStrength: 1.0,     // How hard nodes push apart (0-1)
+            linkStrength: 0.5         // How strongly links pull nodes together (0-1)
+        }
+    },
+    
     data: {}, // Global data object to store the hierarchical data
     uniqueDates: [], // To store unique origin dates
     currentNode: null, // To track the currently clicked node
@@ -271,78 +360,43 @@ const Map = {
         // -----------------------------------------------------------------------
         // POSITIONING: Where the graph center is located
         // -----------------------------------------------------------------------
-        // centerX: Horizontal center of the graph (in pixels from left edge)
-        //   - 0.5 = center of screen
-        //   - 0.55 = slightly right of center
-        //   - 0.65 = far right
-        // centerY: Vertical center (usually height / 2)
-        const centerX = window.innerWidth > 768 ? window.innerWidth * 0.63 : width / 2;
+        const centerX = window.innerWidth > 768 ? window.innerWidth * Map.config.centerXMultiplier : width / 2;
         const centerY = height / 2;
 
         // -----------------------------------------------------------------------
         // LINK DISTANCES: How far apart connected nodes are
         // -----------------------------------------------------------------------
-        // Larger values = nodes further apart, more spread out graph
-        // Smaller values = nodes closer together, more compact graph
         const linkDistance = (d) => {
+            const isDesktop = window.innerWidth > 768;
             if (d.source.depth === 0) {
-                // Root to first-level branches - more spread
-                return window.innerWidth > 768 ? 140 : 70;
+                return isDesktop ? Map.config.linkDistances.rootToFirstLevel.desktop : Map.config.linkDistances.rootToFirstLevel.mobile;
             } else if (d.source.depth === 1) {
-                // First to second level
-                return window.innerWidth > 768 ? 100 : 50;
+                return isDesktop ? Map.config.linkDistances.firstToSecondLevel.desktop : Map.config.linkDistances.firstToSecondLevel.mobile;
             }
-            // Deeper levels
-            return window.innerWidth > 768 ? 70 : 40;
+            return isDesktop ? Map.config.linkDistances.deeperLevels.desktop : Map.config.linkDistances.deeperLevels.mobile;
         };
 
         // -----------------------------------------------------------------------
         // COLLISION: Prevents nodes from overlapping
         // -----------------------------------------------------------------------
-        // nodeRadius: Minimum distance between node centers (in pixels)
-        //   - Larger = more space between nodes
-        //   - Should be at least half the node visual size
-        const nodeRadius = window.innerWidth > 768 ? 55 : 35;
+        const nodeRadius = window.innerWidth > 768 ? Map.config.forces.collideRadius.desktop : Map.config.forces.collideRadius.mobile;
         
         // -----------------------------------------------------------------------
         // FORCE SIMULATION - The physics engine that positions nodes
         // -----------------------------------------------------------------------
         Map.simulation = d3.forceSimulation()
-        
-            // LINK FORCE: Pulls connected nodes toward each other
-            // - distance: Target distance between linked nodes (see linkDistance above)
-            // - strength: How strongly links pull (0-1)
-            //   - 0.1 = weak pull, nodes can drift apart
-            //   - 0.5 = moderate pull, balanced
-            //   - 1.0 = strong pull, nodes stay close to target distance
             .force("link", d3.forceLink()
                 .id(d => d.id)
                 .distance(linkDistance)
-                .strength(0.5))
-            
-            // CHARGE FORCE: Repulsion between ALL nodes (like magnets)
-            // - strength: Negative = repel, Positive = attract
-            //   - -100 = weak repulsion, tight clusters
-            //   - -300 = moderate repulsion, balanced
-            //   - -600 = strong repulsion, spread out
-            // - distanceMax: Repulsion stops beyond this distance (pixels)
-            // - distanceMin: Prevents extreme forces when nodes very close
+                .strength(Map.config.forces.linkStrength))
             .force("charge", d3.forceManyBody()
-                .strength(-400)
-                .distanceMax(400)
-                .distanceMin(20))
-            
-            // CENTER FORCE: Pulls the whole graph toward a point
-            // - First param: x position, Second param: y position
+                .strength(Map.config.forces.chargeStrength)
+                .distanceMax(Map.config.forces.chargeDistanceMax)
+                .distanceMin(Map.config.forces.chargeDistanceMin))
             .force("center", d3.forceCenter(centerX, centerY))
-            
-            // COLLISION FORCE: Prevents nodes from overlapping
-            // - radius: Minimum distance between node centers
-            // - strength: How hard nodes push apart (0-1)
-            // - iterations: More = more accurate but slower
             .force("collide", d3.forceCollide()
                 .radius(nodeRadius)
-                .strength(1.0)
+                .strength(Map.config.forces.collideStrength)
                 .iterations(4))
 
         
@@ -353,19 +407,49 @@ const Map = {
         const nodes = root.descendants();
         const links = root.links();
 
-        // Set initial positions for new nodes based on their connected nodes or the center of the canvas
-        // nodes.forEach(d => {
-        //     if (!d.x || !d.y) {
-        //         const parent = d.parent;
-        //         if (parent) {
-        //             d.x = parent.x + (Math.random() - 0.5) * 20;
-        //             d.y = parent.y + (Math.random() - 0.5) * 20;
-        //         } else {
-        //             d.x = width / 2;
-        //             d.y = height / 2;
-        //         }
-        //     }
-        // });
+        // Set initial positions by hierarchy depth
+        const depthCounters = { 1: 0, 2: 0, 3: 0 };
+
+        nodes.forEach((d, i) => {
+            if (!d.x || !d.y) {
+                let offset;
+
+                // Position based on depth in hierarchy
+                if (d.depth === 0) {
+                    // Root node at center
+                    offset = Map.config.initialPositions.root;
+                } else if (d.depth === 1) {
+                    // First level children: rough circle
+                    const positions = Map.config.initialPositions.depth1;
+                    offset = positions[depthCounters[1] % positions.length];
+                    depthCounters[1]++;
+                } else if (d.depth === 2) {
+                    // Second level: fill gaps
+                    const positions = Map.config.initialPositions.depth2;
+                    offset = positions[depthCounters[2] % positions.length];
+                    depthCounters[2]++;
+                } else {
+                    // Third level and beyond: outer ring
+                    const positions = Map.config.initialPositions.depth3;
+                    offset = positions[depthCounters[3] % positions.length];
+                    depthCounters[3]++;
+                }
+
+                d.x = centerX + offset.x;
+                d.y = centerY + offset.y;
+
+                // Apply boundary constraints from config
+                const minX = window.innerWidth > 768
+                    ? window.innerWidth * Map.config.bounds.minXMultiplier
+                    : Map.config.bounds.minXMobile;
+                const maxX = width - Map.config.bounds.edgeBuffer;
+                const minY = Map.config.bounds.edgeBuffer;
+                const maxY = height - Map.config.bounds.edgeBuffer;
+
+                d.x = Math.max(minX, Math.min(maxX, d.x));
+                d.y = Math.max(minY, Math.min(maxY, d.y));
+            }
+        });
 
         // Convert current nodes and links to sets
         const currentNodes = new Set(nodes.map(d => d.data.uri));
