@@ -25,11 +25,11 @@ const Map = {
 
             // First level children: avoid top/bottom, focus on sides and diagonals
             depth1: [
-                { x: 95, y: -85 },       // Top-right diagonal
-                { x: 135, y: -40 },      // Right-upper
-                { x: 140, y: 25 },       // Right-center
-                { x: 130, y: 75 },       // Right-lower
-                { x: 85, y: 110 },       // Bottom-right diagonal
+                { x: 55, y: -95 },       // Top-right diagonal
+                { x: 110, y: -40 },      // Right-upper
+                { x: 130, y: -10 },      // Right-center
+                { x: 140, y: 60 },       // Right-lower
+                { x: 40, y: 115 },       // Bottom-right diagonal
                 { x: -90, y: 105 },      // Bottom-left diagonal
                 { x: -125, y: 70 },      // Left-lower
                 { x: -140, y: 10 },      // Left-center
@@ -52,6 +52,16 @@ const Map = {
                 { x: 0, y: -90 },        // Top-center inner
                 { x: 110, y: 15 }        // Right-center inner (extra)
             ],
+
+            // Per-node overrides: specific initial positions by UUID
+            // Use to prevent overlap with badges or other nodes on first render
+            uuidOverrides: {
+                'agents-path':  { x: 206, y:   15 },  // AI Agents: south-east nudge
+                'xrproto-path': { x: 190, y:   15 },  // XR Prototypes: right of S&P
+                'visual-path':  { x: 185, y:   95 },  // Visual Practice: below XR Prototypes
+                'ts-path':      { x: 155, y:   80 },  // ThoughtSpot: adjusted west
+                'photo-1':      { x: 190, y:  160 },  // Photography: below Visual Practice
+            },
 
             // Third level (great-grandchildren): outer ring, avoid extreme top/bottom
             depth3: [
@@ -83,8 +93,8 @@ const Map = {
         
         // Link distances between connected nodes
         linkDistances: {
-            rootToFirstLevel: { desktop: 140, mobile: 70 },
-            firstToSecondLevel: { desktop: 100, mobile: 50 },
+            rootToFirstLevel: { desktop: 145, mobile: 70 },
+            firstToSecondLevel: { desktop: 105, mobile: 50 },
             deeperLevels: { desktop: 70, mobile: 40 }
         },
         
@@ -414,8 +424,16 @@ const Map = {
             if (!d.x || !d.y) {
                 let offset;
 
+                // Check for per-node UUID override first
+                const uuidOverride = Map.config.initialPositions.uuidOverrides?.[d.data.uuid];
+                if (uuidOverride) {
+                    offset = uuidOverride;
+                    if (d.depth === 1) depthCounters[1]++;
+                    else if (d.depth === 2) depthCounters[2]++;
+                    else if (d.depth >= 3) depthCounters[3]++;
+                }
                 // Position based on depth in hierarchy
-                if (d.depth === 0) {
+                else if (d.depth === 0) {
                     // Root node at center
                     offset = Map.config.initialPositions.root;
                 } else if (d.depth === 1) {
@@ -650,7 +668,7 @@ const Map = {
             .attr('class', 'node-inner')
             .html(d => {
                 // Check if the node type is 'path' and increment the counter
-                if (d.data.type === 'path') {
+                if (d.data.type === 'path' && d.data.uri !== 'nodes/information') {
                     return `<span class="number">${pathCounter++}</span>`;
                 }
             });

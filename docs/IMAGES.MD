@@ -1,11 +1,11 @@
-# Content Strategy: Portfolio Image Assets
+ot# Content Strategy: Portfolio Image Assets
 
 ## 1. The Root & Meta-Layer
 *The entry point. Sets the tone of "Builder + Strategist."*
 
 ### **Node: Rudram Piplad (Root)**
 *   **Image 1: The Persona (Candid)**
-    *   **What:** A high-quality candid shot. You at a whiteboard, holding a VR headset, or working at a laptop. Monochrome or high contrast works well.
+    *   n**What:** A high-quality candid shot. You at a whiteboard, holding a VR headset, or working at a laptop. Monochrome or high contrast works well.
     *   **Why:** Signals approachability and "action," not just a corporate suit.
 *   **Image 2: The Mental Model (Graphic)**
     *   **What:** A sleek, stylized SVG or PNG abstracting your portfolio graph structure.

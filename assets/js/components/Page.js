@@ -139,7 +139,7 @@ const Page = {
 						company.children.forEach(consultingCompany => {
 							workPositions.push({
 								title: consultingCompany.title,
-								summary: consultingCompany.summary || '',
+								summary: consultingCompany.role || consultingCompany.summary || '',
 								description: this.extractFirstSentence(consultingCompany.description),
 								originDate: consultingCompany.originDate,
 								endDate: consultingCompany.endDate,
@@ -152,7 +152,7 @@ const Page = {
 					// Regular company under Industry Work (ThoughtSpot, Policybazaar)
 					workPositions.push({
 						title: company.title,
-						summary: company.summary || '',
+						summary: company.role || company.summary || '',
 						description: this.extractFirstSentence(company.description),
 						originDate: company.originDate,
 						endDate: company.endDate,
@@ -242,14 +242,35 @@ const Page = {
 
 	formatDateRange(originDate, endDate) {
 		if (!originDate) return '';
-		
-		const originYear = new Date(originDate).getFullYear();
-		const endYear = endDate ? new Date(endDate).getFullYear() : 'Present';
-		
-		if (originYear === endYear) {
-			return originYear.toString();
+
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const start = new Date(originDate);
+		const startMonth = start.getMonth();
+		const startYear = start.getFullYear();
+
+		if (!endDate) {
+			// Year-only storage: Jan 1 start with no end → "YYYY–Present"
+			if (startMonth === 0) return `${startYear}–Present`;
+			return `${months[startMonth]} ${startYear}–Present`;
 		}
-		return `${originYear} – ${endYear}`;
+
+		const end = new Date(endDate);
+		const endMonth = end.getMonth();
+		const endYear = end.getFullYear();
+
+		// Year-only range: Jan–Dec (regardless of span)
+		if (startMonth === 0 && endMonth === 11) {
+			if (startYear === endYear) return `${startYear}`;
+			return `${startYear}–${endYear}`;
+		}
+
+		// Same year, different months
+		if (startYear === endYear) {
+			return `${months[startMonth]}–${months[endMonth]} ${startYear}`;
+		}
+
+		// Different years
+		return `${months[startMonth]} ${startYear}–${months[endMonth]} ${endYear}`;
 	},
 
 	extractFirstSentence(htmlContent) {
@@ -518,8 +539,8 @@ const Page = {
 		const page = document.querySelector('.page');
 		const mainContentInner = document.querySelector('.main-content-inner .page-content');
 
-		const media = pageData.media;
-	
+		const media = pageData.media || [];
+
 		const existingMedia = page.querySelectorAll('.media-item');
 		let delay;
 		
@@ -550,27 +571,24 @@ const Page = {
 				mediaItem.classList.add(indexClasses[index % 10]);
 	
 				// Check the type and create appropriate HTML
-				if (item.type.startsWith('image')) {
+				if (item.type.startsWith('image') || item.type === 'photo') {
 					mediaItem.classList.add('media-image');
 					const img = document.createElement('img');
-					img.src = item.smallImage;
 					img.alt = item.alt || '';
 					img.classList.add('media-image');
-	
-					// Add event listener for image load
-					img.addEventListener('load', () => {
-						const width = img.naturalWidth;
-						const height = img.naturalHeight;
-						const ratio = width / height;
-						if (ratio > 1) {
-							mediaItem.classList.add('media-landscape');
-						} else {
-							mediaItem.classList.add('media-portrait');
-						}
-						setTimeout(() => {
-							mediaItem.classList.add('show-media-item');
-						}, 100);
-					});
+
+					const showMedia = () => {
+						const ratio = img.naturalWidth / img.naturalHeight;
+						mediaItem.classList.add(ratio > 1 ? 'media-landscape' : 'media-portrait');
+						setTimeout(() => mediaItem.classList.add('show-media-item'), 100);
+					};
+
+					img.addEventListener('load', showMedia);
+					img.src = item.smallImage;
+
+					if (img.complete && img.naturalWidth > 0) {
+						showMedia();
+					}
 	
 					mediaItem.appendChild(img);
 				} else if (item.type.startsWith('video')) {
@@ -783,7 +801,7 @@ const Page = {
 	buildPage(uri, isInformation) {
 
 		const pageData = this.findPageDataByUri(uri);
-	
+		
 		if (pageData) {
 			
 			// Check if this node is Information or part of Information branch
@@ -827,8 +845,8 @@ const Page = {
 			let titlesHTML = `
 				<div class="page-titles">
 					<div class="page-titles-type">
-						<span class="tab-icon icon-${pageData.type}"></span>
-						<span class="tab-title">${pageData.type || ''}</span>
+						<span class="tab-icon icon-${pageData.uuid === 'info-path' ? 'information' : pageData.type}"></span>
+						<span class="tab-title">${pageData.uuid === 'info-path' ? 'information' : (pageData.type || '')}</span>
 						<button class="back-page"></button>
 						<button class="close-page"></button>
 					</div>
@@ -841,23 +859,11 @@ const Page = {
 						${pageData.type === 'information' && pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks
 							.filter(link => ['LinkedIn', 'GitHub', 'Behance', 'Medium'].includes(link.title))
 							.map(link => `<h4 class="social-link" data-platform="${link.title}"><a href="${link.link}" target="_blank">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>`).join('') : ''}
-						${pageData.type !== 'path' && pageData.type !== 'information' ? `<h4>${formatDateRange(pageData.originDate, pageData.endDate)}</h4>` : ''}
+						${pageData.type !== 'path' && pageData.type !== 'information' ? `<h4>${Page.formatDateRange(pageData.originDate, pageData.endDate)}</h4>` : ''}
 					</div>
 				</div>
 			`;
 
-			function formatDateRange(originDate, endDate) {
-				const originYear = originDate ? new Date(originDate).getFullYear() : '';
-				const endYear = endDate ? new Date(endDate).getFullYear() : null;
-				const writtenEndYear = endDate ? new Date(endDate).getFullYear() : 'Present';
-
-				if (originYear === endYear) {
-					return originYear;
-				} else {
-					return `${originYear} - ${writtenEndYear}`;
-				}
-			}
-			
 			pageContent.innerHTML += titlesHTML;
 	
 			// Add content inner
