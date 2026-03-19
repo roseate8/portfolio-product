@@ -43,7 +43,7 @@ const Page = {
 		
 		// Populate Paths tab (first-level branches)
 		this.populatePathsTab(rootNode);
-		
+
 		console.log('✅ All homepage tabs populated');
 	},
 
@@ -571,7 +571,7 @@ const Page = {
 				mediaItem.classList.add(indexClasses[index % 10]);
 	
 				// Check the type and create appropriate HTML
-				if (item.type.startsWith('image') || item.type === 'photo') {
+				if (item.type.startsWith('image')) {
 					mediaItem.classList.add('media-image');
 					const img = document.createElement('img');
 					img.alt = item.alt || '';
