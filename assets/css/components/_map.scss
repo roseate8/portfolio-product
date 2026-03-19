@@ -108,13 +108,14 @@ svg.map-lines {
 		}
 
 		.node.information-node .node-inner {
-			background:$black;
-			border-radius:50%;
+			background: url(../img/icon-information.svg) no-repeat center center !important;
+			background-size: 20px 20px !important;
 			width:20px; height:20px;
 		}
 
 		.current-node.information-node .node-inner {
-			background:$black;
+			background: url(../img/icon-information.svg) no-repeat center center !important;
+			background-size: 20px 20px !important;
 		}
 
 		
@@ -124,7 +125,7 @@ svg.map-lines {
 			width: 21px;
 			height: 21px;
 		}
-		
+
 		.node.home-node .node-inner::before {
 			content: '';
 			position: absolute;
@@ -133,7 +134,7 @@ svg.map-lines {
 			background: url(../img/coloured-node-home.svg) no-repeat center center;
 			transform: translate(-50%, -50%);
 			animation: rotate 10s linear infinite;
-			
+
 		}
 		
 		@keyframes rotate {
@@ -405,9 +406,6 @@ svg.map-lines {
 			background: url(../img/secondary-node-research.svg) no-repeat center center;
 		}
 
-		.node.visited:not(.current-node).information-node .node-inner {
-			background: $grey !important; // Gray fill for visited information nodes
-		}
 
 			// .node-label h2::after,
 			// .node-label h3::after { content: ""; display: block; }
