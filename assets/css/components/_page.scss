@@ -506,6 +506,27 @@
 				border-top:1px dashed $black;
 			}
 
+			// Contact subsection within Information page
+			.contact-subsection {
+				margin-top:15px;
+				margin-bottom:5px;
+			}
+
+			// Profile photo styling
+			.profile-photo-container {
+				width:100%;
+				margin:0 0 20px 0;
+				padding:0;
+				
+				.profile-photo {
+					width:100%;
+					height:auto;
+					display:block;
+					border-radius:4px;
+					object-fit:cover;
+				}
+			}
+
 			.page-tab:last-child .tab-content {
 				padding-bottom:0;
 			}
@@ -737,48 +758,85 @@
 					}
 				}
 
+				.footnotes-section {
+					margin-top:20px;
+					padding-top:20px;
+					border-top:1px dashed $black;
+				}
+
 				.footnotes {
-					margin-top:10px;
+					margin:0;
+					padding:0;
 					position:relative;
-					color:$grey;
+					list-style:none;
+					display:flex;
+					flex-direction:column;
+					gap:15px;
 				}
 
 				.footnotes:before {
-					content:'';
-					position:absolute;
-					top:-11px;
-					width:8px;
-					height:1px;
-					background:$black;
-					display:none;
+					content:'Footnotes';
+					@include tinyTypeSans;
+					display:block;
+					margin-bottom:10px;
+					color:$black;
+					font-weight:600;
 				}
 
 					.footnote {
 						@include tinyTypeSans;
 						letter-spacing:0.0em;
 						text-transform:none;
-						// color:$grey;
+						color:$grey;
 						display:flex;
 						flex-direction:row;
+						gap:8px;
 					}
 
 						.footnote-id {
 							width:23px;
 							flex-shrink:0;
+							font-weight:600;
+							color:$black;
 						}
 
 						.footnote-content {
 							flex-shrink:1;
 							text-indent:0;
+							color:$grey;
 						}
 
 						.footnote-content a {
 							color:$black;
+							text-decoration:underline;
+							transition:color 200ms ease;
+						}
+
+						.footnote-content a:hover {
+							color:$grey;
 						}
 						
-							.footnote-content p {
-								text-indent:0 !important;
-							}
+						.footnote-content p {
+							text-indent:0 !important;
+							margin:0;
+							display:inline;
+						}
+
+						.footnote-content p + p {
+							margin-top:8px;
+							display:block;
+						}
+
+				.subsection-footnotes {
+					margin-top:15px;
+					padding-top:15px;
+					border-top:1px dashed $grey;
+				}
+
+				.subsection-footnotes:before {
+					content:'Footnotes';
+					font-size:11px;
+				}
 
 	.page-container p {
 		text-indent:23px;

@@ -315,6 +315,7 @@ function transformNode(
         // Content
         description: node.description || '',
         extendedDescription: node.extended_description || '',
+        profilePhoto: node.profile_photo || '',
         
         // Dates
         originDate: node.origin_date || '',
@@ -326,6 +327,7 @@ function transformNode(
         isFeatured: node.is_featured || false,
         isHighlighted: node.is_highlighted || false,
         isSecondary: node.is_secondary || false,
+        lineStyle: node.line_style || '',
         
         // Related data
         externalLinks: (linksMap[nodeId] || []).map(link => ({

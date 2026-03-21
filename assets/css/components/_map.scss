@@ -208,6 +208,26 @@ svg.map-lines {
 		}
 
 
+		// Information type nodes (Contact Me, etc.) use the information icon
+		.node.node-type-information .node-inner {
+			background: url(../img/icon-information.svg) no-repeat center center;
+			background-size: 16px 16px;
+			width:20px; height:20px;
+		}
+
+		.node.current-node.node-type-information .node-inner {
+			background: url(../img/current-node-information.svg) no-repeat center center !important;
+			background-size: 16px 16px;
+		}
+
+		.node.secondary-node.node-type-information .node-inner,
+		.node.connected-node.node-type-information .node-inner {
+			background: url(../img/icon-information.svg) no-repeat center center;
+			background-size: 16px 16px;
+			opacity: 0.5;
+		}
+
+
 		// Recognition nodes use the same icons as research nodes
 		.node.node-type-recognition .node-inner {
 			background: url(../img/node-research.svg) no-repeat center center;
@@ -417,6 +437,19 @@ svg.map-lines {
 		stroke-width: 1px;
 		// stroke-dasharray: 4,4;
 		fill: none;
+	}
+
+	.link.line-style-solid {
+		stroke-dasharray: none;
+	}
+
+	.link.line-style-dashed {
+		stroke-dasharray: 6, 6;
+	}
+
+	.link.line-style-dotted {
+		stroke-dasharray: 2, 6;
+		stroke-linecap: round;
 	}
 
 	.link.theme-link {

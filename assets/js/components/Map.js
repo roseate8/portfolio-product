@@ -514,6 +514,24 @@ const Map = {
             if (Page.visitedUris.includes(d.target.data.uri)) classes += " visited-link"; // Add visited class to links
             if(d.target.data.type) classes += ` node-type-${d.target.data.type}`;
             
+            // Determine Line Style (solid, dashed, dotted)
+            let lineStyle = "solid"; // Default
+            
+            // 1. Programmatic default logic
+            const nodeType = d.target.data.type;
+            const isSec = d.target.data.isSecondary === true || d.target.data.isSecondary === "true";
+            
+            if (nodeType === 'research' || nodeType === 'initiative' || isSec) {
+                lineStyle = "dashed"; 
+            }
+
+            // 2. Manual Override
+            if (d.target.data.lineStyle) {
+                lineStyle = d.target.data.lineStyle.toLowerCase();
+            }
+
+            classes += ` line-style-${lineStyle}`;
+            
             // Ancestor links: links from root toward the current node (always black)
             // BUT: Don't add ancestor-link on initial page load (when no node is selected)
             //      because it has opacity:1 !important which overrides the animation
