@@ -23,7 +23,7 @@ const Page = {
 		// Populate the homepage index tab with root node data from Supabase
 		console.log('📝 Populating homepage index with root node data');
 		
-		if (!Map.data) {
+		if (!Map.isDataInitialized || !Map.data || !Map.data.uuid) {
 			console.log('⚠️ Map data not yet loaded, will retry...');
 			// Retry after a short delay if data isn't loaded yet
 			setTimeout(() => this.populateHomePageIndex(), 100);
@@ -44,11 +44,14 @@ const Page = {
 		// Populate Paths tab (first-level branches)
 		this.populatePathsTab(rootNode);
 
+		// Animate the content area open so the homepage index is visible
+		this.animatePageHeight();
+
 		console.log('✅ All homepage tabs populated');
 	},
 
 	populateIndexTab(rootNode) {
-		const indexTabContent = document.querySelector('.page-index .tab-open .tab-content');
+		const indexTabContent = document.querySelector('.page-index .page-tab:first-child .tab-content');
 		
 		if (!indexTabContent) {
 			console.log('⚠️ Index tab content not found');
@@ -976,21 +979,34 @@ const Page = {
 			// Build PDF thumbnail for Information node
 			const resumePdfHTML = pageData.uuid === 'info-path' ? this.buildResumePdfThumbnail() : '';
 
-			let contentInnerHTML = `
+			// Build Contact Me subsection directly from pageData for Information node
+			let contactSubsectionHTML = '';
+
+		let contentInnerHTML = `
 				<div class="page-content-inner">
 					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(pageData.description, pageData.externalLinks) : (pageData.extendedDescription && pageData.uuid !== 'bets-path' ? addReadMoreButton(pageData.description) : pageData.description)}` : ''}
 					${pageData.extendedDescription && pageData.uuid !== 'bets-path' ? `<div class="extended-description">${pageData.extendedDescription}</div>` : ''}
+					${contactSubsectionHTML}
 					${resumePdfHTML}
 					${contactLinksExpandedHTML}
 					${pageData.footnotes && pageData.footnotes.length > 0 ? `
-						<ul class="footnotes">
-							${pageData.footnotes.map((footnote, index) => `
-								<li class="footnote">
-									<span class="footnote-id">${index + 1}.</span>
-									<span class="footnote-content">${footnote.footnote}</span>
-								</li>
-							`).join('')}
-						</ul>
+						<div class="footnotes-section">
+							<ul class="footnotes">
+								${pageData.footnotes.map((footnote, index) => {
+									const content = footnote.footnote || '';
+									// Wrap content in <p> if it's not already HTML
+									const wrappedContent = content.includes('<p>') || content.includes('<div>') || content.includes('<h') 
+										? content 
+										: `<p>${content}</p>`;
+									return `
+										<li class="footnote">
+											<span class="footnote-id">${index + 1}.</span>
+											<span class="footnote-content">${wrappedContent}</span>
+										</li>
+									`;
+								}).join('')}
+							</ul>
+						</div>
 					` : ''}
 				</div>
 			`;
@@ -1030,12 +1046,19 @@ const Page = {
 									<div class="subsection-content">${sub.content}</div>
 									${sub.footnotes && sub.footnotes.length > 0 ? `
 										<ul class="footnotes subsection-footnotes">
-											${sub.footnotes.map((fn, i) => `
-												<li class="footnote">
-													<span class="footnote-id">${i + 1}.</span>
-													<span class="footnote-content">${fn}</span>
-												</li>
-											`).join('')}
+											${sub.footnotes.map((fn, i) => {
+												const content = fn || '';
+												// Wrap content in <p> if it's not already HTML
+												const wrappedContent = content.includes('<p>') || content.includes('<div>') || content.includes('<h') 
+													? content 
+													: `<p>${content}</p>`;
+												return `
+													<li class="footnote">
+														<span class="footnote-id">${i + 1}.</span>
+														<span class="footnote-content">${wrappedContent}</span>
+													</li>
+												`;
+											}).join('')}
 										</ul>
 									` : ''}
 								</div>
@@ -1079,57 +1102,6 @@ const Page = {
 											`;
 										}
 									}).join('')}
-								</ul>
-							</div>
-						</div>
-					` : ''}
-					${pageData.uuid === 'info-path' && (pageData.telephone || pageData.email || (pageData.externalLinks && pageData.externalLinks.length > 0)) ? `
-						<div class="page-tab tab-links ${openAllTabs && !isInfoPath ? 'tab-open' : ''}">
-							<div class="tab-titles">
-								<span class="tab-icon icon-links"></span>
-								<span class="tab-title">Contact Me</span>
-								<span class="tab-indicator"></span>
-							</div>
-							<div class="tab-content">
-								<ul class="list">
-									${pageData.telephone ? `
-										<li>
-											<a href="tel:${pageData.telephone}" class="external-link">
-												<span class="item-id"></span>
-												<span class="item-title">
-													<span>phone</span>
-													<span class="link-address">${pageData.telephone}</span>
-												</span>
-											</a>
-										</li>
-									` : ''}
-									${pageData.email ? `
-										<li>
-											<a href="mailto:${pageData.email}" class="external-link">
-												<span class="item-id"></span>
-												<span class="item-title">
-													<span>email</span>
-													<span class="link-address">${pageData.email}</span>
-												</span>
-											</a>
-										</li>
-									` : ''}
-									${pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks.map(link => {
-										const url = new URL(link.link);
-										// Show domain + path for better context (e.g., "linkedin.com/in/rudram-piplad")
-										const displayUrl = url.hostname.replace(/^www\./, '') + url.pathname;
-										return `
-											<li>
-												<a href="${link.link}" class="external-link" target="_blank">
-													<span class="item-id"></span>
-													<span class="item-title">
-														<span>${link.title}</span>
-														<span class="link-address">${displayUrl}</span>
-													</span>
-												</a>
-											</li>
-										`;
-									}).join('') : ''}
 								</ul>
 							</div>
 						</div>

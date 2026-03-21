@@ -59,7 +59,7 @@ INSERT INTO nodes (
 INSERT INTO nodes (parent_id, title, uri, uuid, summary, description, is_featured, type, sort_order)
 VALUES (
     (SELECT id FROM nodes WHERE uuid = 'root-0'),
-    'Information',
+    'Rudram Piplad',
     'nodes/information',
     'info-path',
     'About & Contact',
@@ -183,7 +183,7 @@ INSERT INTO nodes (
     'nodes/information/contact',
     'contact-1',
     'Get in Touch',
-    'Product Manager & AI Engineer',
+    'Contact me',
     'rudram@alumni.iitm.ac.in',
     '+91 9940334981',
     'Based in Bangalore, India',
