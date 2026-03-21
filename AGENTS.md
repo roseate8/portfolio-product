@@ -42,3 +42,22 @@ Use with `analyze_code_relationships`:
 - `find_importers` — who imports this module
 - `call_chain` — full call path
 - `module_deps` — module dependencies
+
+---
+
+## MANDATORY FINAL STEP: Git Commit & Push
+
+Before ending **every conversation**, you MUST commit all changes to git and push them. This ensures the user has a full history of every agent-led change.
+
+### The Process:
+1.  **Stage all changes:** `git add .`
+2.  **Analyze the diff:** Run `git diff --cached` to see exactly what changed. 
+3.  **Generate a DETAILED commit message.** Do not use generic messages like "updated files". Write a comprehensive summary including:
+    - Node type and line style changes (e.g., "Photography type artifact → path")
+    - Structural changes (e.g., "Collapsed Chisel Labs into GTM")
+    - Code logic changes (e.g., "Made Map.js line styles purely data-driven")
+    - Documentation updates
+4.  **Commit and Push:** `git commit -m "Your detailed message"` followed by `git push`.
+
+**This step is not optional.** You must do this at the end of every run to provide a clean, traceable history for the user.
+
