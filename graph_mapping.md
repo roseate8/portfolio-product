@@ -1,70 +1,60 @@
-# Portfolio Graph Mapping
+# Portfolio Graph Mapping (Comprehensive)
 
-This document maps every node in the graph, reflecting the **actual implementation** in the Supabase database and the website's frontend logic.
+This document is a **100% factual** mapping of the graph, reflecting all data stored in Supabase.
 
-| Title | Parent | Type (Icon) | Line Style | Display State | URI | Role | Technologies | Footnotes | Other Metadata |
-|---|---|---|---|---|---|---|---|---|---|
-| Rudram Piplad | None (Root) | (root-icon) | Solid | Normal | `/` | Product Manager | | | |
-| AI Systems | Rudram Piplad | path (icon-path) | Solid | Normal | `nodes/ai-systems` | | | | |
-| AI Agents | AI Systems | path (icon-path) | Solid | Normal | `nodes/ai-systems/agents` | | | | |
-| Butler Expense Agent | AI Agents | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/ai-systems/agents/butler` | | | | Stack: LangGraph, GPT-4, MCP Connectors, Tool Calling |
-| AI Ethics Framework | AI Agents | research (icon-research) | Dashed (Auto) | Normal | `nodes/ai-systems/agents/ethics` | | | | Architecture: Multi-agent (Interpreter → Cartographer → Dialectician → Pragmatist) |
-| RAG Pipelines | AI Systems | path (icon-path) | Solid | Normal | `nodes/ai-systems/rag-pipelines` | | | | |
-| Chunking Strategies | RAG Pipelines | artifact (icon-artifact) | Solid | Normal | `nodes/ai-systems/rag-pipelines/chunking` | | | | |
-| Document Parsing | RAG Pipelines | artifact (icon-artifact) | Solid | Normal | `nodes/ai-systems/rag-pipelines/doc-parsing` | | Docling, PyMuPDF, Unstructured, OCR | | |
-| GraphRAG | RAG Pipelines | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/ai-systems/rag-pipelines/graphrag` | | Neo4j, LangChain, OpenAI | | |
-| Safety & Evals | AI Systems | path (icon-path) | Solid | Normal | `nodes/ai-systems/safety-evals` | | | | |
-| Eval Framework | Safety & Evals | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/ai-systems/safety-evals/eval-framework` | | | | Metrics: nDCG@5, Recall@10, Latency p95, hallucinations |
-| PII/DLP Guardrails | Safety & Evals | artifact (icon-artifact) | Solid | Normal | `nodes/ai-systems/safety-evals/pii-dlp` | | | | Compliance: SOC 2 Type II Certified |
-| Bets | Rudram Piplad | path (icon-path) | Solid | Normal | `nodes/bets` | | | | |
-| Caval | Bets | initiative (icon-initiative) | Dashed (Auto) | Highlighted (Blinking Dot) | `nodes/bets/caval` | | | | Revenue: ₹5 Lakhs | Users: 4K+, 4.6 Play Store rating |
-| EventHive | Bets | initiative (icon-initiative) | Dashed (Auto) | Highlighted (Blinking Dot) | `nodes/bets/eventhive` | | | | Funding: ₹30 Lakhs Pre-Incubation | Incubator: IIT Madras Incubation Cell |
-| Product Work | Rudram Piplad | path (icon-path) | Dashed (Manual) | Normal | `nodes/industry-work` | | | | |
-| Consulting | Product Work | path (icon-path) | Solid | Normal | `nodes/industry-work/consulting` | | | | |
-| Chisel Labs | Consulting | path (icon-path) | Solid | Normal | `nodes/industry-work/consulting/chisel` | Product Advisor | | | |
-| Global SaaS GTM | Chisel Labs | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/industry-work/consulting/chisel/gtm` | | | | Forecast: 20% ARR uplift |
-| Tata Group (TCS – CPG & Retail) | Consulting | path (icon-path) | Solid | Normal | `nodes/industry-work/consulting/tata` | Management Consultant – Summer Associate | | | |
-| AI Maturity Model | Tata Group (TCS – CPG & Retail) | artifact (icon-artifact) | Solid | Normal | `nodes/industry-work/consulting/tata/ai-maturity` | | | | Impact: +15% AI adoption in proposals |
-| MLOps & LLM Intelligence | Tata Group (TCS – CPG & Retail) | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/industry-work/consulting/tata/mlops` | | | | Target: 12% cost savings in RFPs |
-| HCL Technologies | Product Work | path (icon-path) | Solid | Hidden | `nodes/industry-work/hcl` | Software Developer – Digital Transformation & Industry 4.0 | | | |
-| Policybazaar | Product Work | path (icon-path) | Solid | Normal | `nodes/industry-work/policybazaar` | Product Manager – Assistant Manager | | | |
-| Web Analytics | Policybazaar | artifact (icon-artifact) | Solid | Normal | `nodes/industry-work/policybazaar/analytics` | | | | Impact: Saved ₹6.5M+ in wasted spend | Team: 15+ members |
-| Growth & Mobile App | Policybazaar | artifact (icon-artifact) | Solid | Normal | `nodes/industry-work/policybazaar/growth-mobile` | | | | Revenue: ₹25M+ from mobile, ₹75M+ from upselling |
-| Your Orders | Policybazaar | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/industry-work/policybazaar/orders` | | | | Impact: Saved ₹10M+ in support costs | Engagement: +170% |
-| Swiggy | Product Work | path (icon-path) | Solid | Hidden | `nodes/industry-work/swiggy` | | | | |
-| ThoughtSpot | Product Work | path (icon-path) | Solid | Normal | `nodes/industry-work/thoughtspot` | Product Manager II | | | |
-| Boundaryless / Enterprise Search | ThoughtSpot | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/industry-work/thoughtspot/boundaryless` | | | | Role: Product Manager | Constraints: <$0.004/query, >0.7 nDCG@5 |
-| Homepage | ThoughtSpot | artifact (icon-artifact) | Solid | Normal | `nodes/industry-work/thoughtspot/homepage` | | | | |
-| Navigation & Discovery | ThoughtSpot | artifact (icon-artifact) | Solid | Normal | `nodes/industry-work/thoughtspot/navigation` | | | | Impact: 20% faster time to discovery |
-| Object Search | ThoughtSpot | artifact (icon-artifact) | Solid | Normal | `nodes/industry-work/thoughtspot/object-search` | | | | |
-| Information | Rudram Piplad | information (icon-information) | Solid | Normal | `nodes/information` | Product Manager | | | |
-| Behance | Information | information (icon-information) | Solid | Hidden | `nodes/information/behance` | | | | |
-| Education | Information | path (icon-path) | Solid | Normal | `nodes/information/education` | | | IIT Madras has secured the #1 position in the NIRF 2025... | Exchange Programme: NCCU College of Commerce, Taipei |
-| Email | Information | information (icon-information) | Solid | Hidden | `nodes/information/email` | | | | |
-| Footnotes | Information | information (icon-information) | Solid | Secondary (Dimmed) | `nodes/information/footnotes` | | | | |
-| LinkedIn | Information | information (icon-information) | Solid | Hidden | `nodes/information/linkedin` | | | | |
-| Phone | Information | information (icon-information) | Solid | Hidden | `nodes/information/phone` | | | | |
-| Resume | Information | information (icon-information) | Solid | Hidden | `nodes/information/resume` | | | | |
-| Bangalore | Photography | artifact (icon-artifact) | Solid | Normal | `nodes/photography/bangalore` | | | | |
-| Taipei | Photography | artifact (icon-artifact) | Solid | Normal | `nodes/photography/taipei` | | | | |
-| Spatial & Perception | Rudram Piplad | path (icon-path) | Solid | Normal | `nodes/spatial-perception` | | | | |
-| Foveated Rendering & Gaze Tracking | Spatial & Perception | research (icon-research) | Dashed (Auto) | Highlighted (Blinking Dot) | `nodes/spatial-perception/foveated-rendering` | | | | Lab: IIT Madras Haptics Lab | Result: 57% GPU reduction |
-| Haptics Research | Spatial & Perception | research (icon-research) | Dashed (Auto) | Normal | `nodes/spatial-perception/haptics` | | | | Focus: AED pad placement, shock delivery, CPR feedback |
-| Visual Practice | Spatial & Perception | path (icon-path) | Solid | Normal | `nodes/spatial-perception/visual-practice` | | | | |
-| Graphic Design & Illustrations | Visual Practice | path (icon-path) | Solid | Normal | `nodes/spatial-perception/visual-practice/graphic-design` | | | | |
-| Behance Work | Graphic Design & Illustrations | artifact (icon-artifact) | Solid | Normal | `nodes/spatial-perception/visual-practice/graphic-design/behance` | | | | |
-| E-Cell Magazine | Graphic Design & Illustrations | artifact (icon-artifact) | Solid | Normal | `nodes/spatial-perception/visual-practice/graphic-design/ecell-magazine` | | | | Role: Chief Designer | Circulation: 30K+ copies |
-| NFT Collection | Graphic Design & Illustrations | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/spatial-perception/visual-practice/graphic-design/nft` | | | | Pieces: 9+ minted |
-| Photography | Visual Practice | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/spatial-perception/visual-practice/photography` | | | | |
-| XR Prototypes | Spatial & Perception | path (icon-path) | Solid | Normal | `nodes/spatial-perception/xr-prototypes` | | | | |
-| 3D Printing VR | XR Prototypes | artifact (icon-artifact) | Solid | Normal | `nodes/spatial-perception/xr-prototypes/3d-print-vr` | | | | |
-| AED in VR | XR Prototypes | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/spatial-perception/xr-prototypes/aed-vr` | | | | Platform: Unity, Oculus Quest |
-| AR Mobile Games | XR Prototypes | artifact (icon-artifact) | Solid | Normal | `nodes/spatial-perception/xr-prototypes/ar-games` | | | | Platform: ARCore, Unity | Status: Code missing |
-| Trajectory | Rudram Piplad | path (icon-path) | Solid | Hidden | `nodes/trajectory` | | | | |
-| IIM Bangalore | Education | path (icon-path) | Solid | Normal | `nodes/trajectory/iimb` | | | QS World University Rankings 2024. IIM Bangalore ranked #31... | MBA (Post Graduate Programme) | QS WORLD RANK: #31 |
-| NCCU Exchange Taipei | IIM Bangalore | artifact (icon-artifact) | Solid | Highlighted (Blinking Dot) | `nodes/trajectory/iimb/nccu-exchange` | | | Financial Times Masters in Management (MiM) Global Ranking 2023... | Location: Taipei, Taiwan | Focus: East Asian tech ecosystems |
-| IIT Madras | Education | path (icon-path) | Solid | Normal | `nodes/trajectory/iitm` | | | | Engineering Design (specialization: Biomedical) |
-| Engineering Design | IIT Madras | artifact (icon-artifact) | Solid | Normal | `nodes/trajectory/iitm/engineering-design` | | | | |
-| Thesis: Photoacoustic Spectroscopy | IIT Madras | research (icon-research) | Solid | Highlighted (Blinking Dot) | `nodes/trajectory/iitm/thesis` | | | | Advisor: Dr. N.J. Vasa (Dean, IIT Madras) |
-| Chunking Strategies | RAG Pipelines | artifact (icon-artifact) | Solid | Normal | `nodes/ai-systems/rag-pipelines/chunking` | | | | |
-| Behance Work | Graphic Design & Illustrations | artifact (icon-artifact) | Solid | Normal | `nodes/spatial-perception/visual-practice/graphic-design/behance` | | | | |
+| Title | Parent | Type | Line Style | Display State | Role | Technologies | Impact / Metrics | Connections (Dotted) | External Links | Footnotes | Content Preview (Context / What I Built) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Rudram Piplad | None | | Solid | Normal | Product Manager | | | | | | |
+| AI Systems | Rudram Piplad | path | Solid | Normal | | | | | | | |
+| AI Agents | AI Systems | path | Solid | Normal | | | | | | | |
+| Butler Expense Agent | AI Agents | artifact | Solid | Highlighted | | LangGraph, GPT-4, MCP | Time Saved: 45min → 2min | | GitHub: butler-travel-expense-agent | Agentic RAG / MCP Connectors | After every business trip, you spend 45 minutes matching receipts... I built a multi-agent system that pulls from corporate feeds. |
+| AI Ethics Framework | AI Agents | research | Dashed (Auto) | Normal | | | | Eval Framework | GitHub: applied-ai-ethics | | Most AI ethics frameworks are checklists... I wanted to build something for PMs and founders. |
+| RAG Pipelines | AI Systems | path | Solid | Normal | | | | | | | |
+| Chunking Strategies | RAG Pipelines | artifact | Solid | Normal | | | | | GitHub: chunking-strategy-experiments | | The dirty secret of RAG: your chunking strategy matters... Tried recursive splitting, semantic chunking. |
+| Document Parsing | RAG Pipelines | artifact | Solid | Normal | | Docling, PyMuPDF, Unstructured | | | GitHub: document-parser-for-rag | | PDFs claim to have structure but hide text... Parser pipeline using Docling that handles PDF, PPT, XLSX. |
+| GraphRAG | RAG Pipelines | artifact | Solid | Highlighted | | Neo4j, LangChain, OpenAI | | | GitHub: graph-rag-trials | | Standard RAG felt like searching with a blindfold... Entities and relationships extracted from docs. |
+| Safety & Evals | AI Systems | path | Solid | Normal | | | | | | | |
+| Eval Framework | Safety & Evals | artifact | Solid | Highlighted | | | Metrics: nDCG@5, Recall@10, Latency | Boundaryless / Enterprise Search | | | If evals regress, the release doesn't ship... Groundedness and safety evals as release gates. |
+| PII/DLP Guardrails | Safety & Evals | artifact | Solid | Normal | | | SOC 2 Type II Certified | | | | Enterprise AI failure mode: leaking data... User asks a question, RAG retrieves a doc they shouldn't see. |
+| Bets | Rudram Piplad | path | Solid | Normal | | | | | | | |
+| Caval | Bets | initiative | Dashed (Auto) | Highlighted | Co-founder, Design Lead | | Revenue: ₹5 Lakhs, Users: 4K+ | | | | |
+| EventHive | Bets | initiative | Dashed (Auto) | Highlighted | | | Funding: ₹30 Lakhs | | | | |
+| Product Work | Rudram Piplad | path | Dashed (Manual) | Normal | | | | | | | |
+| Consulting | Product Work | path | Solid | Normal | | | | | | | |
+| Chisel Labs | Consulting | path | Solid | Normal | Product Advisor | | | | | | |
+| Global SaaS GTM | Chisel Labs | artifact | Solid | Highlighted | | | Forecast: 20% ARR uplift | | | | Designed GTM strategy for Chisel's international expansion... Post-trial conversion playbook. |
+| Tata Group (TCS) | Consulting | path | Solid | Normal | Management Consultant | | | | | | |
+| AI Maturity Model | Tata Group | artifact | Solid | Normal | | | Impact: +15% AI adoption | | | | Built a three-part digital maturity model to assess enterprise AI readiness. |
+| MLOps & LLM Intelligence | Tata Group | artifact | Solid | Highlighted | | | Target: 12% cost savings | | | | Competitive intelligence reports on MLOps platforms and LLMs. |
+| HCL Technologies | Product Work | path | Solid | Hidden | Software Developer | | | | | | |
+| Policybazaar | Product Work | path | Solid | Normal | Product Manager | | | | | | |
+| Web Analytics | Policybazaar | artifact | Solid | Normal | | | Impact: Saved ₹6.5M+ | | | | Web analytics had a 60% discrepancy... Overhauled entire analytics infrastructure. |
+| Growth & Mobile App | Policybazaar | artifact | Solid | Normal | | | Revenue: ₹25M+ from mobile | RAG Pipelines | | | Mobile deployment was broken... Streamlined release process. |
+| Your Orders | Policybazaar | artifact | Solid | Highlighted | | | Impact: Saved ₹10M+ | | | | Self-service portal for managing insurance policies. |
+| Swiggy | Product Work | path | Solid | Hidden | | | | | | | |
+| ThoughtSpot | Product Work | path | Solid | Normal | Product Manager II | | | | | | |
+| Boundaryless / Search | ThoughtSpot | artifact | Solid | Highlighted | Product Manager | | Constraints: <$0.004/query | | | | Search across warehouses, spreadsheets, third-party tools. |
+| Homepage | ThoughtSpot | artifact | Solid | Normal | | | | | | | Old homepage was a list of recent items... New homepage surfaces relevant content based on user behavior. |
+| Navigation & Discovery | ThoughtSpot | artifact | Solid | Normal | | | Impact: 20% faster discovery | | | | How do users find what they're looking for? Overhauled frontend and backend navigation. |
+| Object Search | ThoughtSpot | artifact | Solid | Normal | | | | | | | Beyond answering questions, users need to find things. |
+| Information | Rudram Piplad | information | Solid | Normal | Product Manager | | | | LinkedIn, GitHub, Behance | | |
+| Education | Information | path | Solid | Normal | | | | | | NIRF 2025 #1 Engineering, QS #180... | BTech & MTech Engineering Design | MBA IIMB |
+| Spatial & Perception | Rudram Piplad | path | Solid | Normal | | | | | | | |
+| Foveated Rendering | Spatial & Perception | research | Dashed (Auto) | Highlighted | | | Result: 57% GPU reduction | XR Prototypes | GitHub: foveated-rendering-virtual-reality | | You don't need to render everything at full quality... Human eyes have high resolution only at the fovea. |
+| Haptics Research | Spatial & Perception | research | Dashed (Auto) | Normal | | | Result: ~30% improvement | XR Prototypes, AED in VR | | | Simulation falls apart when physical feedback is wrong... Pad placement, shock delivery, compressions. |
+| Visual Practice | Spatial & Perception | path | Solid | Normal | | | | | | | |
+| Graphic Design | Visual Practice | path | Solid | Normal | | | | | | | |
+| Behance Work | Graphic Design | artifact | Solid | Normal | | | | | Behance Profile | | Curated collection of graphic design, branding. |
+| E-Cell Magazine | Graphic Design | artifact | Solid | Normal | Chief Designer | | Circulation: 30K+ copies | | | | Chief Designer for IIT Madras Entrepreneurship Cell. |
+| NFT Collection | Graphic Design | artifact | Solid | Highlighted | | | Pieces: 9+ minted | | OpenSea | | Digital art pieces on OpenSea. |
+| Photography | Visual Practice | artifact | Solid | Highlighted | | | | | | | |
+| XR Prototypes | Spatial & Perception | path | Solid | Normal | | | | Foveated Rendering | | | | |
+| 3D Printing VR | XR Prototypes | artifact | Solid | Normal | | | | | GitHub: 3d-printing-in-vr | | Design 3D-printable objects in VR intuitively. |
+| AED in VR | XR Prototypes | artifact | Solid | Highlighted | | | Platform: Unity, Oculus Quest | | GitHub: automated-external-defibrillator-in-vr | | VR training simulation for AED use. |
+| AR Mobile Games | XR Prototypes | artifact | Solid | Normal | | | Platform: ARCore, Unity | | | | Built and published AR games on mobile using Unity. |
+| Trajectory | Rudram Piplad | path | Solid | Hidden | | | | | | | |
+| IIM Bangalore | Education | path | Solid | Normal | | | QS WORLD RANK: #31 | | | QS 2024 #31 globally | MBA (Post Graduate Programme). |
+| NCCU Exchange | IIM Bangalore | artifact | Solid | Highlighted | | | Focus: East Asian tech | | | FT MiM Ranking #96 | Taipei, Taiwan. |
+| IIT Madras | Education | path | Solid | Normal | | | | | | | Engineering Design (specialization: Biomedical). |
+| Engineering Design | IIT Madras | artifact | Solid | Normal | | | | | | | |
+| Thesis: Photoacoustic | IIT Madras | research | Solid | Highlighted | | | Advisor: Dr. N.J. Vasa | Spatial & Perception | | | Feasibility Study on Broadband Photoacoustic Techniques. |
