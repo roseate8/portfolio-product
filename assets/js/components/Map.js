@@ -515,19 +515,20 @@ const Map = {
             if(d.target.data.type) classes += ` node-type-${d.target.data.type}`;
             
             // Determine Line Style (solid, dashed, dotted)
-            let lineStyle = "solid"; // Default
+            // Line style is now purely data-driven from the lineStyle field in Supabase.
+            // Taxonomy: solid = structural, dashed = emergent/exploratory, dotted = lateral/thematic
+            let lineStyle = "solid"; // Default: structural/definitive
             
-            // 1. Programmatic default logic
-            const nodeType = d.target.data.type;
-            const isSec = d.target.data.isSecondary === true || d.target.data.isSecondary === "true";
-            
-            if (nodeType === 'research' || nodeType === 'initiative' || isSec) {
-                lineStyle = "dashed"; 
-            }
-
-            // 2. Manual Override
+            // 1. Use explicit lineStyle from database (source of truth)
             if (d.target.data.lineStyle) {
                 lineStyle = d.target.data.lineStyle.toLowerCase();
+            }
+            // 2. Fallback: secondary nodes default to dashed if no explicit style
+            else {
+                const isSec = d.target.data.isSecondary === true || d.target.data.isSecondary === "true";
+                if (isSec) {
+                    lineStyle = "dashed";
+                }
             }
 
             classes += ` line-style-${lineStyle}`;
