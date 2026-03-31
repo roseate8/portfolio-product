@@ -1,0 +1,59 @@
+# Portfolio Graph – Nested List
+
+- Rudram Piplad
+  - AI Systems
+    - AI Agents
+      - Butler Expense Agent
+      - AI Ethics Framework
+    - RAG Pipelines
+      - Chunking Strategies
+      - Document Parsing
+      - GraphRAG
+    - Safety & Evals
+      - Eval Framework
+      - PII/DLP Guardrails
+  - Bets
+    - Caval
+    - EventHive
+  - Product Work
+    - Consulting
+      - Chisel Labs – Global SaaS GTM
+      - Tata Group (TCS)
+        - AI Maturity Model
+        - MLOps & LLM Intelligence
+    - HCL Technologies
+      - Smart Logistics
+      - TechJam
+    - Policybazaar
+      - Web Analytics
+      - Growth & Mobile App
+      - Your Orders
+    - Swiggy
+      - Last-Mile Optimization
+    - ThoughtSpot
+      - Boundaryless / Search
+      - Homepage
+      - Navigation & Discovery
+  - Information
+    - Education
+      - IIM Bangalore
+        - NCCU Exchange
+      - IIT Madras
+        - Engineering Design
+        - Thesis: Photoacoustic
+  - Spatial & Perception
+    - Foveated Rendering
+    - Haptics Research
+    - Visual Practice
+      - Graphic Design
+        - Behance Work
+        - E-Cell Magazine
+        - NFT Collection
+      - Photography
+        - Taipei
+        - Bangalore
+    - XR Prototypes
+      - 3D Printing VR
+      - AED in VR
+      - AR Mobile Games
+  - Trajectory
