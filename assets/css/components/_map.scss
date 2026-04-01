@@ -108,13 +108,13 @@ svg.map-lines {
 		}
 
 		.node.information-node .node-inner {
-			background: url(../img/icon-information.svg) no-repeat center center !important;
+			background: url(../img/icon-dot.svg) no-repeat center center !important;
 			background-size: 20px 20px !important;
 			width:20px; height:20px;
 		}
 
 		.current-node.information-node .node-inner {
-			background: url(../img/icon-information.svg) no-repeat center center !important;
+			background: url(../img/icon-dot.svg) no-repeat center center !important;
 			background-size: 20px 20px !important;
 		}
 
@@ -131,7 +131,7 @@ svg.map-lines {
 			position: absolute;
 			top: 50%; left: 50%;
 			width: 21px; height: 21px;
-			background: url(../img/coloured-node-home.svg) no-repeat center center;
+			background: url(../img/coloured-node-star.svg) no-repeat center center;
 			transform: translate(-50%, -50%);
 			animation: rotate 10s linear infinite;
 
@@ -149,95 +149,95 @@ svg.map-lines {
 		
 		
 		.node.node-type-research .node-inner {
-			background: url(../img/node-research.svg) no-repeat center center;
+			background: url(../img/node-circle.svg) no-repeat center center;
 			width:20px; height:20px;
 		}
 
 		.node.current-node.node-type-research .node-inner {
-			background: url(../img/coloured-node-research.svg) no-repeat center center !important;
+			background: url(../img/coloured-node-circle.svg) no-repeat center center !important;
 		}
 
 		.node.secondary-node.node-type-research .node-inner,
 		.node.connected-node.node-type-research .node-inner {
-			background: url(../img/secondary-node-research.svg) no-repeat center center;
+			background: url(../img/secondary-node-circle.svg) no-repeat center center;
 		}
 
 
 		.node.node-type-initiative .node-inner {
-			background: url(../img/node-initiative.svg) no-repeat center center;
+			background: url(../img/node-diamond.svg) no-repeat center center;
 			width:26px; height:26px;
 		}
 
 		.node.current-node.node-type-initiative .node-inner {
-			background: url(../img/coloured-node-initiative.svg) no-repeat center center !important;
+			background: url(../img/coloured-node-diamond.svg) no-repeat center center !important;
 		}
 
 		.node.secondary-node.node-type-initiative .node-inner,
 		.node.connected-node.node-type-initiative .node-inner {
-			background: url(../img/secondary-node-initiative.svg) no-repeat center center;
+			background: url(../img/secondary-node-diamond.svg) no-repeat center center;
 		}
 
 
 		.node.node-type-entity .node-inner {
-			background: url(../img/node-initiative.svg) no-repeat center center;
+			background: url(../img/node-diamond.svg) no-repeat center center;
 			width:26px; height:26px;
 		}
 
 		.node.current-node.node-type-entity .node-inner {
-			background: url(../img/coloured-node-initiative.svg) no-repeat center center !important;
+			background: url(../img/coloured-node-diamond.svg) no-repeat center center !important;
 		}
 
 		.node.secondary-node.node-type-entity .node-inner,
 		.node.connected-node.node-type-entity .node-inner {
-			background: url(../img/secondary-node-initiative.svg) no-repeat center center;
+			background: url(../img/secondary-node-diamond.svg) no-repeat center center;
 		}
 
 
 		.node.node-type-path .node-inner {
-			background: url(../img/node-path.svg) no-repeat center center;
+			background: url(../img/node-hexagon.svg) no-repeat center center;
 			width:24px; height:24px;
 		}
 
 		.node.current-node.node-type-path .node-inner {
-			background: url(../img/coloured-node-path.svg) no-repeat center center !important;
+			background: url(../img/coloured-node-hexagon.svg) no-repeat center center !important;
 		}
 
 		.node.secondary-node.node-type-path .node-inner,
 		.node.connected-node.node-type-path .node-inner {
-			background: url(../img/secondary-node-path.svg) no-repeat center center;
+			background: url(../img/secondary-node-hexagon.svg) no-repeat center center;
 		}
 
 
 		.node.node-type-artifact .node-inner {
-			background: url(../img/node-artifact.svg) no-repeat center center;
+			background: url(../img/node-triangle.svg) no-repeat center center;
 			width:20px; height:20px;
 		}
 
 		.node.current-node.node-type-artifact .node-inner {
-			background: url(../img/coloured-node-artifact.svg) no-repeat center center !important;
+			background: url(../img/coloured-node-triangle.svg) no-repeat center center !important;
 		}
 
 		.node.secondary-node.node-type-artifact .node-inner,
 		.node.connected-node.node-type-artifact .node-inner {
-			background: url(../img/secondary-node-artifact.svg) no-repeat center center;
+			background: url(../img/secondary-node-triangle.svg) no-repeat center center;
 		}
 
 
 		// Information type nodes (Contact Me, etc.) use the information icon
 		.node.node-type-information .node-inner {
-			background: url(../img/icon-information.svg) no-repeat center center;
+			background: url(../img/icon-dot.svg) no-repeat center center;
 			background-size: 16px 16px;
 			width:20px; height:20px;
 		}
 
 		.node.current-node.node-type-information .node-inner {
-			background: url(../img/current-node-information.svg) no-repeat center center !important;
+			background: url(../img/current-node-dot.svg) no-repeat center center !important;
 			background-size: 16px 16px;
 		}
 
 		.node.secondary-node.node-type-information .node-inner,
 		.node.connected-node.node-type-information .node-inner {
-			background: url(../img/icon-information.svg) no-repeat center center;
+			background: url(../img/icon-dot.svg) no-repeat center center;
 			background-size: 16px 16px;
 			opacity: 0.5;
 		}
@@ -245,17 +245,17 @@ svg.map-lines {
 
 		// Recognition nodes use the same icons as research nodes
 		.node.node-type-recognition .node-inner {
-			background: url(../img/node-research.svg) no-repeat center center;
+			background: url(../img/node-circle.svg) no-repeat center center;
 			width:20px; height:20px;
 		}
 
 		.node.current-node.node-type-recognition .node-inner {
-			background: url(../img/coloured-node-research.svg) no-repeat center center !important;
+			background: url(../img/coloured-node-circle.svg) no-repeat center center !important;
 		}
 
 		.node.secondary-node.node-type-recognition .node-inner,
 		.node.connected-node.node-type-recognition .node-inner {
-			background: url(../img/secondary-node-research.svg) no-repeat center center;
+			background: url(../img/secondary-node-circle.svg) no-repeat center center;
 		}
 
 	.node.highlighted-node:not(.current-node) .node-inner:after {
@@ -428,20 +428,20 @@ svg.map-lines {
 
 		// Visited nodes use secondary (gray) icon variants
 		.node.visited:not(.current-node).node-type-research .node-inner {
-			background: url(../img/secondary-node-research.svg) no-repeat center center;
+			background: url(../img/secondary-node-circle.svg) no-repeat center center;
 		}
 		.node.visited:not(.current-node).node-type-initiative .node-inner,
 		.node.visited:not(.current-node).node-type-entity .node-inner {
-			background: url(../img/secondary-node-initiative.svg) no-repeat center center;
+			background: url(../img/secondary-node-diamond.svg) no-repeat center center;
 		}
 		.node.visited:not(.current-node).node-type-path .node-inner {
-			background: url(../img/secondary-node-path.svg) no-repeat center center;
+			background: url(../img/secondary-node-hexagon.svg) no-repeat center center;
 		}
 		.node.visited:not(.current-node).node-type-artifact .node-inner {
-			background: url(../img/secondary-node-artifact.svg) no-repeat center center;
+			background: url(../img/secondary-node-triangle.svg) no-repeat center center;
 		}
 		.node.visited:not(.current-node).node-type-recognition .node-inner {
-			background: url(../img/secondary-node-research.svg) no-repeat center center;
+			background: url(../img/secondary-node-circle.svg) no-repeat center center;
 		}
 
 
