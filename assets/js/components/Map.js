@@ -827,7 +827,6 @@ const Map = {
                     'ts-path',         // ThoughtSpot (under Industry Work)
                     'photo-1',         // Photography (under Visual Practice -> Spatial)
                     'xrproto-path',    // XR Prototypes (under Spatial & Perception)
-                    'visual-path',     // Visual Practice (to show Photography under it)
                     'agents-path',     // AI Agents (under AI Systems)
                     'trajectory-path', // Trajectory/Education (under Information)
                     'iitm-path'        // IIT Madras (under Trajectory -> Information)
