@@ -863,6 +863,8 @@ const Page = {
 							.filter(link => ['LinkedIn', 'GitHub', 'Behance', 'Medium'].includes(link.title))
 							.map(link => `<h4 class="social-link" data-platform="${link.title}"><a href="${link.link}" target="_blank">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>`).join('') : ''}
 						${pageData.type !== 'path' && pageData.type !== 'information' ? `<h4>${Page.formatDateRange(pageData.originDate, pageData.endDate)}</h4>` : ''}
+						${pageData.uuid === 'eventhive-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks
+							.map(link => `<h4 class="social-link" data-platform="${link.title}"><a href="${link.link}" target="_blank">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>`).join('') : ''}
 					</div>
 				</div>
 			`;
@@ -1131,7 +1133,7 @@ const Page = {
 							</div>
 						</div>
 					` : ''}
-					${pageData.externalLinks && pageData.externalLinks.length > 0 && pageData.uuid !== 'info-path' && pageData.uuid !== 'contact-1' ? `
+					${pageData.externalLinks && pageData.externalLinks.length > 0 && pageData.uuid !== 'info-path' && pageData.uuid !== 'contact-1' && pageData.uuid !== 'eventhive-1' ? `
 						<div class="page-tab tab-links ${openAllTabs || shouldOpenFurtherReading ? 'tab-open' : ''}">
 							<div class="tab-titles">
 								<span class="tab-icon icon-links"></span>

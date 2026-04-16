@@ -122,16 +122,17 @@ svg.map-lines {
 		
 		.node.home-node .node-inner {
 			position: relative;
-			width: 21px;
-			height: 21px;
+			width: 33px;
+			height: 33px;
 		}
 
 		.node.home-node .node-inner::before {
 			content: '';
 			position: absolute;
 			top: 50%; left: 50%;
-			width: 21px; height: 21px;
-			background: url(../img/coloured-node-star.svg) no-repeat center center;
+			width: 33px; height: 33px;
+			background: url(../img/daisy.svg) no-repeat center center;
+			background-size: contain;
 			transform: translate(-50%, -50%);
 			animation: rotate 10s linear infinite;
 
