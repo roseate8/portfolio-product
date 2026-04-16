@@ -109,29 +109,30 @@ svg.map-lines {
 
 		.node.information-node .node-inner {
 			background: url(../img/icon-dot.svg) no-repeat center center !important;
-			background-size: 20px 20px !important;
-			width:20px; height:20px;
+			background-size: 26px 26px !important;
+			width:26px; height:26px;
 		}
 
 		.current-node.information-node .node-inner {
 			background: url(../img/icon-dot.svg) no-repeat center center !important;
-			background-size: 20px 20px !important;
+			background-size: 26px 26px !important;
 		}
 
 		
 		
 		.node.home-node .node-inner {
 			position: relative;
-			width: 21px;
-			height: 21px;
+			width: 33px;
+			height: 33px;
 		}
 
 		.node.home-node .node-inner::before {
 			content: '';
 			position: absolute;
 			top: 50%; left: 50%;
-			width: 21px; height: 21px;
-			background: url(../img/coloured-node-star.svg) no-repeat center center;
+			width: 33px; height: 33px;
+			background: url(../img/daisy.svg) no-repeat center center;
+			background-size: contain;
 			transform: translate(-50%, -50%);
 			animation: rotate 10s linear infinite;
 
@@ -226,19 +227,19 @@ svg.map-lines {
 		// Information type nodes (Contact Me, etc.) use the information icon
 		.node.node-type-information .node-inner {
 			background: url(../img/icon-dot.svg) no-repeat center center;
-			background-size: 16px 16px;
-			width:20px; height:20px;
+			background-size: 22px 22px;
+			width:26px; height:26px;
 		}
 
 		.node.current-node.node-type-information .node-inner {
 			background: url(../img/current-node-dot.svg) no-repeat center center !important;
-			background-size: 16px 16px;
+			background-size: 22px 22px;
 		}
 
 		.node.secondary-node.node-type-information .node-inner,
 		.node.connected-node.node-type-information .node-inner {
 			background: url(../img/icon-dot.svg) no-repeat center center;
-			background-size: 16px 16px;
+			background-size: 22px 22px;
 			opacity: 0.5;
 		}
 
