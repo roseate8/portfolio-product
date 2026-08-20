@@ -47,6 +47,25 @@ const CONFIG = {
 };
 
 /**
+ * Publishes load diagnostics on window.__portfolio.
+ *
+ * Data problems stay out of the UI: a visitor should never see plumbing
+ * failures. Everything you need to debug a stale or empty graph is here and in
+ * the console, in every environment.
+ *
+ * @param {Object} info - Partial diagnostics to merge in
+ */
+function publishDiagnostics(info) {
+    if (typeof window === 'undefined') return;
+
+    window.__portfolio = {
+        ...(window.__portfolio || {}),
+        ...info,
+        updatedAt: new Date().toISOString()
+    };
+}
+
+/**
  * Logs a message to the console
  */
 function log(emoji, message, data = null) {
@@ -97,6 +116,7 @@ export const Data = {
         
         let data = null;
         let dataSource = 'unknown';
+        let lastError = null;
 
         // =====================================================================
         // TRY TO GET DATA
@@ -114,12 +134,14 @@ export const Data = {
                     log('✅', 'SUCCESS: Data loaded from Supabase');
                 } else {
                     log('⚠️', 'Supabase returned no data, trying fallback...');
+                    lastError = 'Supabase returned no data';
                     data = await this.fetchStaticData();
                     dataSource = 'json-fallback';
                 }
             } catch (error) {
                 log('❌', 'Supabase failed:', error.message);
                 log('⚠️', 'Falling back to portfolio.json...');
+                lastError = error.message;
                 data = await this.fetchStaticData();
                 dataSource = 'json-fallback';
             }
@@ -147,6 +169,14 @@ export const Data = {
                 '- Is your Supabase project active?'
             );
             
+            this.dataSource = 'none';
+            publishDiagnostics({
+                ok: false,
+                dataSource: 'none',
+                error: lastError || 'No data returned from any source',
+                nodeCount: 0
+            });
+            
             // Return empty structure instead of undefined to prevent crashes
             return {
                 data: {
@@ -156,7 +186,8 @@ export const Data = {
                     uuid: 'error',
                     type: ''
                 },
-                uniqueDates: []
+                uniqueDates: [],
+                dataSource: 'none'
             };
         }
 
@@ -175,6 +206,15 @@ export const Data = {
         
         // Notify Analytics of the data source
         Analytics.setDataSource(dataSource);
+        
+        publishDiagnostics({
+            ok: true,
+            dataSource,
+            error: lastError,
+            rootTitle: data.title,
+            nodeCount: allNodes.length,
+            uniqueDates: uniqueDates.length
+        });
 
         // Final summary
         log('✅', '=== DATA LOAD COMPLETE ===');

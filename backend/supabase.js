@@ -28,8 +28,15 @@ import { createClient } from '@supabase/supabase-js';
 // CONFIGURATION
 // =============================================================================
 
+// Environment values. import.meta.env is the Vite (browser) path; process.env is
+// the Node path, used by scripts/snapshot-portfolio.mjs when it generates the
+// static fallback from this same file.
+const env = (typeof import.meta !== 'undefined' && import.meta.env)
+    || (typeof process !== 'undefined' && process.env)
+    || {};
+
 // Set to true to see detailed logs in the browser console
-const DEBUG_MODE = import.meta.env.DEV;
+const DEBUG_MODE = Boolean(env.DEV);
 
 /**
  * Logs a message to the console (only if DEBUG_MODE is true)
@@ -54,12 +61,13 @@ function log(emoji, message, data = null) {
 // STEP 1: CONNECT TO SUPABASE
 // =============================================================================
 
-// Get credentials from your .env file
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get credentials from your .env file (see the env resolver above)
+const supabaseUrl = env.VITE_SUPABASE_URL;
+const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
+const hasCredentials = Boolean(supabaseUrl && supabaseKey);
 
 // Check if credentials exist
-if (!supabaseUrl || !supabaseKey) {
+if (!hasCredentials) {
     console.error(
         '❌ SUPABASE ERROR: Missing credentials!\n\n' +
         'You need to create a .env file in your project root with:\n\n' +
@@ -69,8 +77,11 @@ if (!supabaseUrl || !supabaseKey) {
     );
 }
 
-// Create the Supabase client
-const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+// Create the Supabase client.
+// createClient() throws on an empty URL, and that throw happens while app.js is
+// still being imported - which kills every listener and leaves a blank page.
+// Staying null instead lets Data.js fall back to portfolio.json.
+const supabase = hasCredentials ? createClient(supabaseUrl, supabaseKey) : null;
 
 log('🔌', 'Supabase client initialized', { 
     url: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING',
@@ -86,10 +97,11 @@ log('🔌', 'Supabase client initialized', {
  * If the path is already a full URL (starts with http), returns it as-is.
  * 
  * @param {string} filePath - The file path in storage (e.g., 'photography/taipei/image.jpg')
+ * @param {string} baseUrl - Project URL the storage path hangs off
  * @param {string} bucket - The storage bucket name (default: 'portfolio-media')
  * @returns {string} The full public URL to access the file
  */
-function getStorageUrl(filePath, bucket = 'portfolio-media') {
+function getStorageUrl(filePath, baseUrl = supabaseUrl, bucket = 'portfolio-media') {
     // If it's already a full URL, return as-is
     if (filePath && (filePath.startsWith('http://') || filePath.startsWith('https://'))) {
         return filePath;
@@ -97,8 +109,8 @@ function getStorageUrl(filePath, bucket = 'portfolio-media') {
     
     // Generate Supabase Storage public URL
     // Format: https://PROJECT_REF.supabase.co/storage/v1/object/public/BUCKET/PATH
-    if (supabaseUrl && filePath) {
-        return `${supabaseUrl}/storage/v1/object/public/${bucket}/${filePath}`;
+    if (baseUrl && filePath) {
+        return `${baseUrl}/storage/v1/object/public/${bucket}/${filePath}`;
     }
     
     // Fallback to original path if something is missing
@@ -124,11 +136,27 @@ export async function fetchPortfolioData() {
     log('📡', 'Starting Supabase data fetch...');
     
     // Check credentials before making requests
-    if (!supabaseUrl || !supabaseKey) {
+    if (!supabase) {
         log('❌', 'Cannot fetch: Missing Supabase credentials');
         return null;
     }
 
+    return fetchPortfolioTree(supabase, supabaseUrl);
+}
+
+
+/**
+ * Same fetch, but against a client you pass in.
+ *
+ * The browser gets its client from the .env values above; the snapshot script
+ * builds one from process.env. Keeping the query and transform logic here means
+ * both paths produce byte-identical trees.
+ *
+ * @param {Object} client - A Supabase client
+ * @param {string} storageBase - Project URL used to build public storage URLs
+ * @returns {Promise<Object|null>} The root node with all children, or null if error
+ */
+export async function fetchPortfolioTree(client, storageBase = supabaseUrl) {
     try {
         // =====================================================================
         // FETCH ALL TABLES IN PARALLEL (faster than one at a time)
@@ -149,16 +177,16 @@ export async function fetchPortfolioData() {
             subsectionsResult,
             subsectionFootnotesResult
         ] = await Promise.all([
-            supabase.from('nodes').select('*').order('sort_order'),
-            supabase.from('node_links').select('*').order('sort_order'),
-            supabase.from('node_metadata').select('*').order('sort_order'),
-            supabase.from('node_media').select('*').order('sort_order'),
-            supabase.from('node_education').select('*').order('sort_order'),
-            supabase.from('node_recognition').select('*').order('sort_order'),
-            supabase.from('node_footnotes').select('*').order('sort_order'),
-            supabase.from('node_connections').select('*'),
-            supabase.from('node_subsections').select('*').order('sort_order'),
-            supabase.from('subsection_footnotes').select('*').order('sort_order')
+            client.from('nodes').select('*').order('sort_order'),
+            client.from('node_links').select('*').order('sort_order'),
+            client.from('node_metadata').select('*').order('sort_order'),
+            client.from('node_media').select('*').order('sort_order'),
+            client.from('node_education').select('*').order('sort_order'),
+            client.from('node_recognition').select('*').order('sort_order'),
+            client.from('node_footnotes').select('*').order('sort_order'),
+            client.from('node_connections').select('*'),
+            client.from('node_subsections').select('*').order('sort_order'),
+            client.from('subsection_footnotes').select('*').order('sort_order')
         ]);
 
         const fetchTime = Math.round(performance.now() - startTime);
@@ -232,7 +260,8 @@ export async function fetchPortfolioData() {
             footnotesMap,
             connectionsMap,
             subsectionsMap,
-            subsectionFootnotesMap
+            subsectionFootnotesMap,
+            storageBase
         ));
 
         // Build the tree structure
@@ -294,7 +323,8 @@ function transformNode(
     footnotesMap,
     connectionsMap,
     subsectionsMap,
-    subsectionFootnotesMap
+    subsectionFootnotesMap,
+    storageBase = supabaseUrl
 ) {
     const nodeId = node.id;
     
@@ -328,6 +358,12 @@ function transformNode(
         isHighlighted: node.is_highlighted || false,
         isSecondary: node.is_secondary || false,
         lineStyle: node.line_style || '',
+
+        // Graph visibility flags (see backend/add_homepage_flags.sql).
+        // Undefined until that migration runs, which is what Map.js checks for
+        // before falling back to its legacy hardcoded UUID lists.
+        showOnHomepage: node.show_on_homepage,
+        showWithParent: node.show_with_parent,
         
         // Related data
         externalLinks: (linksMap[nodeId] || []).map(link => ({
@@ -341,11 +377,11 @@ function transformNode(
         })),
         
         media: (mediaMap[nodeId] || []).map(m => ({
-            url: getStorageUrl(m.original_url || m.file_path),
+            url: getStorageUrl(m.original_url || m.file_path, storageBase),
             alt: m.alt_text || '',
             type: m.media_type || 'image',
-            smallImage: getStorageUrl(m.small_url || m.file_path),
-            largeImage: getStorageUrl(m.large_url || m.file_path),
+            smallImage: getStorageUrl(m.small_url || m.file_path, storageBase),
+            largeImage: getStorageUrl(m.large_url || m.file_path, storageBase),
             externalLink: m.external_link || '',
             externalLinkText: m.external_link_text || ''
         })),

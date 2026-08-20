@@ -9,6 +9,24 @@ import Analytics, { VIEW_SOURCES } from '../utils/Analytics.js';
 
 const mapContainer = document.querySelector('.map-container');
 
+// Which deep nodes stay visible in the condensed views.
+// These lists are the fallback for databases that have not run
+// backend/add_homepage_flags.sql yet; once any node carries the flags, the
+// database wins and these are ignored. See Map.resolveGraphFlagSource().
+const LEGACY_HOMEPAGE_UUIDS = [
+    'ts-path',         // ThoughtSpot (under Industry Work)
+    'photo-1',         // Photography (under Visual Practice -> Spatial)
+    'xrproto-path',    // XR Prototypes (under Spatial & Perception)
+    'agents-path',     // AI Agents (under AI Systems)
+    'trajectory-path', // Trajectory/Education (under Information)
+    'iitm-path'        // IIT Madras (under Trajectory -> Information)
+];
+
+const LEGACY_PINNED_UUIDS = [
+    'iitm-path',  // IIT Madras, kept visible when Information is open
+    'iimb-path'   // IIM Bangalore, kept visible when Information is open
+];
+
 const Map = {
     // =======================================================================
     // CONFIGURATION - Edit these values to customize the graph
@@ -120,6 +138,51 @@ const Map = {
     nodeSize: 36, // Default node size
     previousNodes: new Set(), // To store the previous nodes for comparison
     previousLinks: new Set(), // To store the previous links for comparison
+    graphFlagSource: null, // 'database' | 'legacy', resolved on first use per data load
+
+    // =======================================================================
+    // GRAPH VISIBILITY FLAGS
+    // =======================================================================
+
+    /**
+     * Decides whether visibility comes from the database columns or the legacy
+     * UUID lists. The database wins as soon as one node carries a flag, so the
+     * migration and a deploy can happen in either order.
+     *
+     * @returns {'database'|'legacy'}
+     */
+    resolveGraphFlagSource() {
+        if (this.graphFlagSource) return this.graphFlagSource;
+
+        const hasFlag = node => node.showOnHomepage === true
+            || node.showWithParent === true
+            || (node.children || []).some(hasFlag);
+
+        this.graphFlagSource = this.data && hasFlag(this.data) ? 'database' : 'legacy';
+
+        if (this.graphFlagSource === 'legacy') {
+            console.warn(
+                '[Map] No show_on_homepage flags found in the data - using the hardcoded ' +
+                'UUID lists in Map.js. Run backend/add_homepage_flags.sql to move this into Supabase.'
+            );
+        }
+
+        return this.graphFlagSource;
+    },
+
+    /** Stays visible on the homepage graph despite being below the first level. */
+    showsOnHomepage(node) {
+        return this.resolveGraphFlagSource() === 'database'
+            ? node.showOnHomepage === true
+            : LEGACY_HOMEPAGE_UUIDS.includes(node.uuid);
+    },
+
+    /** Stays visible when an ancestor is opened, instead of collapsing away. */
+    showsWithParent(node) {
+        return this.resolveGraphFlagSource() === 'database'
+            ? node.showWithParent === true
+            : LEGACY_PINNED_UUIDS.includes(node.uuid);
+    },
 
     initialize(initialUri = null, sliderValue = null) {
         if (this.isDataInitialized) {
@@ -150,9 +213,10 @@ const Map = {
                 this.data = data;
                 this.uniqueDates = uniqueDates;
                 this.isDataInitialized = true;
+                this.graphFlagSource = null; // re-resolve against the data we just loaded
                 
-                // Show JSON fallback indicator if not using Supabase
-                this.showDataSourceIndicator(dataSource);
+                // Console/debug only - never rendered into the page
+                this.reportDataSource(dataSource);
                 
                 // Populate homepage index with root node data
                 Page.populateHomePageIndex();
@@ -199,19 +263,20 @@ const Map = {
         }
     },
 
-    showDataSourceIndicator(dataSource) {
-        // Show a small black dot in the bottom-left corner of the viewport
-        // when data is loaded from JSON fallback instead of Supabase
-        if (dataSource !== 'supabase') {
-            const indicator = document.createElement('div');
-            indicator.className = 'data-source-indicator';
-            indicator.title = `Data source: ${dataSource}`;
-            
-            // Append to body (viewport level, on grey background)
-            document.body.appendChild(indicator);
-            
-            console.log('⚫ JSON fallback indicator shown (data source:', dataSource, ')');
-        }
+    /**
+     * Reports a degraded data source to the console only.
+     * Visitors should never see plumbing problems, so nothing is rendered:
+     * check the console, or window.__portfolio, when something looks stale.
+     *
+     * @param {string} dataSource - 'supabase' | 'json-fallback' | 'json-direct' | 'none'
+     */
+    reportDataSource(dataSource) {
+        if (dataSource === 'supabase') return;
+
+        console.warn(
+            `[Map] Portfolio data came from "${dataSource}" instead of Supabase. ` +
+            'Content may be out of date. Details: window.__portfolio'
+        );
     },
 
     setUpListeners() {
@@ -814,24 +879,15 @@ const Map = {
         
         node.children.forEach(child => {
             if (isRootNode && child.children && child.children.length > 0) {
-                // Special case: Keep specific nodes visible on homepage
-                // These appear as visible nodes connected to their parent branches
-                const featuredHomepageUUIDs = [
-                    'ts-path',         // ThoughtSpot (under Industry Work)
-                    'photo-1',         // Photography (under Visual Practice -> Spatial)
-                    'xrproto-path',    // XR Prototypes (under Spatial & Perception)
-                    'agents-path',     // AI Agents (under AI Systems)
-                    'trajectory-path', // Trajectory/Education (under Information)
-                    'iitm-path'        // IIT Madras (under Trajectory -> Information)
-                ];
-                
-                // Helper function to check if a node should be visible
-                const shouldShowNode = (node) => {
-                    const originDate = node.originDate ? new Date(node.originDate) : new Date('2018-01-01');
-                    const expirationDate = node.expirationDate ? new Date(node.expirationDate) : null;
+                // Keep the nodes the data marks as homepage-visible (show_on_homepage,
+                // or the legacy UUID list until that migration has run).
+                // These appear as visible nodes connected to their parent branches.
+                const shouldShowNode = (candidate) => {
+                    const originDate = candidate.originDate ? new Date(candidate.originDate) : new Date('2018-01-01');
+                    const expirationDate = candidate.expirationDate ? new Date(candidate.expirationDate) : null;
                     const isDateValid = originDate <= selectedDateObj && (!expirationDate || expirationDate > selectedDateObj);
-                    const isFeaturedValid = node.isFeatured === true || node.isFeatured === "true";
-                    return isDateValid && isFeaturedValid && featuredHomepageUUIDs.includes(node.uuid);
+                    const isFeaturedValid = candidate.isFeatured === true || candidate.isFeatured === "true";
+                    return isDateValid && isFeaturedValid && this.showsOnHomepage(candidate);
                 };
                 
                 child.children = child.children.filter(grandchild => {
@@ -933,19 +989,17 @@ const Map = {
         // Set up the clicked node and its direct children (but not grandchildren)
         const clickedNodeCopy = { ...clickedNode, children: [] };
         if (clickedNode.children) {
-            // Special case: For Information node, preserve specific grandchildren (IIT Madras, IIM Bangalore)
+            // On the Information node, grandchildren the data pins (show_with_parent,
+            // or the legacy UUID list) stay visible instead of collapsing away
             const isInformationNode = clickedNode.type === 'information' || clickedNode.uuid === 'info-path';
 
             clickedNodeCopy.children = clickedNode.children.map(child => {
-                // If we're on Information node and this is the Education path, keep only IIT and IIM children
-                if (isInformationNode && child.uuid === 'education-path') {
-                    const educationChildren = child.children ? child.children.filter(grandchild =>
-                        grandchild.uuid === 'iitm-path' || grandchild.uuid === 'iimb-path'
-                    ).map(grandchild => ({ ...grandchild, children: [] })) : [];
-                    return { ...child, children: educationChildren };
-                }
-                // Otherwise, just copy the child without grandchildren
-                return { ...child, children: [] };
+                const pinnedGrandchildren = isInformationNode && child.children
+                    ? child.children.filter(grandchild => this.showsWithParent(grandchild))
+                        .map(grandchild => ({ ...grandchild, children: [] }))
+                    : [];
+
+                return { ...child, children: pinnedGrandchildren };
             });
         }
     
