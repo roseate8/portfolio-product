@@ -43,7 +43,7 @@ const CONFIG = {
     staticDataPath: '/assets/data/portfolio.json',
     
     // Show detailed logs in console?
-    debug: true
+    debug: import.meta.env.DEV
 };
 
 /**
@@ -240,69 +240,6 @@ export const Data = {
         return result;
     },
 
-    // =========================================================================
-    // LEGACY: Kirby CMS Methods (you can ignore these)
-    // =========================================================================
-    // These are here for backwards compatibility if you ever used Kirby CMS.
-    // They're not used when Supabase or static JSON is enabled.
-
-    buildQuery(level) {
-        if (level === 0) return {};
-        return {
-            title: true,
-            uri: true,
-            uuid: true,
-            summary: true,
-            role: true,
-            email: true,
-            telephone: true,
-            overview: true,
-            description: "page.description.kirbytext",
-            extendedDescription: "page.extendedDescription.kirbytext",
-            originDate: true,
-            endDate: true,
-            expirationDate: true,
-            lastUpdated: true,
-            isFeatured: true,
-            isHighlighted: true,
-            isSecondary: true,
-            media: {
-                query: "page.media.toFiles",
-                select: {
-                    url: true, alt: true, type: true,
-                    smallImage: "file.resize(1200, null, 95).url",
-                    largeImage: "file.resize(1600, null, 95).url",
-                    externalLink: true, externalLinkText: true
-                }
-            },
-            type: true,
-            externalLinks: { query: "page.externalLinks.toStructure", select: { title: true, link: true } },
-            metadata: { query: "page.metadata.toStructure", select: { title: true, subtitle: true } },
-            education: { query: "page.education.toStructure", select: { title: true, subtitle: true, year: true } },
-            recognition: { query: "page.recognition.toStructure", select: { title: true, subtitle: true, year: true } },
-            footnotes: { query: "page.footnotes.toStructure", select: { footnote: true } },
-            connectedNodes: { query: "page.connectedNodes.toStructure", select: { foreignkey: true } },
-            children: { query: "page.children", select: this.buildQuery(level - 1) }
-        };
-    },
-
-    async fetchPageData(uri, levels = 20) {
-        // Legacy Kirby CMS support - not used with Supabase
-        return null;
-    },
-
-    async fetchAllPages(uri) {
-        // Legacy Kirby CMS support - not used with Supabase
-        return [];
-    },
-
-    extractDates(node) {
-        const dates = [node.originDate];
-        if (node.children) {
-            node.children.forEach(child => dates.push(...this.extractDates(child)));
-        }
-        return dates;
-    }
 };
 
 export default Data;

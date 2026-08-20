@@ -29,7 +29,7 @@ import { createClient } from '@supabase/supabase-js';
 // =============================================================================
 
 // Set to true to see detailed logs in the browser console
-const DEBUG_MODE = true;
+const DEBUG_MODE = import.meta.env.DEV;
 
 /**
  * Logs a message to the console (only if DEBUG_MODE is true)

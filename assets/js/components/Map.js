@@ -555,18 +555,7 @@ const Map = {
         };
 
         // Utility function to create path based on curve direction and theme
-        const getPath = (d) => {
-            if (!d.curveDirection) {
-                d.curveDirection = (d.source.y > d.target.y) ? -30 : 30;
-            }
-
-            if(d.target.data.type === 'path'){
-                return Map.createAngledPath(d.source, d.target, d.curveDirection);
-            } else {
-                return Map.createStraightPath(d.source, d.target, d.curveDirection);
-            }
-
-        };
+        const getPath = (d) => Map.getNodePath(d);
 
         // Animation timing
         // Root appears first, then children appear at random scattered intervals
@@ -714,17 +703,7 @@ const Map = {
 
         function ticked() {
             linkEnter.merge(link)
-                .attr("d", d => {
-                    if (!d.curveDirection) {
-                        d.curveDirection = (d.source.y > d.target.y) ? -30 : 30;
-                    }
-                    // return Map.createStraightPath(d.source, d.target, d.curveDirection);
-                    if(d.target.data.type === 'path'){
-                        return Map.createAngledPath(d.source, d.target, d.curveDirection);
-                    } else {
-                        return Map.createStraightPath(d.source, d.target, d.curveDirection);
-                    }
-                });
+                .attr("d", d => Map.getNodePath(d));
 
             nodeEnter.merge(node)
                 .style('left', d => `${d.x}px`)
@@ -753,6 +732,20 @@ const Map = {
         Map.previousLinks = currentLinks;
     
         
+    },
+
+    /**
+     * Shared path generator for links. Uses angled paths for 'path' type nodes,
+     * straight paths for everything else. Lazily computes curve direction.
+     */
+    getNodePath(d) {
+        if (!d.curveDirection) {
+            d.curveDirection = (d.source.y > d.target.y) ? -30 : 30;
+        }
+        if (d.target.data.type === 'path') {
+            return Map.createAngledPath(d.source, d.target, d.curveDirection);
+        }
+        return Map.createStraightPath(d.source, d.target, d.curveDirection);
     },
 
     createStraightPath(source, target) {
@@ -904,80 +897,6 @@ const Map = {
         return null;
     },
 
-    // filterNodes(clickedNode) {
-    // this gets all children and their grandchildren too
-
-    //     let filteredData = {};
-    
-    //     // Function to find ancestors and ensure correct hierarchy
-    //     function findAncestors(data, node, ancestors) {
-    //         if (data.uri === node.uri) {
-    //             return true;
-    //         }
-    
-    //         if (data.children) {
-    //             for (let child of data.children) {
-    //                 if (findAncestors(child, node, ancestors)) {
-    //                     const ancestorCopy = { ...data, children: [] };
-    //                     ancestors.unshift(ancestorCopy);
-    //                     return true;
-    //                 }
-    //             }
-    //         }
-    //         return false;
-    //     }
-    
-    //     // Function to get all descendants recursively
-    //     function getAllDescendants(node) {
-    //         let descendants = [];
-    //         if (node.children) {
-    //             node.children.forEach(child => {
-    //                 descendants.push({ ...child, children: getAllDescendants(child) });
-    //             });
-    //         }
-    //         return descendants;
-    //     }
-    
-    //     // Find ancestors of the clicked node
-    //     let ancestors = [];
-    //     findAncestors(this.data, clickedNode, ancestors);
-    
-    //     // Set up the clicked node and its descendants
-    //     const clickedNodeCopy = { ...clickedNode, children: getAllDescendants(clickedNode) };
-    
-    //     // Add connected nodes
-    //     if (clickedNode.connectedNodes && clickedNode.connectedNodes.length > 0) {
-    //         clickedNode.connectedNodes.forEach(uuid => {
-    //             const connectedNode = this.findNodeByUUID(this.data, uuid);
-    //             if (connectedNode) {
-    //                 const connectedNodeCopy = { ...connectedNode, children: [], isConnected: true }; // Add isConnected flag
-    //                 clickedNodeCopy.children.push(connectedNodeCopy);
-    //             }
-    //         });
-    //     }
-    
-    //     // If there are ancestors, build the nested structure
-    //     if (ancestors.length > 0) {
-    //         // The last ancestor in the list is the direct parent of the clicked node
-    //         ancestors[ancestors.length - 1].children = [clickedNodeCopy];
-    
-    //         // Build the hierarchy from the ancestors array
-    //         for (let i = ancestors.length - 2; i >= 0; i--) {
-    //             ancestors[i].children = [ancestors[i + 1]];
-    //         }
-    
-    //         // The top-most ancestor becomes the root of the filtered data
-    //         filteredData = ancestors[0];
-    //     } else {
-    //         // If no ancestors, the clicked node is the root of the filtered data
-    //         filteredData = clickedNodeCopy;
-    //     }
-    
-    //     return filteredData;
-    // },
-    
-    // this just gets one level of children
-
     filterNodes(clickedNode) {
         console.log('🎯 Node clicked:', clickedNode.title, '- building path to root + first-level children');
         console.log('🔍 Clicked node children count:', clickedNode.children?.length || 0);
@@ -1041,24 +960,6 @@ const Map = {
             });
         }
 
-        // Add external nodes
-        // if (clickedNode.externalLinks && clickedNode.externalLinks.length > 0) {
-        //     clickedNode.externalLinks.forEach(link => {
-        //         const externalNode = {
-        //             data: {
-        //                 uri: link.url,
-        //                 title: link.title,
-        //                 summary: 'External Link', // Ensure summary is set
-        //                 isExternalLink: true // Ensure isExternalLink is set
-        //             },
-        //             depth: clickedNode.depth + 1, // Set appropriate depth
-        //             parent: clickedNode
-        //         };
-        //         console.log(externalNode);
-        //         clickedNodeCopy.children.push(externalNode);
-        //     });
-        // }
-    
         // If there are ancestors, build the nested structure
         if (ancestors.length > 0) {
             // The last ancestor in the list is the direct parent of the clicked node
