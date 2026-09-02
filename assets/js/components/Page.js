@@ -477,7 +477,16 @@ const Page = {
 
 
 
-    openPage(uri) {
+	openPage(uri) {
+		if (window.innerWidth <= 768) {
+			document.body.classList.add('mobile-content-view');
+			document.body.classList.remove('mobile-graph-view');
+			const toggle = document.querySelector('.mobile-view-toggle');
+			if (toggle) {
+				toggle.setAttribute('aria-label', 'Show graph view');
+				toggle.setAttribute('aria-pressed', 'false');
+			}
+		}
 		if(uri === 'nodes/information'){
 			Page.buildPage(uri, true);
 			document.body.classList.add('page-open', 'information-open');
@@ -499,6 +508,15 @@ const Page = {
 		Page.pageOpen = false;
 
         document.body.classList.remove('page-open', 'information-open');
+		if (window.innerWidth <= 768) {
+			document.body.classList.add('mobile-content-view');
+			document.body.classList.remove('mobile-graph-view');
+			const toggle = document.querySelector('.mobile-view-toggle');
+			if (toggle) {
+				toggle.setAttribute('aria-label', 'Show graph view');
+				toggle.setAttribute('aria-pressed', 'false');
+			}
+		}
 
 		const page = document.querySelector('.page');
 		const existingMedia = page.querySelectorAll('.media-item');

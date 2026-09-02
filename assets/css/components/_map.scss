@@ -8,12 +8,27 @@
 	z-index: 1;
 	overflow: visible; // Allow nodes/links to render anywhere
 	@include mobile {
-		pointer-events: none;
-		position: relative;
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
 		animation: none;
-		height: 80vw;
-		display: none;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 200ms ease-in-out;
 	}
+}
+
+// Show graph when user toggles to graph view on mobile
+body.mobile-graph-view .map-container {
+	@include mobile {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+	.map-container { transition: none; }
 }
 
 // Ensure SVG fills the entire viewport for rendering branches
@@ -340,7 +355,8 @@ svg.map-lines {
 		-webkit-user-select:none;
 		transition:opacity 200ms;
 		@include mobile {
-			display:none;
+			display:block;
+			width:120px;
 		}
 	}
 
