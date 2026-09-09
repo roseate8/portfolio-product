@@ -56,3 +56,41 @@ body * {
 a {
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
+
+.mobile-view-toggle { display: none; }
+
+// Mobile graph/content mode: static gradient + toggle button.
+// Layout overrides for .map-container and .page live in their respective
+// component files (_map.scss, _page.scss) so they win the CSS cascade
+// over the pre-existing @include mobile rules in those files.
+@include mobile {
+	body {
+		background: linear-gradient(135deg, #ebedff 0%, #f3f2f8 52%, #dbf8ff 100%);
+	}
+
+	#gradient-root { display: none; }
+
+	.mobile-view-toggle {
+		position: fixed;
+		right: 20px;
+		bottom: max(20px, env(safe-area-inset-bottom));
+		z-index: 100000;
+		width: 48px;
+		height: 48px;
+		border: 1px solid rgba(24, 32, 43, .16);
+		border-radius: 50%;
+		background: rgba(255, 255, 255, .94);
+		color: $black;
+		box-shadow: 0 6px 18px rgba(24, 32, 43, .16);
+		font-size: 24px;
+		line-height: 1;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.mobile-view-toggle:focus-visible { outline: 3px solid #3157d5; outline-offset: 3px; }
+	.mobile-view-toggle__list { display: none; }
+	body.mobile-graph-view .mobile-view-toggle__graph { display: none; }
+	body.mobile-graph-view .mobile-view-toggle__list { display: inline; }
+}

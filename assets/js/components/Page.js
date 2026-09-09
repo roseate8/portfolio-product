@@ -289,24 +289,6 @@ const Page = {
 		return match ? match[0] : text.substring(0, 150) + '...';
 	},
 
-	animateHomePage(path) {
-		// if theres no path, its the home page, and the open page will run instead
-		// if (!path) {
-		// 	const page = document.querySelector('.page');
-		// 	const pageContainer = document.querySelector('.page-container');
-		// 	let actualHeight = 0;
-
-		// 	// briefly show it to get the actual height
-		// 	page.style.height = 'auto';
-		// 	actualHeight = pageContainer.offsetHeight;
-		// 	page.style.height = '0px';
-			
-		// 	setTimeout(() => {
-		// 		page.style.height = `${actualHeight}px`;
-		// 	}, 2000);
-		// }
-	},
-
 	setupListeners() {
 		document.addEventListener('click', (event) => {
 			const target = event.target;
@@ -495,7 +477,16 @@ const Page = {
 
 
 
-    openPage(uri) {
+	openPage(uri) {
+		if (window.innerWidth <= 768) {
+			document.body.classList.add('mobile-content-view');
+			document.body.classList.remove('mobile-graph-view');
+			const toggle = document.querySelector('.mobile-view-toggle');
+			if (toggle) {
+				toggle.setAttribute('aria-label', 'Show graph view');
+				toggle.setAttribute('aria-pressed', 'false');
+			}
+		}
 		if(uri === 'nodes/information'){
 			Page.buildPage(uri, true);
 			document.body.classList.add('page-open', 'information-open');
@@ -517,6 +508,15 @@ const Page = {
 		Page.pageOpen = false;
 
         document.body.classList.remove('page-open', 'information-open');
+		if (window.innerWidth <= 768) {
+			document.body.classList.add('mobile-content-view');
+			document.body.classList.remove('mobile-graph-view');
+			const toggle = document.querySelector('.mobile-view-toggle');
+			if (toggle) {
+				toggle.setAttribute('aria-label', 'Show graph view');
+				toggle.setAttribute('aria-pressed', 'false');
+			}
+		}
 
 		const page = document.querySelector('.page');
 		const existingMedia = page.querySelectorAll('.media-item');
@@ -1180,31 +1180,6 @@ const Page = {
 			console.error('Page data not found for URI:', uri);
 		}
 	},
-
-	// ${pageData.connectedNodes && pageData.connectedNodes.length > 0 ? `
-	// 	<div class="page-tab tab-connections">
-	// 		<div class="tab-titles">
-	// 			<span class="tab-icon icon-connections"></span>
-	// 			<span class="tab-title">Connections</span>
-	// 			<span class="tab-indicator"></span>
-	// 		</div>
-	// 		<div class="tab-content">
-	// 			<ul class="list">
-	// 				${pageData.connectedNodes.map(uuid => {
-	// 					const connectedNode = this.findNodeByUUID(Map.data, uuid);
-	// 					return connectedNode ? `
-	// 						<li>
-	// 							<a href="${connectedNode.uri}" class="external-link">
-	// 								<span class="item-id"></span>
-	// 								<span class="item-title"><a href="${connectedNode.uri}">${connectedNode.title}</a></span>
-	// 							</a>
-	// 						</li>
-	// 					` : '';
-	// 				}).join('')}
-	// 			</ul>
-	// 		</div>
-	// 	</div>
-	// ` : ''}
 
 	animatePageHeight() {
 		const mainContent = document.querySelector('.main-content');

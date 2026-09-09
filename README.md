@@ -71,6 +71,9 @@ portfolio-product/
 | `npm run dev` | Start development server (http://localhost:3000) |
 | `npm run build` | Build for production (output in `dist/`) |
 | `npm run preview` | Preview production build locally |
+| `npm run snapshot` | Refresh `assets/data/portfolio.json` from Supabase (runs automatically before every build) |
+| `npm test` | Run the test suite |
+| `npm run test:watch` | Re-run tests on change |
 
 ---
 
@@ -82,6 +85,28 @@ The portfolio supports two data sources:
 |--------|-------------|-----------|
 | **Supabase** | Online database | Primary (default) |
 | **portfolio.json** | Static JSON file | Fallback if Supabase fails |
+
+### The fallback snapshot
+
+`assets/data/portfolio.json` is generated, not hand-written, and is gitignored.
+`npm run snapshot` writes it from live Supabase data, and it runs automatically
+before every build (`prebuild`), so each deploy ships a snapshot taken at build
+time. If Supabase is down when a visitor arrives, they get slightly stale content
+instead of an empty graph.
+
+The script never fails a build: with no credentials, no network, or a suspiciously
+empty database, it warns, leaves any existing snapshot in place, and exits 0.
+On Vercel and in CI it picks up `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`
+from the environment.
+
+### Diagnosing a stale or empty graph
+
+Nothing about data problems is shown to visitors. Check the console, or:
+
+```javascript
+window.__portfolio
+// { ok: true, dataSource: 'json-fallback', error: '...', nodeCount: 42, ... }
+```
 
 ### To switch data sources:
 
@@ -120,6 +145,20 @@ The portfolio data is stored in Supabase with these tables:
 - **node_footnotes** - Notes and citations
 - **node_connections** - Cross-references between nodes
 
+### Which nodes stay visible in the graph
+
+Two columns on `nodes` control the condensed views, so content edits do not need
+a code change:
+
+| Column | Effect |
+|--------|--------|
+| `show_on_homepage` | Node stays visible on the homepage graph even though it sits below the first level (e.g. ThoughtSpot under Industry Work) |
+| `show_with_parent` | Node stays visible when an ancestor is opened, instead of collapsing away (e.g. IIT Madras and IIM Bangalore under Information) |
+
+Run `backend/add_homepage_flags.sql` once to add and backfill them. Until then
+`Map.js` falls back to its legacy hardcoded UUID lists and warns in the console,
+so the migration and a deploy can happen in either order.
+
 ### Manage Your Data
 
 - **Dashboard:** https://supabase.com/dashboard/project/eeuvtdgwdjerdsumowmx
@@ -133,7 +172,8 @@ The portfolio data is stored in Supabase with these tables:
 → Create the `.env` file with the correct values (see Quick Start)
 
 ### Data not loading
-→ Check browser console (F12 → Console) for detailed logs
+→ Check browser console (F12 → Console) for detailed logs, and `window.__portfolio`
+for the source, error and node count. Data failures are never rendered into the page.
 
 ### Changes not appearing
 → Hard refresh: `Ctrl + Shift + R`

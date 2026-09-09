@@ -10,15 +10,35 @@
 	align-items:center;
 	justify-content:center;
 	@include mobile {
-		// position:relative;
-		width:95vw;
-		left:50%;
-		gap:10px;
-		// left:2.5vw;
-		// transform:none;
-		// top:0vw;
-		// overflow:hidden;
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		left: 0;
+		transform: none;
+		align-items: stretch;
+		justify-content: flex-start;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 200ms ease-in-out;
 	}
+}
+
+// Mobile view-toggle: show content panel in content view, hide in graph view
+body.mobile-content-view .page {
+	@include mobile {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+body.mobile-graph-view .page {
+	@include mobile {
+		opacity: 0;
+		pointer-events: none;
+	}
+}
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+	.page { transition: none; }
 }
 
 
@@ -30,6 +50,9 @@
 		pointer-events:all;
 		@include mobile {
 			width:100%;
+			max-width:420px;
+			height:100%;
+			margin:0 auto;
 		}
 	}
 
@@ -66,6 +89,10 @@
 		height:0;
 		position:relative;
 		background-color:rgba(255,255,255,1);
+		@include mobile {
+			border-radius:0;
+			padding-bottom:env(safe-area-inset-bottom);
+		}
 	}
 
 	
