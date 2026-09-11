@@ -1,0 +1,28 @@
+# CODEOWNERS for roseate8/portfolio-product
+#
+# Every path requires human review by the repository owner; the sensitive
+# paths below (see docs/ai/RISK_MODEL.md) are called out explicitly so that
+# "Require review from Code Owners" in branch protection forces human review
+# of control-plane, dependency, data, and deployment changes.
+
+# Default owner for everything
+* @roseate8
+
+# Control plane and fleet policy
+.github/ @roseate8
+.factory/ @roseate8
+AGENTS.md @roseate8
+agent.md @roseate8
+docs/ai/ @roseate8
+
+# Dependency manifests
+package.json @roseate8
+package-lock.json @roseate8
+
+# Data and schema artifacts
+backend/**/*.sql @roseate8
+supabase/ @roseate8
+
+# Deployment and tool configuration
+vercel.json @roseate8
+.mcp.json @roseate8
