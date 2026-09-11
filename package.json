@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Interactive node-based portfolio website",
   "type": "module",
+  "engines": {
+    "node": ">=22 <25"
+  },
   "scripts": {
     "dev": "vite",
     "snapshot": "node --env-file-if-exists=.env scripts/snapshot-portfolio.mjs",
@@ -31,6 +34,7 @@
     "jsdom": "^30.0.1",
     "sass": "^1.69.5",
     "vite": "^5.0.0",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "yaml": "^2.9.0"
   }
 }
