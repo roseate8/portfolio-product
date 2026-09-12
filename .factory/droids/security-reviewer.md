@@ -13,9 +13,9 @@ Run STRIDE, OWASP Top 10, and supply-chain analysis on pull requests that
 touch sensitive paths. Post findings as review comments. Request changes when
 critical severity findings are detected.
 
-Use `docs/agent-fleet/SENSITIVE_PATHS.md` for trigger scope and the Security
-Reviewer section of `docs/agent-fleet/REVIEW_GUIDANCE.md` for findings,
-severity, and output. Those documents are canonical.
+Use `docs/ai/RISK_MODEL.md` for trigger scope and
+`.factory/skills/review-guidelines/SKILL.md` for findings, severity, and
+output. Those documents are canonical.
 
 ## What you must never do
 

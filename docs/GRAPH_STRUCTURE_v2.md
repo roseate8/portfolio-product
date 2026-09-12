@@ -8,20 +8,20 @@
 
 ## Quick Stats
 
-| Metric | Count |
-|--------|-------|
-| **Total Nodes** | 61 |
-| **Featured (visible in graph)** | 55 |
-| **Hidden (not in graph)** | 6 |
-| **Highlighted (★)** | 15 |
-| **Main Branches** | 6 (5 featured + 1 hidden) |
-| **Cross-Connections** | 8 |
-| **Subsections** | 67 (across 27 nodes) |
-| **External Links** | 25 |
-| **Metadata Entries** | 50 |
-| **Media Files** | 8 |
-| **Node Footnotes** | 4 |
-| **Subsection Footnotes** | 2 |
+| Metric                          | Count                     |
+| ------------------------------- | ------------------------- |
+| **Total Nodes**                 | 61                        |
+| **Featured (visible in graph)** | 55                        |
+| **Hidden (not in graph)**       | 6                         |
+| **Highlighted (★)**             | 15                        |
+| **Main Branches**               | 6 (5 featured + 1 hidden) |
+| **Cross-Connections**           | 8                         |
+| **Subsections**                 | 67 (across 27 nodes)      |
+| **External Links**              | 25                        |
+| **Metadata Entries**            | 50                        |
+| **Media Files**                 | 8                         |
+| **Node Footnotes**              | 4                         |
+| **Subsection Footnotes**        | 2                         |
 
 ---
 
@@ -29,51 +29,51 @@
 
 ### Tables Overview
 
-| Table | Rows | Purpose |
-|-------|------|---------|
-| `nodes` | 61 | Main content nodes (pages/sections) |
-| `node_subsections` | 67 | Structured content sections (Context, What I Built, Outcome, etc.) |
-| `node_metadata` | 50 | Key-value pairs (Technologies, Impact, etc.) |
-| `node_links` | 25 | External URLs (GitHub, LinkedIn, etc.) |
-| `node_media` | 8 | Photography images |
-| `node_connections` | 8 | Cross-links between non-parent-child nodes |
-| `node_footnotes` | 4 | Citation footnotes for ranking claims |
-| `node_education` | 3 | Academic credentials |
-| `subsection_footnotes` | 2 | Footnotes within subsections |
-| `node_recognition` | 0 | Awards (currently empty) |
+| Table                  | Rows | Purpose                                                            |
+| ---------------------- | ---- | ------------------------------------------------------------------ |
+| `nodes`                | 61   | Main content nodes (pages/sections)                                |
+| `node_subsections`     | 67   | Structured content sections (Context, What I Built, Outcome, etc.) |
+| `node_metadata`        | 50   | Key-value pairs (Technologies, Impact, etc.)                       |
+| `node_links`           | 25   | External URLs (GitHub, LinkedIn, etc.)                             |
+| `node_media`           | 8    | Photography images                                                 |
+| `node_connections`     | 8    | Cross-links between non-parent-child nodes                         |
+| `node_footnotes`       | 4    | Citation footnotes for ranking claims                              |
+| `node_education`       | 3    | Academic credentials                                               |
+| `subsection_footnotes` | 2    | Footnotes within subsections                                       |
+| `node_recognition`     | 0    | Awards (currently empty)                                           |
 
 ### Node Types
 
-| Type | Count | Description |
-|------|-------|-------------|
-| `artifact` | 27 | Concrete projects and deliverables |
-| `path` | 20 | Navigation branches and categories |
-| `information` | 7 | Contact and meta information |
-| `research` | 4 | Academic and research work |
-| `initiative` | 2 | Entrepreneurial ventures |
-| *(empty)* | 1 | Root node only |
+| Type          | Count | Description                        |
+| ------------- | ----- | ---------------------------------- |
+| `artifact`    | 27    | Concrete projects and deliverables |
+| `path`        | 20    | Navigation branches and categories |
+| `information` | 7     | Contact and meta information       |
+| `research`    | 4     | Academic and research work         |
+| `initiative`  | 2     | Entrepreneurial ventures           |
+| _(empty)_     | 1     | Root node only                     |
 
 ### Subsection Types
 
 Content is structured using standardized subsection titles:
 
-| Subsection | Count | Description |
-|------------|-------|-------------|
-| Context | 26 | Problem statement or background |
-| Outcome | 13 | Results and impact |
-| What I Built | 12 | Implementation details |
-| Findings | 3 | Research discoveries |
-| What I Learned | 3 | Lessons and takeaways |
-| Architecture | 1 | Technical system design |
-| Abstract | 1 | Academic summary |
-| Approach | 1 | Methodology |
-| Competitive Landscape | 1 | Market analysis |
-| Constraints & Results | 1 | Performance metrics |
-| Design Challenge | 1 | Core problem |
-| Design Philosophy | 1 | Design principles |
-| What I Owned | 1 | Ownership scope |
-| What I'm Building | 1 | Work in progress |
-| Who It's For | 1 | Target audience |
+| Subsection            | Count | Description                     |
+| --------------------- | ----- | ------------------------------- |
+| Context               | 26    | Problem statement or background |
+| Outcome               | 13    | Results and impact              |
+| What I Built          | 12    | Implementation details          |
+| Findings              | 3     | Research discoveries            |
+| What I Learned        | 3     | Lessons and takeaways           |
+| Architecture          | 1     | Technical system design         |
+| Abstract              | 1     | Academic summary                |
+| Approach              | 1     | Methodology                     |
+| Competitive Landscape | 1     | Market analysis                 |
+| Constraints & Results | 1     | Performance metrics             |
+| Design Challenge      | 1     | Core problem                    |
+| Design Philosophy     | 1     | Design principles               |
+| What I Owned          | 1     | Ownership scope                 |
+| What I'm Building     | 1     | Work in progress                |
+| Who It's For          | 1     | Target audience                 |
 
 **Collapsed by Default:** 19 subsections (typically "Outcome" sections)
 
@@ -152,6 +152,7 @@ Rudram Piplad (root-0) [root]
 ```
 
 **Legend:**
+
 - ★ = Highlighted (larger, emphasized in graph)
 - ⊘ = Not featured (hidden from graph visualization)
 - (secondary) = Dimmed styling
@@ -160,14 +161,14 @@ Rudram Piplad (root-0) [root]
 
 ## Branch Statistics
 
-| Branch | Nodes | Featured | Highlighted | Max Depth |
-|--------|-------|----------|-------------|-----------|
-| Product Work | 16 | Yes | 5 | 4 levels |
-| Spatial & Perception | 15 | Yes | 4 | 5 levels |
-| Information | 14 | Yes | 2 | 4 levels |
-| AI Systems | 11 | Yes | 4 | 3 levels |
-| Bets | 3 | Yes | 2 | 2 levels |
-| Trajectory | 1 | **No** | 0 | 1 level |
+| Branch               | Nodes | Featured | Highlighted | Max Depth |
+| -------------------- | ----- | -------- | ----------- | --------- |
+| Product Work         | 16    | Yes      | 5           | 4 levels  |
+| Spatial & Perception | 15    | Yes      | 4           | 5 levels  |
+| Information          | 14    | Yes      | 2           | 4 levels  |
+| AI Systems           | 11    | Yes      | 4           | 3 levels  |
+| Bets                 | 3     | Yes      | 2           | 2 levels  |
+| Trajectory           | 1     | **No**   | 0           | 1 level   |
 
 **Total:** 60 branch nodes + 1 root = 61
 
@@ -179,20 +180,20 @@ Rudram Piplad (root-0) [root]
 
 These are citation footnotes attached directly to nodes for ranking claims:
 
-| Node | Footnote |
-|------|----------|
-| **Education** | IIT Madras has secured the #1 position in the NIRF 2025 overall category for the seventh consecutive year, topping the Engineering category for the 10th year, and ranking #1 in Innovation and SDG categories. Internationally, it jumped to #180 in QS World University Rankings 2026. |
-| **Education** | IIM Bangalore ranks #2 in NIRF 2025 Management, #1 in India for PGP, PGPBA, and EPGP in QS World University Rankings 2026, #47 globally in FT Global MBA 2024, and #2 in Outlook 2025 government MBA colleges. |
-| **IIM Bangalore** | QS World University Rankings 2024. IIM Bangalore ranked #31 globally for MBA programs. |
-| **NCCU Exchange Taipei** | Financial Times Masters in Management (MiM) Global Ranking 2023. NCCU College of Commerce ranked #96 worldwide for its Master in Management programs. |
+| Node                     | Footnote                                                                                                                                                                                                                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Education**            | IIT Madras has secured the #1 position in the NIRF 2025 overall category for the seventh consecutive year, topping the Engineering category for the 10th year, and ranking #1 in Innovation and SDG categories. Internationally, it jumped to #180 in QS World University Rankings 2026. |
+| **Education**            | IIM Bangalore ranks #2 in NIRF 2025 Management, #1 in India for PGP, PGPBA, and EPGP in QS World University Rankings 2026, #47 globally in FT Global MBA 2024, and #2 in Outlook 2025 government MBA colleges.                                                                           |
+| **IIM Bangalore**        | QS World University Rankings 2024. IIM Bangalore ranked #31 globally for MBA programs.                                                                                                                                                                                                   |
+| **NCCU Exchange Taipei** | Financial Times Masters in Management (MiM) Global Ranking 2023. NCCU College of Commerce ranked #96 worldwide for its Master in Management programs.                                                                                                                                    |
 
 ### Subsection Footnotes (2)
 
 These are inline explanatory footnotes within specific subsections:
 
-| Node | Subsection | Footnote |
-|------|------------|----------|
-| **Butler Expense Agent** | What I Built | MCP (Model Context Protocol) connectors enable agents to access external data sources like calendars, emails, and corporate systems in real-time. |
+| Node                     | Subsection   | Footnote                                                                                                                                                                  |
+| ------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Butler Expense Agent** | What I Built | MCP (Model Context Protocol) connectors enable agents to access external data sources like calendars, emails, and corporate systems in real-time.                         |
 | **Butler Expense Agent** | What I Built | Agentic RAG combines retrieval-augmented generation with autonomous agent decision-making, allowing the system to validate expenses against policy documents dynamically. |
 
 ---
@@ -201,51 +202,51 @@ These are inline explanatory footnotes within specific subsections:
 
 These create dotted lines between non-parent-child nodes in the graph:
 
-| Source | Target | Relationship |
-|--------|--------|--------------|
-| AI Ethics Framework → | Eval Framework | Ethics connects to practical evals |
-| Eval Framework → | Boundaryless | Evals used in enterprise search |
-| Foveated Rendering → | XR Prototypes | Research informs prototypes |
-| Haptics Research → | XR Prototypes | Research informs prototypes |
-| Haptics Research → | AED in VR | Haptics used in AED training |
-| Growth & Mobile App → | RAG Pipelines | NLP work connects to RAG |
-| Thesis → | Spatial & Perception | Academic research connects to perception |
-| XR Prototypes → | Foveated Rendering | Prototypes connect back to research |
+| Source                | Target               | Relationship                             |
+| --------------------- | -------------------- | ---------------------------------------- |
+| AI Ethics Framework → | Eval Framework       | Ethics connects to practical evals       |
+| Eval Framework →      | Boundaryless         | Evals used in enterprise search          |
+| Foveated Rendering →  | XR Prototypes        | Research informs prototypes              |
+| Haptics Research →    | XR Prototypes        | Research informs prototypes              |
+| Haptics Research →    | AED in VR            | Haptics used in AED training             |
+| Growth & Mobile App → | RAG Pipelines        | NLP work connects to RAG                 |
+| Thesis →              | Spatial & Perception | Academic research connects to perception |
+| XR Prototypes →       | Foveated Rendering   | Prototypes connect back to research      |
 
 ---
 
 ## Highlighted Nodes (15)
 
-| Node | UUID | Type | Branch |
-|------|------|------|--------|
-| AED in VR | aedvr-1 | artifact | Spatial/XR |
-| Boundaryless / Enterprise Search | tsboundary-1 | artifact | Product/ThoughtSpot |
-| Butler Expense Agent | butler-1 | artifact | AI/Agents |
-| Caval | caval-1 | initiative | Bets |
-| Eval Framework | evalframework-1 | artifact | AI/Safety |
-| EventHive | eventhive-1 | initiative | Bets |
-| Foveated Rendering & Gaze Tracking | foveat-1 | research | Spatial |
-| Global SaaS GTM | gtm-1 | artifact | Product/Consulting |
-| GraphRAG | graphrag-1 | artifact | AI/RAG |
-| MLOps & LLM Intelligence | mlops-1 | artifact | Product/Consulting |
-| NCCU Exchange Taipei | nccu-1 | artifact | Info/Education |
-| NFT Collection | nft-1 | artifact | Spatial/Visual |
-| Photography | photo-1 | artifact | Spatial/Visual |
-| Thesis: Photoacoustic Spectroscopy | thesis-1 | research | Info/Education |
-| Your Orders | orders-1 | artifact | Product/Policybazaar |
+| Node                               | UUID            | Type       | Branch               |
+| ---------------------------------- | --------------- | ---------- | -------------------- |
+| AED in VR                          | aedvr-1         | artifact   | Spatial/XR           |
+| Boundaryless / Enterprise Search   | tsboundary-1    | artifact   | Product/ThoughtSpot  |
+| Butler Expense Agent               | butler-1        | artifact   | AI/Agents            |
+| Caval                              | caval-1         | initiative | Bets                 |
+| Eval Framework                     | evalframework-1 | artifact   | AI/Safety            |
+| EventHive                          | eventhive-1     | initiative | Bets                 |
+| Foveated Rendering & Gaze Tracking | foveat-1        | research   | Spatial              |
+| Global SaaS GTM                    | gtm-1           | artifact   | Product/Consulting   |
+| GraphRAG                           | graphrag-1      | artifact   | AI/RAG               |
+| MLOps & LLM Intelligence           | mlops-1         | artifact   | Product/Consulting   |
+| NCCU Exchange Taipei               | nccu-1          | artifact   | Info/Education       |
+| NFT Collection                     | nft-1           | artifact   | Spatial/Visual       |
+| Photography                        | photo-1         | artifact   | Spatial/Visual       |
+| Thesis: Photoacoustic Spectroscopy | thesis-1        | research   | Info/Education       |
+| Your Orders                        | orders-1        | artifact   | Product/Policybazaar |
 
 ---
 
 ## Hidden Nodes (6)
 
-| Node | UUID | Parent | Reason |
-|------|------|--------|--------|
-| Trajectory | trajectory-path | Root | Empty placeholder branch |
-| LinkedIn | linkedin-1 | Information | Accessible via Contact links |
-| Email | email-1 | Information | Accessible via Contact links |
-| Phone | phone-1 | Information | Accessible via Contact links |
-| Behance | behance-info-1 | Information | Accessible via Contact links |
-| Resume | resume-1 | Information | Direct download link |
+| Node       | UUID            | Parent      | Reason                       |
+| ---------- | --------------- | ----------- | ---------------------------- |
+| Trajectory | trajectory-path | Root        | Empty placeholder branch     |
+| LinkedIn   | linkedin-1      | Information | Accessible via Contact links |
+| Email      | email-1         | Information | Accessible via Contact links |
+| Phone      | phone-1         | Information | Accessible via Contact links |
+| Behance    | behance-info-1  | Information | Accessible via Contact links |
+| Resume     | resume-1        | Information | Direct download link         |
 
 ---
 
@@ -253,35 +254,35 @@ These create dotted lines between non-parent-child nodes in the graph:
 
 27 nodes have structured subsections (67 total):
 
-| Node | Count | Subsections |
-|------|-------|-------------|
-| AI Ethics Framework | 4 | Context, Who It's For, Architecture, Design Philosophy† |
-| Butler Expense Agent | 4 | Context, What I Built, Design Challenge†, Competitive Landscape† |
-| AED in VR | 3 | Context, What I Built, Outcome† |
-| Boundaryless | 3 | Context, What I Owned, Constraints & Results† |
-| Foveated Rendering | 3 | Context, Approach, Findings |
-| Global SaaS GTM | 3 | Context, What I Built, Outcome† |
-| GraphRAG | 3 | Context, What I Built, Outcome† |
-| Growth & Mobile App | 3 | Context, What I Built, Outcome† |
-| Haptics Research | 3 | Context, What I Built, Findings |
-| Navigation & Discovery | 3 | Context, What I Built, Outcome† |
-| PII/DLP Guardrails | 3 | Context, What I'm Building, Outcome† |
-| Thesis | 3 | Context, Abstract, What I Learned† |
-| Web Analytics | 3 | Context, What I Built, Outcome† |
-| Your Orders | 3 | Context, What I Built, Outcome† |
-| 3D Printing VR | 2 | Context, Findings |
-| AI Maturity Model | 2 | Context, Outcome† |
-| AR Mobile Games | 2 | Context, Outcome† |
-| Chunking Strategies | 2 | Context, What I Built |
-| Document Parsing | 2 | Context, What I Built |
-| E-Cell Magazine | 2 | Context, Outcome† |
-| Eval Framework | 2 | Context, Outcome† |
-| Homepage | 2 | Context, What I Built |
-| MLOps & LLM Intelligence | 2 | Context, Outcome† |
-| NFT Collection | 2 | Context, What I Learned† |
-| Behance Work | 1 | Context |
-| NCCU Exchange Taipei | 1 | What I Learned |
-| Object Search | 1 | Context |
+| Node                     | Count | Subsections                                                      |
+| ------------------------ | ----- | ---------------------------------------------------------------- |
+| AI Ethics Framework      | 4     | Context, Who It's For, Architecture, Design Philosophy†          |
+| Butler Expense Agent     | 4     | Context, What I Built, Design Challenge†, Competitive Landscape† |
+| AED in VR                | 3     | Context, What I Built, Outcome†                                  |
+| Boundaryless             | 3     | Context, What I Owned, Constraints & Results†                    |
+| Foveated Rendering       | 3     | Context, Approach, Findings                                      |
+| Global SaaS GTM          | 3     | Context, What I Built, Outcome†                                  |
+| GraphRAG                 | 3     | Context, What I Built, Outcome†                                  |
+| Growth & Mobile App      | 3     | Context, What I Built, Outcome†                                  |
+| Haptics Research         | 3     | Context, What I Built, Findings                                  |
+| Navigation & Discovery   | 3     | Context, What I Built, Outcome†                                  |
+| PII/DLP Guardrails       | 3     | Context, What I'm Building, Outcome†                             |
+| Thesis                   | 3     | Context, Abstract, What I Learned†                               |
+| Web Analytics            | 3     | Context, What I Built, Outcome†                                  |
+| Your Orders              | 3     | Context, What I Built, Outcome†                                  |
+| 3D Printing VR           | 2     | Context, Findings                                                |
+| AI Maturity Model        | 2     | Context, Outcome†                                                |
+| AR Mobile Games          | 2     | Context, Outcome†                                                |
+| Chunking Strategies      | 2     | Context, What I Built                                            |
+| Document Parsing         | 2     | Context, What I Built                                            |
+| E-Cell Magazine          | 2     | Context, Outcome†                                                |
+| Eval Framework           | 2     | Context, Outcome†                                                |
+| Homepage                 | 2     | Context, What I Built                                            |
+| MLOps & LLM Intelligence | 2     | Context, Outcome†                                                |
+| NFT Collection           | 2     | Context, What I Learned†                                         |
+| Behance Work             | 1     | Context                                                          |
+| NCCU Exchange Taipei     | 1     | What I Learned                                                   |
+| Object Search            | 1     | Context                                                          |
 
 **† = Collapsed by default** (19 subsections total)
 
@@ -291,29 +292,29 @@ These create dotted lines between non-parent-child nodes in the graph:
 
 ### GitHub Repositories (10)
 
-| Project | URL |
-|---------|-----|
-| 3D Printing VR | github.com/roseate8/3d-printing-in-vr |
-| AED VR | github.com/roseate8/automated-external-defibrillator-in-vr |
-| AI Ethics | github.com/roseate8/applied-ai-ethics |
-| Butler Expense Agent | github.com/roseate8/butler-travel-expense-agent |
-| Expense Agent UI | github.com/roseate8/expense-agents-ui-lovable |
-| Chunking Experiments | github.com/roseate8/chunking-strategy-experiments |
-| Document Parser | github.com/roseate8/document-parser-for-rag |
-| Doc Parsers | github.com/roseate8/doc-parsers |
-| Foveated Rendering | github.com/roseate8/foveated-rendering-virtual-reality |
-| GraphRAG | github.com/roseate8/graph-rag-trials |
+| Project              | URL                                                        |
+| -------------------- | ---------------------------------------------------------- |
+| 3D Printing VR       | github.com/roseate8/3d-printing-in-vr                      |
+| AED VR               | github.com/roseate8/automated-external-defibrillator-in-vr |
+| AI Ethics            | github.com/roseate8/applied-ai-ethics                      |
+| Butler Expense Agent | github.com/roseate8/butler-travel-expense-agent            |
+| Expense Agent UI     | github.com/roseate8/expense-agents-ui-lovable              |
+| Chunking Experiments | github.com/roseate8/chunking-strategy-experiments          |
+| Document Parser      | github.com/roseate8/document-parser-for-rag                |
+| Doc Parsers          | github.com/roseate8/doc-parsers                            |
+| Foveated Rendering   | github.com/roseate8/foveated-rendering-virtual-reality     |
+| GraphRAG             | github.com/roseate8/graph-rag-trials                       |
 
 ### Social & Professional (6)
 
-| Platform | URL |
-|----------|-----|
+| Platform | URL                           |
+| -------- | ----------------------------- |
 | LinkedIn | linkedin.com/in/rudram-piplad |
-| GitHub | github.com/roseate8 |
-| Behance | behance.net/rudrampiplad |
-| Medium | roseate134.medium.com |
-| OpenSea | opensea.io/rudrampiplad |
-| Email | rudram@alumni.iitm.ac.in |
+| GitHub   | github.com/roseate8           |
+| Behance  | behance.net/rudrampiplad      |
+| Medium   | roseate134.medium.com         |
+| OpenSea  | opensea.io/rudrampiplad       |
+| Email    | rudram@alumni.iitm.ac.in      |
 
 ---
 
@@ -324,6 +325,7 @@ All stored in Supabase Storage bucket: `portfolio-media`
 ### Photography (8 images)
 
 **Taipei (5 images):**
+
 - PB020359.jpg — Taipei cityscape
 - PB050292.jpg — Taipei street photography
 - PB050294.jpg — Taipei urban landscape
@@ -331,33 +333,35 @@ All stored in Supabase Storage bucket: `portfolio-media`
 - PB271470-2.jpg — Taipei night scene
 
 **Bangalore (3 images):**
+
 - _C050177.jpg — Bangalore landscape
 - _C050179-2.jpg — Bangalore cityscape
 - _C050200.jpg — Bangalore urban scene
 
 ### Documents
+
 - Resume: `resume/rudram-piplad-resume.pdf`
 
 ---
 
 ## Metadata Distribution (50 entries)
 
-| Metadata Type | Examples |
-|---------------|----------|
+| Metadata Type      | Examples                                         |
+| ------------------ | ------------------------------------------------ |
 | **Platform/Stack** | Unity, LangGraph, GPT-4, Neo4j, HTC Vive, ARCore |
-| **Impact/Results** | ₹10M saved, 57% GPU reduction, +170% engagement |
-| **Role** | Product Manager, Chief Designer, Co-founder |
-| **Constraints** | <$0.004/query, >0.7 nDCG@5 |
-| **Metrics** | nDCG@5, Recall@10, Latency p95 |
+| **Impact/Results** | ₹10M saved, 57% GPU reduction, +170% engagement  |
+| **Role**           | Product Manager, Chief Designer, Co-founder      |
+| **Constraints**    | <$0.004/query, >0.7 nDCG@5                       |
+| **Metrics**        | nDCG@5, Recall@10, Latency p95                   |
 
 ### Linked Metadata (Navigation)
 
 2 metadata entries link to other nodes:
 
-| From Node | Metadata | Links To |
-|-----------|----------|----------|
+| From Node | Metadata      | Links To  |
+| --------- | ------------- | --------- |
 | Education | IIM Bangalore | iimb-path |
-| Education | IIT Madras | iitm-path |
+| Education | IIT Madras    | iitm-path |
 
 > **Implementation Note:** `linked_node_uuid` is stored in database but NOT passed to frontend. Only `title` and `subtitle` are rendered.
 
@@ -365,11 +369,11 @@ All stored in Supabase Storage bucket: `portfolio-media`
 
 ## Education Entries (3)
 
-| Degree | Institution | Year | Node |
-|--------|-------------|------|------|
-| BTech + MTech | IIT Madras (Biomedical) | 2016-2021 | Information |
-| MBA | IIM Bangalore | 2023-2025 | Information |
-| B.Tech Engineering Design | IIT Madras | 2019 | Engineering Design |
+| Degree                    | Institution             | Year      | Node               |
+| ------------------------- | ----------------------- | --------- | ------------------ |
+| BTech + MTech             | IIT Madras (Biomedical) | 2016-2021 | Information        |
+| MBA                       | IIM Bangalore           | 2023-2025 | Information        |
+| B.Tech Engineering Design | IIT Madras              | 2019      | Engineering Design |
 
 ---
 
@@ -377,12 +381,12 @@ All stored in Supabase Storage bucket: `portfolio-media`
 
 ### Supabase Project
 
-| Setting | Value |
-|---------|-------|
-| Project ID | eeuvtdgwdjerdsumowmx |
-| Region | ap-southeast-1 (Singapore) |
-| Database | PostgreSQL 17.6 |
-| Status | ACTIVE_HEALTHY |
+| Setting    | Value                      |
+| ---------- | -------------------------- |
+| Project ID | eeuvtdgwdjerdsumowmx       |
+| Region     | ap-southeast-1 (Singapore) |
+| Database   | PostgreSQL 17.6            |
+| Status     | ACTIVE_HEALTHY             |
 
 ### Storage
 
@@ -392,6 +396,7 @@ All stored in Supabase Storage bucket: `portfolio-media`
 ### Row Level Security
 
 All tables have RLS enabled:
+
 - **Read:** Public (anonymous) access allowed
 - **Write:** Requires authentication
 
@@ -409,12 +414,12 @@ Supabase DB → backend/supabase.js → Data.js → Map.js / Page.js
 
 ### Key Files
 
-| File | Purpose |
-|------|---------|
-| `backend/supabase.js` | Fetches all 10 tables in parallel, transforms to frontend format |
-| `assets/js/utils/Data.js` | Data layer abstraction, handles Supabase/JSON fallback |
-| `assets/js/components/Map.js` | D3.js graph visualization, renders nodes and connections |
-| `assets/js/components/Page.js` | Page content rendering, tabs, subsections |
+| File                           | Purpose                                                          |
+| ------------------------------ | ---------------------------------------------------------------- |
+| `backend/supabase.js`          | Fetches all 10 tables in parallel, transforms to frontend format |
+| `assets/js/utils/Data.js`      | Data layer abstraction, handles Supabase/JSON fallback           |
+| `assets/js/components/Map.js`  | D3.js graph visualization, renders nodes and connections         |
+| `assets/js/components/Page.js` | Page content rendering, tabs, subsections                        |
 
 ### Tree Building Logic
 
@@ -429,17 +434,20 @@ Located in `backend/supabase.js`:
 ### Footnote Rendering
 
 **Node Footnotes** (Page.js lines 956-963):
+
 - Rendered as numbered list (`<ul class="footnotes">`) below description
 - Each footnote: `<li class="footnote">` with `footnote-id` and `footnote-content` spans
 - Condition: Only shown if `pageData.footnotes.length > 0`
 
 **Subsection Footnotes** (Page.js lines 1002-1010):
+
 - Rendered as numbered list (`<ul class="footnotes subsection-footnotes">`) inside tab content
-- Below the `<div class="subsection-content">` 
+- Below the `<div class="subsection-content">`
 - Each footnote: Same structure as node footnotes
 - Condition: Only shown if `sub.footnotes.length > 0`
 
 **Data Transform** (supabase.js lines 365-381):
+
 - Node footnotes: `footnotesMap[nodeId]` → `{footnote: fn.footnote}`
 - Subsection footnotes: `subsectionFootnotesMap[sub.id]` → array of strings
 
@@ -451,6 +459,7 @@ ${openAllTabs && !sub.isCollapsedByDefault ? 'tab-open' : ''}
 ```
 
 Tab is open only if BOTH:
+
 1. `openAllTabs` is enabled (user preference)
 2. `isCollapsedByDefault` is false
 
@@ -463,11 +472,11 @@ Tab is open only if BOTH:
 SELECT type, COUNT(*) FROM nodes GROUP BY type;
 
 -- Verify all featured nodes have parents (except root)
-SELECT n.uuid, n.title FROM nodes n 
+SELECT n.uuid, n.title FROM nodes n
 WHERE n.is_featured = true AND n.parent_id IS NULL AND n.uuid != 'root-0';
 
 -- Find orphan subsections
-SELECT ns.* FROM node_subsections ns 
+SELECT ns.* FROM node_subsections ns
 LEFT JOIN nodes n ON ns.node_id = n.id WHERE n.id IS NULL;
 
 -- Check all footnotes
@@ -483,18 +492,19 @@ LEFT JOIN nodes n ON nc.target_node_uuid = n.uuid WHERE n.id IS NULL;
 
 ## Changes Since Previous Version
 
-| Item | Previous | Current | Change |
-|------|----------|---------|--------|
-| Total Nodes | 66 | 61 | -5 |
-| Featured | 60 | 55 | -5 |
-| Highlighted | 17 | 15 | -2 |
-| Metadata | 53 | 50 | -3 |
-| Education | 4 | 3 | -1 |
-| Recognition | 4 | 0 | -4 (deleted) |
-| Subsections | 69 | 67 | -2 |
-| **Node Footnotes** | 0 | **4** | **+4 (NEW!)** |
+| Item               | Previous | Current | Change        |
+| ------------------ | -------- | ------- | ------------- |
+| Total Nodes        | 66       | 61      | -5            |
+| Featured           | 60       | 55      | -5            |
+| Highlighted        | 17       | 15      | -2            |
+| Metadata           | 53       | 50      | -3            |
+| Education          | 4        | 3       | -1            |
+| Recognition        | 4        | 0       | -4 (deleted)  |
+| Subsections        | 69       | 67      | -2            |
+| **Node Footnotes** | 0        | **4**   | **+4 (NEW!)** |
 
 ### Deleted Nodes
+
 - `mba-1` (MBA) — removed from IIM Bangalore
 - `nccu-path` (NCCU Taipei path) — removed
 - `techjam-1` (HCL-CA TechJam) — recognition deleted
@@ -502,6 +512,7 @@ LEFT JOIN nodes n ON nc.target_node_uuid = n.uuid WHERE n.id IS NULL;
 - `gatejee-1` (GATE & JEE Ranks) — recognition deleted
 
 ### Added Features
+
 - **Node footnotes:** 4 citation footnotes for academic ranking claims
 - Education node: 2 footnotes (IIT Madras NIRF, IIM Bangalore ranking)
 - IIM Bangalore node: 1 footnote (QS World ranking)
@@ -511,19 +522,19 @@ LEFT JOIN nodes n ON nc.target_node_uuid = n.uuid WHERE n.id IS NULL;
 
 ## Database Verified Counts
 
-| Table | Count |
-|-------|-------|
-| nodes | 61 |
-| node_subsections | 67 |
-| node_metadata | 50 |
-| node_links | 25 |
-| node_connections | 8 |
-| node_media | 8 |
-| node_footnotes | 4 |
-| node_education | 3 |
-| subsection_footnotes | 2 |
-| node_recognition | 0 |
+| Table                | Count |
+| -------------------- | ----- |
+| nodes                | 61    |
+| node_subsections     | 67    |
+| node_metadata        | 50    |
+| node_links           | 25    |
+| node_connections     | 8     |
+| node_media           | 8     |
+| node_footnotes       | 4     |
+| node_education       | 3     |
+| subsection_footnotes | 2     |
+| node_recognition     | 0     |
 
 ---
 
-*This document was generated from live Supabase queries via MCP on January 23, 2026. For real-time accuracy, query the database directly using the Supabase MCP tools.*
+_This document was generated from live Supabase queries via MCP on January 23, 2026. For real-time accuracy, query the database directly using the Supabase MCP tools._

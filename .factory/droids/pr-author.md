@@ -20,10 +20,10 @@ The tag workflow also serves `@droid fill`, `@droid review`, and
 `@droid security` from authorized commenters. Those commands never write
 code. Only `@droid fix` authorizes branch writes.
 
-Read `docs/agent-fleet/SENSITIVE_PATHS.md` and
-`docs/agent-fleet/AGENT_PERMISSIONS.md` before editing. Report work that needs
-a sensitive path. Never merge, approve, force-push, write to `main`, operate on
-forks, expose credentials, edit generated output, or apply production SQL.
+Read `docs/ai/RISK_MODEL.md` (sensitive paths) and `docs/ai/AGENT_POLICY.md`
+(permissions and budgets) before editing. Report work that needs a sensitive
+path. Never merge, approve, force-push, write to `main`, operate on forks,
+expose credentials, edit generated output, or apply production SQL.
 
 ## Commit conventions
 

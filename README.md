@@ -6,6 +6,11 @@ A responsive, node-based portfolio website built with vanilla JavaScript, D3.js,
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- **Node.js 22 or 24** (`engines.node`: `>=22 <25`). CI runs on Node 22; the
+  local development machine runs Node 24, and both are supported.
+
 ### 1. Install Dependencies
 
 ```bash
@@ -51,7 +56,7 @@ portfolio-product/
 │   └── img/                  # Images and icons
 │
 ├── backend/                  # Supabase client and ordered SQL migrations
-├── docs/                     # Policies, runbooks, and agent-fleet docs
+├── docs/                     # Fleet policy (docs/ai), runbooks, and discipline guides
 ├── public/                   # Static files (generated portfolio.json snapshot)
 ├── scripts/                  # Snapshot and repository check scripts
 ├── tests/                    # Vitest suite
@@ -189,7 +194,7 @@ for the source, error and node count. Data failures are never rendered into the 
 
 - **Quick Start:** This file
 - **Agent workflow:** `AGENTS.md`
-- **Agent fleet:** `docs/agent-fleet/README.md`
+- **Fleet policy:** `docs/ai/AGENT_POLICY.md` (see the control plane links below)
 - **Runbooks:** `docs/runbooks/README.md`
 - **Dependency policy:** `docs/DEPENDENCY_POLICY.md`
 - **Migration discipline:** `docs/MIGRATION_DISCIPLINE.md`
@@ -228,6 +233,30 @@ for the source, error and node count. Data failures are never rendered into the 
 - **Build Tool:** Vite
 - **Database:** Supabase (PostgreSQL)
 - **Fonts:** Space Grotesk
+
+---
+
+## 🤖 AI Agent Fleet
+
+This repository is operated with a role-separated Factory AI fleet. A human is
+the only merge authority; agents author draft PRs on `factory/*` branches,
+review, assess risk, and report — they never merge, force-push, or push to
+`main`.
+
+- **Canonical agent instructions:** [`AGENTS.md`](AGENTS.md) (the legacy
+  `agent.md` is retired and redirects there)
+- **Agent policy** (authorized actors, command grammars, permission levels,
+  budgets, fleet check names, writer leases): [`docs/ai/AGENT_POLICY.md`](docs/ai/AGENT_POLICY.md)
+- **Risk model** (LOW/MEDIUM/HIGH rules and sensitive paths): [`docs/ai/RISK_MODEL.md`](docs/ai/RISK_MODEL.md)
+- **Branch protection settings** (human-applied): [`docs/ai/BRANCH-PROTECTION.md`](docs/ai/BRANCH-PROTECTION.md)
+- **Code ownership** (human review for sensitive paths): [`.github/CODEOWNERS`](.github/CODEOWNERS)
+- **Pull request template:** [`.github/pull_request_template.md`](.github/pull_request_template.md)
+- **Review guidelines** (objective bug criteria, P0–P3 severity): [`.factory/skills/review-guidelines/SKILL.md`](.factory/skills/review-guidelines/SKILL.md)
+
+Fleet guardrails are enforced by the policy test harness in
+[`tests/fleet-policy.test.mjs`](tests/fleet-policy.test.mjs), which parses every
+workflow under `.github/workflows/` and the policy documents above
+(`npm test` runs it).
 
 ---
 

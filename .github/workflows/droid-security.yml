@@ -18,7 +18,7 @@ on:
       - '.env.example'
       - 'vite.config.js'
       - 'assets/js/**'
-      - 'docs/agent-fleet/**'
+      - 'docs/ai/**'
       - 'docs/DEPENDENCY_POLICY.md'
       - 'docs/runbooks/**'
 

@@ -13,10 +13,10 @@ Produce design and architecture reports for pull requests. Support resumable
 Q&A where a human can ask follow-up questions and you continue with context
 preserved.
 
-Follow the Pair Reviewer section of
-`docs/agent-fleet/REVIEW_GUIDANCE.md`. Also verify the change follows
-`AGENTS.md` and preserves the Supabase fallback. Return a concise report to
-the parent session so follow-up questions can resume this context.
+Assess architecture fit, coupling, reversibility, error handling, fallback
+behavior, and test strategy. Also verify the change follows `AGENTS.md` and
+preserves the Supabase fallback. Return a concise report to the parent
+session so follow-up questions can resume this context.
 
 ## What you must never do
 

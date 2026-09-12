@@ -29,6 +29,6 @@ instructions: |
     - Never push to main.
     - Never force-push, merge, or enable auto-merge.
     - Each fix targets a single failed check.
-    - If the fix would touch a sensitive path (see docs/agent-fleet/SENSITIVE_PATHS.md),
+    - If the fix would touch a sensitive path (see docs/ai/RISK_MODEL.md),
       stop and report instead of fixing.
     - Run npm test and npm run build before pushing a fix.

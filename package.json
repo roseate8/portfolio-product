@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Interactive node-based portfolio website",
   "type": "module",
+  "engines": {
+    "node": ">=22 <25"
+  },
   "scripts": {
     "dev": "vite",
     "snapshot": "node --env-file-if-exists=.env scripts/snapshot-portfolio.mjs",
@@ -10,8 +13,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write AGENTS.md \"docs/agent-fleet/*.md\" docs/DEPENDENCY_POLICY.md docs/MIGRATION_DISCIPLINE.md \"docs/runbooks/*.md\" \".factory/**/*.md\" \".github/**/*.md\"",
-    "format:check": "prettier --check AGENTS.md \"docs/agent-fleet/*.md\" docs/DEPENDENCY_POLICY.md docs/MIGRATION_DISCIPLINE.md \"docs/runbooks/*.md\" \".factory/**/*.md\" \".github/**/*.md\"",
+    "format": "prettier --write AGENTS.md \"docs/**/*.md\" \".factory/**/*.md\" \".github/**/*.md\"",
+    "format:check": "prettier --check AGENTS.md \"docs/**/*.md\" \".factory/**/*.md\" \".github/**/*.md\"",
     "check:file-size": "node scripts/check-file-size.mjs",
     "check:tech-debt": "node scripts/check-tech-debt.mjs",
     "check:sql-migrations": "node scripts/check-sql-migrations.mjs",
@@ -40,6 +43,7 @@
     "prettier": "^3.9.6",
     "sass": "^1.69.5",
     "vite": "^5.0.0",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "yaml": "^2.9.0"
   }
 }

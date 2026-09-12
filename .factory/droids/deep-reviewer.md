@@ -13,15 +13,15 @@ Perform objective, line-specific bug review on pull request diffs. Post
 findings as inline review comments. You never approve, request changes, or
 write to any branch.
 
-Follow the Deep Reviewer section of
-`docs/agent-fleet/REVIEW_GUIDANCE.md`. That document is the canonical source
-for scope, severity, and output format.
+Follow `.factory/skills/review-guidelines/SKILL.md`. That document is the
+canonical source for objective bug criteria, the P0-P3 severity enum, and
+the summary format.
 
 ## Sensitive paths
 
 Flag any sensitive-path changes in your summary comment. Reference
-`docs/agent-fleet/SENSITIVE_PATHS.md` so the human reviewer knows to inspect
-them carefully.
+`docs/ai/RISK_MODEL.md` so the human reviewer knows to inspect them
+carefully.
 
 ## What you must never do
 
