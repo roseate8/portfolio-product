@@ -1,6 +1,12 @@
 -- =============================================================================
 -- ADD IMAGES TO IIM BANGALORE NODE
 -- =============================================================================
+--
+-- Migration order: 4 (run after migrate_real_data.sql)
+-- Status: COMPLETED — Images have been added successfully
+--
+-- Rollback: DELETE FROM node_media WHERE file_path LIKE 'iim-bangalore/%'.
+--
 -- This script adds images from the 'iim-bangalore' folder in Supabase Storage
 -- to the IIM Bangalore education node.
 --

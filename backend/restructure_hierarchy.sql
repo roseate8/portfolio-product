@@ -1,6 +1,23 @@
 -- =============================================================================
 -- RESTRUCTURE HIERARCHY MIGRATION
 -- =============================================================================
+--
+-- ⚠️  DATA-MODIFYING: This migration updates parent_id, uri, and sort_order
+--     on existing nodes. Do NOT run automatically.
+--
+-- Migration order: 2 (run AFTER migrate_real_data.sql)
+-- Status: COMPLETED — this migration has been applied to production.
+--
+-- Rollback: Restore the previous parent_id, uri, and sort_order values from
+--   a backup taken before this migration. There is no in-script rollback.
+--
+-- This script reorganizes the portfolio hierarchy:
+-- 1. Move Footnotes under Information branch
+-- 2. Rename "Product Work" to "Industry Work" and move Consulting under it
+-- 3. Move Visual Practice under Spatial & Perception
+--
+-- Run this AFTER migrate_real_data.sql
+-- =============================================================================
 -- 
 -- This script reorganizes the portfolio hierarchy:
 -- 1. Move Footnotes under Information branch

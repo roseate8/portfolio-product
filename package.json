@@ -14,7 +14,8 @@
     "format:check": "prettier --check AGENTS.md docs/**/*.md",
     "check:file-size": "node scripts/check-file-size.mjs",
     "check:tech-debt": "node scripts/check-tech-debt.mjs",
-    "validate": "npm run lint && npm run format:check && npm run check:file-size && npm run check:tech-debt && npm test",
+    "check:sql-migrations": "node scripts/check-sql-migrations.mjs",
+    "validate": "npm run lint && npm run format:check && npm run check:file-size && npm run check:tech-debt && npm run check:sql-migrations && npm test",
     "test": "vitest run",
     "test:watch": "vitest"
   },

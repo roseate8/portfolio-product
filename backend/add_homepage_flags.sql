@@ -2,6 +2,13 @@
 -- ADD GRAPH VISIBILITY FLAGS
 -- =============================================================================
 --
+-- Migration order: 5 (run after restructure_hierarchy.sql)
+-- Status: COMPLETED — this migration has been applied to production.
+--
+-- Rollback: ALTER TABLE nodes DROP COLUMN show_on_homepage, DROP COLUMN show_with_parent.
+--   Safe to run in either order relative to a deploy (Map.js falls back to legacy lists).
+--
+--
 -- Until now the graph decided which deep nodes stay visible using two hardcoded
 -- UUID lists inside assets/js/components/Map.js. Renaming or replacing a node in
 -- Supabase silently dropped it from the homepage, with nothing in the database

@@ -20,14 +20,15 @@ or real credentials.
 ## Commands
 
 ```bash
-npm run dev          # Start Vite on http://localhost:3000
-npm test             # Run the Vitest suite
-npm run lint         # Run ESLint syntax and quality checks
-npm run format:check # Check tracked project documentation formatting
-npm run check:file-size  # Check tracked file size and line-count limits
-npm run check:tech-debt  # Require issue-linked TODO/FIXME/HACK markers
-npm run validate      # Run all fast local checks
-npm run build        # Generate the data snapshot and build dist/
+npm run dev               # Start Vite on http://localhost:3000
+npm test                  # Run the Vitest suite
+npm run lint              # Run ESLint syntax and quality checks
+npm run format:check      # Check tracked project documentation formatting
+npm run check:file-size   # Check tracked file size and line-count limits
+npm run check:tech-debt   # Require issue-linked TODO/FIXME/HACK markers
+npm run check:sql-migrations # Check SQL migration guard comments
+npm run validate          # Run all fast local checks (includes all above + tests)
+npm run build             # Generate the data snapshot and build dist/
 ```
 
 `npm run snapshot` refreshes `assets/data/portfolio.json` from Supabase. The
@@ -57,7 +58,9 @@ console. Do not render Supabase errors into the page.
   `assets/js/utils/`.
 - Match the existing JavaScript style and keep changes focused.
 - Treat `backend/*.sql` as ordered migrations. Document a migration's purpose
-  and backfill behavior in the SQL comments and README when needed.
+  and backfill behavior in the SQL comments and `docs/MIGRATION_DISCIPLINE.md`
+  when needed. Every migration must have a guard header with order, status, and
+  rollback information. Run `npm run check:sql-migrations` to verify.
 - Keep Supabase reads resilient. Preserve the runtime JSON fallback and the
   build-time snapshot behavior.
 - Use `VITE_` environment variables for browser-exposed configuration.

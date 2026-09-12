@@ -190,18 +190,15 @@ for the source, error and node count. Data failures are never rendered into the 
 ## 📚 Documentation
 
 - **Quick Start:** This file
-- **✅ Migration Completed:** `backend/MIGRATION_COMPLETED.md` ← Data migration summary
-- **Data Status:** `DATA_SITUATION.md` ← Current status (all real data loaded)
-- **Backend Integration:** `backend/supabase.js`
-- **Migration Script:** `backend/migrate_real_data.sql`
-- **Database Setup:** `docs/SUPABASE_SETUP_GUIDE.md`
-- **Implementation:** `docs/SUPABASE_IMPLEMENTATION_SUMMARY.md`
 - **Agent workflow:** `AGENTS.md`
 - **Agent fleet:** `docs/agent-fleet/README.md`
 - **Runbooks:** `docs/runbooks/README.md`
 - **Dependency policy:** `docs/DEPENDENCY_POLICY.md`
-- **Photography with Storage:** `docs/PHOTOGRAPHY_SUPABASE_STORAGE.md`
-- **Information Node Reorganization:** `docs/INFORMATION_NODE_REORGANIZATION.md`
+- **Migration discipline:** `docs/MIGRATION_DISCIPLINE.md`
+- **Supabase setup:** `SUPABASE_SETUP.md`
+- **Backend Integration:** `backend/supabase.js`
+- **Migration files:** `backend/*.sql` (see migration discipline for order and status)
+- **Readiness sample:** `docs/readiness-report-sample/SKILL.md`
 
 ---
 
