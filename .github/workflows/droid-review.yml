@@ -1,0 +1,43 @@
+name: Droid Deep Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: droid-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    # Fleet runs skip cleanly until the FACTORY_API_KEY secret is configured,
+    # matching how CI tolerates missing Supabase credentials.
+    env:
+      FACTORY_KEY_PRESENT: ${{ secrets.FACTORY_API_KEY != '' }}
+    steps:
+      - name: Skip when FACTORY_API_KEY is not configured
+        if: env.FACTORY_KEY_PRESENT != 'true'
+        run: echo "FACTORY_API_KEY secret not set; skipping fleet run."
+
+      - uses: actions/checkout@v4
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        with:
+          fetch-depth: 0
+
+      - uses: Factory-AI/droid-action@v7
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        with:
+          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          automatic_review: true
+          review_depth: deep
+          include_suggestions: true

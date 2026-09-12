@@ -26,7 +26,7 @@ is verified by the user.
 4. **Block force pushes**: ON. **Block deletions**: ON.
 5. **Do not enable auto-merge for fleet PRs.** If repository auto-merge is
    enabled at all, no fleet identity may set it; a human alone decides and
-     clicks merge.
+   clicks merge.
 6. **Require conversation resolution before merging**: ON (recommended, so
    review findings must be dispositioned).
 

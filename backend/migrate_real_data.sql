@@ -1,6 +1,25 @@
 -- =============================================================================
 -- COMPLETE DATA MIGRATION FOR RUDRAM PIPLAD PORTFOLIO
 -- =============================================================================
+--
+-- ⚠️  DESTRUCTIVE: This migration deletes ALL existing data before inserting.
+--     Do NOT run automatically. Run manually in the Supabase SQL Editor only.
+--
+-- Migration order: 1 (run first, before restructure_hierarchy.sql)
+-- Status: COMPLETED — this migration has been applied to production.
+--
+-- Rollback: Restore from a Supabase backup taken before this migration.
+--   There is no in-script rollback; the DELETE operations are not reversible.
+--
+-- This script contains ALL the real portfolio data that needs to be in Supabase.
+-- Run this in the Supabase SQL Editor in this exact order:
+--
+-- 1. First run the CLEANUP section (deletes sample data)
+-- 2. Then run ALL sections in order from ROOT to FOOTNOTES
+--
+-- ⚠️ IMPORTANT: Run this as ONE complete script, or section by section in order.
+-- Do NOT skip sections or run out of order!
+-- =============================================================================
 -- 
 -- This script contains ALL the real portfolio data that needs to be in Supabase.
 -- Run this in the Supabase SQL Editor in this exact order:

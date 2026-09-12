@@ -1,0 +1,8 @@
+# Ignore Factory runtime files. Keep droid definitions tracked.
+cache/
+artifacts/
+bin/
+settings.json
+background-processes.json
+background-tasks.json
+*.bak

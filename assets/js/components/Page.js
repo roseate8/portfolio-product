@@ -5,6 +5,8 @@ import Router from '../utils/Router.js';
 import Data from '../utils/Data.js';
 import Slider from './Slider.js';
 import Analytics, { EXPANSION_TYPES, CLICK_TYPES } from '../utils/Analytics.js';
+import { sanitizeHTML, sanitizeURL, sanitizeText } from '../utils/sanitize.js';
+import { showMobileContent } from '../utils/MobileView.js';
 
 const Page = {
 
@@ -61,18 +63,19 @@ const Page = {
 		// Use description if available, otherwise use summary
 		let content = '';
 		if (rootNode.description) {
-			// Use the full description HTML
-			content = rootNode.description;
+			// Use the full description HTML, sanitized to prevent XSS
+			content = sanitizeHTML(rootNode.description);
 		} else if (rootNode.summary) {
-			content = `<p>${rootNode.summary}</p>`;
+			content = `<p>${sanitizeText(rootNode.summary)}</p>`;
 		} else {
 			content = '<p>Welcome to my portfolio.</p>';
 		}
 
 		// Add link to Information node if it exists
 		const infoNode = rootNode.children?.find(child => child.type === 'information' || child.uuid === 'info-path');
-		const infoLink = infoNode 
-			? ` <a href="${infoNode.uri}" data-uri="${infoNode.uri}" class="index-link">more about me →</a>`
+		const safeInfoUri = infoNode ? sanitizeURL(infoNode.uri) : '';
+		const infoLink = infoNode && safeInfoUri
+			? ` <a href="${safeInfoUri}" data-uri="${safeInfoUri}" class="index-link">more about me →</a>`
 			: '';
 
 		indexTabContent.innerHTML = `${content}<p>${infoLink}</p>`;
@@ -101,13 +104,14 @@ const Page = {
 		let html = '';
 		betsPath.children.forEach(initiative => {
 			const dateRange = this.formatDateRange(initiative.originDate, initiative.endDate);
+			const safeUri = sanitizeURL(initiative.uri);
 			html += `
 				<li>
-					<a href="${initiative.uri}" class="index-link" data-uri="${initiative.uri}">
+					<a href="${safeUri}" class="index-link" data-uri="${safeUri}">
 						<span class="item-id"><span></span></span>
 						<span class="item-title">
-							<h2>${initiative.title}</h2>
-							<h3>${initiative.summary || ''}</h3>
+							<h2>${sanitizeText(initiative.title)}</h2>
+							<h3>${sanitizeText(initiative.summary || '')}</h3>
 							${dateRange ? `<h4>${dateRange}</h4>` : ''}
 						</span>
 					</a>
@@ -182,13 +186,14 @@ const Page = {
 		let html = '';
 		workPositions.forEach(position => {
 			const dateRange = this.formatDateRange(position.originDate, position.endDate);
+			const safeUri = sanitizeURL(position.uri);
 			html += `
 				<li>
-					<a href="${position.uri}" class="index-link" data-uri="${position.uri}">
+					<a href="${safeUri}" class="index-link" data-uri="${safeUri}">
 						<span class="item-id"><span></span></span>
 						<span class="item-title">
-							<h2>${position.title}</h2>
-							<h3>${position.summary}</h3>
+							<h2>${sanitizeText(position.title)}</h2>
+							<h3>${sanitizeText(position.summary)}</h3>
 							${dateRange ? `<h4>${dateRange}</h4>` : ''}
 						</span>
 					</a>
@@ -226,13 +231,14 @@ const Page = {
 		// Build list
 		let html = '';
 		mainPaths.forEach(path => {
+			const safeUri = sanitizeURL(path.uri);
 			html += `
 				<li>
-					<a href="${path.uri}" class="index-link" data-uri="${path.uri}">
+					<a href="${safeUri}" class="index-link" data-uri="${safeUri}">
 						<span class="item-id"><span></span></span>
 						<span class="item-title">
-							<h2>${path.title}</h2>
-							<h3>${path.summary || ''}</h3>
+							<h2>${sanitizeText(path.title)}</h2>
+							<h3>${sanitizeText(path.summary || '')}</h3>
 						</span>
 					</a>
 				</li>
@@ -278,10 +284,10 @@ const Page = {
 
 	extractFirstSentence(htmlContent) {
 		if (!htmlContent) return '';
-		
-		// Create temp element to extract text
+
+		// Create temp element to extract text (sanitized for defense-in-depth)
 		const tempDiv = document.createElement('div');
-		tempDiv.innerHTML = htmlContent;
+		tempDiv.innerHTML = sanitizeHTML(htmlContent);
 		const text = tempDiv.textContent || tempDiv.innerText || '';
 		
 		// Get first sentence (up to first period, question mark, or exclamation)
@@ -478,15 +484,7 @@ const Page = {
 
 
 	openPage(uri) {
-		if (window.innerWidth <= 768) {
-			document.body.classList.add('mobile-content-view');
-			document.body.classList.remove('mobile-graph-view');
-			const toggle = document.querySelector('.mobile-view-toggle');
-			if (toggle) {
-				toggle.setAttribute('aria-label', 'Show graph view');
-				toggle.setAttribute('aria-pressed', 'false');
-			}
-		}
+		showMobileContent();
 		if(uri === 'nodes/information'){
 			Page.buildPage(uri, true);
 			document.body.classList.add('page-open', 'information-open');
@@ -508,15 +506,7 @@ const Page = {
 		Page.pageOpen = false;
 
         document.body.classList.remove('page-open', 'information-open');
-		if (window.innerWidth <= 768) {
-			document.body.classList.add('mobile-content-view');
-			document.body.classList.remove('mobile-graph-view');
-			const toggle = document.querySelector('.mobile-view-toggle');
-			if (toggle) {
-				toggle.setAttribute('aria-label', 'Show graph view');
-				toggle.setAttribute('aria-pressed', 'false');
-			}
-		}
+		showMobileContent();
 
 		const page = document.querySelector('.page');
 		const existingMedia = page.querySelectorAll('.media-item');
@@ -608,7 +598,7 @@ const Page = {
 					video.muted = true;
 
 					video.classList.add('media-video');
-					video.src = item.url;
+					video.src = sanitizeURL(item.url);
 
 					// Add event listener for video loadeddata
 					video.addEventListener('canplay', () => {
@@ -642,7 +632,7 @@ const Page = {
 					const button = document.createElement('a');
 					button.textContent = item.externalLinkText && item.externalLinkText.trim() !== '' ? item.externalLinkText : 'view link';
 					button.target = '_blank';
-					button.href = item.externalLink;
+					button.href = sanitizeURL(item.externalLink);
 					mediaItem.appendChild(button);
 				}
 	
@@ -854,17 +844,17 @@ const Page = {
 						<button class="close-page"></button>
 					</div>
 					<div class="page-main-title">
-						${pageData.type === 'information' ? `<h2>Rudram Piplad</h2>` : `<h2>${pageData.title}</h2>`}
-						${pageData.type === 'information' ? `<h3>${pageData.overview}</h3>` : `<h3>${pageData.summary}</h3>`}
-						${pageData.role ? `<h4 class="role">${pageData.role}</h4>` : ``}
-						${pageData.type === 'information' ? `<h4 class="email"><a href="mailto:${pageData.email}">${pageData.email}</a></h4>` : ''}
-						${pageData.type === 'information' && pageData.telephone ? `<h4 class="telephone"><a href="tel:${pageData.telephone}">${pageData.telephone}</a></h4>` : ''}
+						${pageData.type === 'information' ? `<h2>Rudram Piplad</h2>` : `<h2>${sanitizeText(pageData.title)}</h2>`}
+						${pageData.type === 'information' ? `<h3>${sanitizeText(pageData.overview)}</h3>` : `<h3>${sanitizeText(pageData.summary)}</h3>`}
+						${pageData.role ? `<h4 class="role">${sanitizeText(pageData.role)}</h4>` : ``}
+						${pageData.type === 'information' && pageData.email ? `<h4 class="email"><a href="${sanitizeURL('mailto:' + pageData.email)}">${sanitizeText(pageData.email)}</a></h4>` : ''}
+						${pageData.type === 'information' && pageData.telephone ? `<h4 class="telephone"><a href="${sanitizeURL('tel:' + pageData.telephone)}">${sanitizeText(pageData.telephone)}</a></h4>` : ''}
 						${pageData.type === 'information' && pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks
 							.filter(link => ['LinkedIn', 'GitHub', 'Behance', 'Medium'].includes(link.title))
-							.map(link => `<h4 class="social-link" data-platform="${link.title}"><a href="${link.link}" target="_blank">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>`).join('') : ''}
+							.map(link => { const safeHref = sanitizeURL(link.link); return safeHref ? `<h4 class="social-link" data-platform="${sanitizeText(link.title)}"><a href="${safeHref}" target="_blank">${sanitizeText(link.title)}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>` : ''; }).join('') : ''}
 						${pageData.type !== 'path' && pageData.type !== 'information' ? `<h4>${Page.formatDateRange(pageData.originDate, pageData.endDate)}</h4>` : ''}
 						${pageData.uuid === 'eventhive-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? pageData.externalLinks
-							.map(link => `<h4 class="social-link" data-platform="${link.title}"><a href="${link.link}" target="_blank">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>`).join('') : ''}
+							.map(link => { const safeHref = sanitizeURL(link.link); return safeHref ? `<h4 class="social-link" data-platform="${sanitizeText(link.title)}"><a href="${safeHref}" target="_blank">${sanitizeText(link.title)}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></a></h4>` : ''; }).join('') : ''}
 					</div>
 				</div>
 			`;
@@ -925,14 +915,16 @@ const Page = {
 							.filter(link => !link.link.startsWith('mailto:') && !link.link.startsWith('tel:'))
 							.map(link => {
 								try {
-									const url = new URL(link.link);
-									const displayUrl = url.hostname.replace(/^www\./, '') + url.pathname.replace(/\/$/, '');
+									const safeHref = sanitizeURL(link.link);
+									if (!safeHref) return '';
+									const url = new URL(safeHref);
+									const displayUrl = sanitizeText(url.hostname.replace(/^www\./, '') + url.pathname.replace(/\/$/, ''));
 									return `
 										<li>
-											<a href="${link.link}" class="external-link contact-social-link" target="_blank">
+											<a href="${safeHref}" class="external-link contact-social-link" target="_blank">
 												<span class="item-id"></span>
 												<span class="item-title">
-													<span class="link-title-arrow">${link.title}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></span>
+													<span class="link-title-arrow">${sanitizeText(link.title)}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="arrow-icon"><path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z"/></svg></span>
 													<span class="link-address">${displayUrl}</span>
 												</span>
 											</a>
@@ -959,13 +951,14 @@ const Page = {
 							<ul class="list">
 								${pageData.children.map(child => {
 									const dateRange = this.formatDateRange(child.originDate, child.endDate);
+									const safeUri = sanitizeURL(child.uri);
 									return `
 										<li>
-											<a href="${child.uri}" class="index-link" data-uri="${child.uri}">
+											<a href="${safeUri}" class="index-link" data-uri="${safeUri}">
 												<span class="item-id"></span>
 												<span class="item-title">
-													<h2>${child.title}</h2>
-													<h3>${child.summary || ''}</h3>
+													<h2>${sanitizeText(child.title)}</h2>
+													<h3>${sanitizeText(child.summary || '')}</h3>
 													${dateRange ? `<h4>${dateRange}</h4>` : ''}
 												</span>
 											</a>
@@ -986,8 +979,8 @@ const Page = {
 
 		let contentInnerHTML = `
 				<div class="page-content-inner">
-					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(pageData.description, pageData.externalLinks) : (pageData.extendedDescription && pageData.uuid !== 'bets-path' ? addReadMoreButton(pageData.description) : pageData.description)}` : ''}
-					${pageData.extendedDescription && pageData.uuid !== 'bets-path' ? `<div class="extended-description">${pageData.extendedDescription}</div>` : ''}
+					${pageData.description ? `${pageData.uuid === 'contact-1' && pageData.externalLinks && pageData.externalLinks.length > 0 ? addContactLinksButton(sanitizeHTML(pageData.description), pageData.externalLinks) : (pageData.extendedDescription && pageData.uuid !== 'bets-path' ? addReadMoreButton(sanitizeHTML(pageData.description)) : sanitizeHTML(pageData.description))}` : ''}
+					${pageData.extendedDescription && pageData.uuid !== 'bets-path' ? `<div class="extended-description">${sanitizeHTML(pageData.extendedDescription)}</div>` : ''}
 					${contactSubsectionHTML}
 					${resumePdfHTML}
 					${contactLinksExpandedHTML}
@@ -995,7 +988,8 @@ const Page = {
 						<div class="footnotes-section">
 							<ul class="footnotes">
 								${pageData.footnotes.map((footnote, index) => {
-									const content = footnote.footnote || '';
+									const rawContent = footnote.footnote || '';
+									const content = sanitizeHTML(rawContent);
 									// Wrap content in <p> if it's not already HTML
 									const wrappedContent = content.includes('<p>') || content.includes('<div>') || content.includes('<h') 
 										? content 
@@ -1041,15 +1035,15 @@ const Page = {
 							<div class="page-tab tab-subsection ${openAllTabs && !sub.isCollapsedByDefault ? 'tab-open' : ''}">
 								<div class="tab-titles">
 									<span class="tab-icon icon-meta"></span>
-									<span class="tab-title">${sub.title}</span>
+									<span class="tab-title">${sanitizeText(sub.title)}</span>
 									<span class="tab-indicator"></span>
 								</div>
 								<div class="tab-content">
-									<div class="subsection-content">${sub.content}</div>
+									<div class="subsection-content">${sanitizeHTML(sub.content)}</div>
 									${sub.footnotes && sub.footnotes.length > 0 ? `
 										<ul class="footnotes subsection-footnotes">
 											${sub.footnotes.map((fn, i) => {
-												const content = fn || '';
+												const content = sanitizeHTML(fn || '');
 												// Wrap content in <p> if it's not already HTML
 												const wrappedContent = content.includes('<p>') || content.includes('<div>') || content.includes('<h') 
 													? content 
@@ -1078,15 +1072,16 @@ const Page = {
 								<ul class="list">
 									${pageData.education.map(entry => {
 										const hasLink = entry.linkUri && entry.linkUri.trim() !== '';
-										if (hasLink) {
+										const safeUri = hasLink ? sanitizeURL(entry.linkUri) : '';
+										if (hasLink && safeUri) {
 											return `
 												<li>
-													<a href="${entry.linkUri}" class="index-link" data-uri="${entry.linkUri}">
+													<a href="${safeUri}" class="index-link" data-uri="${safeUri}">
 														<span class="item-id"></span>
 														<span class="item-title education-item">
-															<span class="edu-institute">${entry.institute}</span>
-															<span class="edu-major">${entry.major}</span>
-															<span class="edu-degree">${entry.degree}<br>${entry.dates}</span>
+															<span class="edu-institute">${sanitizeText(entry.institute)}</span>
+															<span class="edu-major">${sanitizeText(entry.major)}</span>
+															<span class="edu-degree">${sanitizeText(entry.degree)}<br>${sanitizeText(entry.dates)}</span>
 														</span>
 													</a>
 												</li>
@@ -1096,9 +1091,9 @@ const Page = {
 												<li>
 													<span class="item-id"></span>
 													<span class="item-title education-item">
-														<span class="edu-institute">${entry.institute}</span>
-														<span class="edu-major">${entry.major}</span>
-														<span class="edu-degree">${entry.degree}<br>${entry.dates}</span>
+														<span class="edu-institute">${sanitizeText(entry.institute)}</span>
+														<span class="edu-major">${sanitizeText(entry.major)}</span>
+														<span class="edu-degree">${sanitizeText(entry.degree)}<br>${sanitizeText(entry.dates)}</span>
 													</span>
 												</li>
 											`;
@@ -1122,9 +1117,9 @@ const Page = {
 											<li>
 												<span class="item-id"></span>
 												<span class="item-title">
-													<h2>${entry.title}</h2>
-													<h3>${entry.subtitle}</h3>
-													<h3>${entry.year}</h3>
+													<h2>${sanitizeText(entry.title)}</h2>
+													<h3>${sanitizeText(entry.subtitle)}</h3>
+													<h3>${sanitizeText(entry.year)}</h3>
 												</span>
 											</li>
 										`;
@@ -1143,15 +1138,18 @@ const Page = {
 							<div class="tab-content">
 								<ul class="list">
 									${pageData.externalLinks.map(link => {
+										// Validate the URL before using it
+										const safeHref = sanitizeURL(link.link);
+										if (!safeHref) return '';
 										// Extract the main domain from the link
-										const url = new URL(link.link);
-										const mainDomain = url.hostname.replace(/^www\./, ''); // Remove 'www.' if present
+										const url = new URL(safeHref);
+										const mainDomain = sanitizeText(url.hostname.replace(/^www\./, '')); // Remove 'www.' if present
 										return `
 											<li>
-												<a href="${link.link}" class="external-link" target="_blank">
+												<a href="${safeHref}" class="external-link" target="_blank">
 													<span class="item-id"></span>
 													<span class="item-title">
-														<span>${link.title}</span>
+														<span>${sanitizeText(link.title)}</span>
 														<span class="link-address">${mainDomain}</span>
 													</span>
 												</a>
@@ -1288,16 +1286,6 @@ const Page = {
 		this.breadcrumbCache = {};
 	},
 
-	// Escape HTML to prevent XSS
-	escapeHtml(text) {
-		if (!text) return '';
-		return String(text)
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;');
-	},
-
 	// Get breadcrumb path with caching
 	getBreadcrumbPath(targetUri) {
 		if (!Map.data || !targetUri) return [];
@@ -1363,8 +1351,8 @@ const Page = {
 			const parent = path[path.length - 2];
 			return `
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="${this.escapeHtml(parent.uri)}" data-uri="${this.escapeHtml(parent.uri)}" class="breadcrumb-link">
-						← ${this.escapeHtml(parent.title)}
+					<a href="${sanitizeText(sanitizeURL(parent.uri))}" data-uri="${sanitizeText(sanitizeURL(parent.uri))}" class="breadcrumb-link">
+						← ${sanitizeText(parent.title)}
 					</a>
 				</nav>
 				${this.buildSchemaMarkup(path)}
@@ -1376,8 +1364,8 @@ const Page = {
 		
 		const items = displayPath.map((item, i) => {
 			const isLast = i === displayPath.length - 1;
-			const escaped = this.escapeHtml(item.title);
-			const escapedUri = this.escapeHtml(item.uri);
+			const escaped = sanitizeText(item.title);
+			const escapedUri = sanitizeText(sanitizeURL(item.uri));
 			
 			if (item.isEllipsis) {
 				return `<span class="breadcrumb-ellipsis">…</span>`;
@@ -1416,7 +1404,9 @@ const Page = {
 			"itemListElement": items
 		};
 		
-		return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+		// Prevent database text from closing the script element.
+		const json = JSON.stringify(schema).replace(/</g, '\\u003c');
+		return `<script type="application/ld+json">${json}</script>`;
 	},
 
 	// Setup keyboard navigation for breadcrumbs

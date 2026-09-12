@@ -1,0 +1,54 @@
+name: Droid CI Steward
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+
+# actions: write is required to rerun failed jobs; the steward token cannot
+# retry with read-only actions scope.
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+  id-token: write
+
+concurrency:
+  group: droid-ci-steward-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  ci-steward:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    env:
+      FACTORY_KEY_PRESENT: ${{ secrets.FACTORY_API_KEY != '' }}
+    steps:
+      - name: Skip when FACTORY_API_KEY is not configured
+        if: env.FACTORY_KEY_PRESENT != 'true'
+        run: echo "FACTORY_API_KEY secret not set; skipping fleet run."
+
+      - uses: actions/checkout@v4
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Verify failing revision
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
+
+      - uses: Factory-AI/droid-action@v7
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        with:
+          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          ci_steward: true
+          auto_fix: true
+          retry_mode: smart
+          max_retries: '1'
+          max_fix_attempts: '2'
+          max_runs_per_pr: '3'
+          config_path: .github/droid-ci.yml

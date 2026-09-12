@@ -69,6 +69,10 @@ describe('fetchPortfolioTree', () => {
         expect(await fetchTree({}, { errorOn: 'nodes' })).toBeNull();
     });
 
+    it('returns null when a related-table query errors', async () => {
+        expect(await fetchTree({}, { errorOn: 'node_media' })).toBeNull();
+    });
+
     it('returns null when there is no root node', async () => {
         const rows = makeRows();
         rows.nodes = rows.nodes.filter(node => node.parent_id !== null);

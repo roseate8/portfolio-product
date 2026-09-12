@@ -73,7 +73,7 @@ if (!hasCredentials) {
         'You need to create a .env file in your project root with:\n\n' +
         'VITE_SUPABASE_URL=https://your-project.supabase.co\n' +
         'VITE_SUPABASE_ANON_KEY=your-anon-key-here\n\n' +
-        'See README_SUPABASE.md for details.'
+        'See .env.example for details.'
     );
 }
 
@@ -195,9 +195,23 @@ export async function fetchPortfolioTree(client, storageBase = supabaseUrl) {
         // =====================================================================
         // CHECK FOR ERRORS
         // =====================================================================
-        if (nodesResult.error) {
-            log('❌', 'Error fetching nodes:', nodesResult.error.message);
-            throw nodesResult.error;
+        const results = [
+            ['nodes', nodesResult],
+            ['node_links', linksResult],
+            ['node_metadata', metadataResult],
+            ['node_media', mediaResult],
+            ['node_education', educationResult],
+            ['node_recognition', recognitionResult],
+            ['node_footnotes', footnotesResult],
+            ['node_connections', connectionsResult],
+            ['node_subsections', subsectionsResult],
+            ['subsection_footnotes', subsectionFootnotesResult],
+        ];
+        const failedQuery = results.find(([, result]) => result.error);
+        if (failedQuery) {
+            const [table, result] = failedQuery;
+            log('❌', `Error fetching ${table}:`, result.error.message);
+            throw result.error;
         }
 
         // =====================================================================

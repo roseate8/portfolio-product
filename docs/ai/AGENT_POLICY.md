@@ -20,29 +20,29 @@ single definition of authorization; every command trigger cites this section.
 
 ### Per-command minimum permission levels
 
-| Command | Effect | Minimum permission |
-|---------|--------|--------------------|
-| `@droid fix` | Authorizes a bounded repair push to the PR branch | `write` |
-| `@droid accept <finding-id>` | Accepts one review finding, authorizing one bounded fix | `write` |
-| `@droid design [question]` | Read-only design report / follow-up Q&A | `triage` |
-| `@droid security-review` | Read-only security review | `triage` |
-| `@droid qa` | Read-only QA validation run | `triage` |
-| `@droid plan-supabase <summary>` | Read-only Supabase change plan (never applied) | `triage` |
-| `workflow_dispatch` of fleet workflows | Per workflow `docs/ai/` documentation | GitHub-enforced (`write` to dispatch) |
+| Command                                | Effect                                                  | Minimum permission                    |
+| -------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| `@droid fix`                           | Authorizes a bounded repair push to the PR branch       | `write`                               |
+| `@droid accept <finding-id>`           | Accepts one review finding, authorizing one bounded fix | `write`                               |
+| `@droid design [question]`             | Read-only design report / follow-up Q&A                 | `triage`                              |
+| `@droid security-review`               | Read-only security review                               | `triage`                              |
+| `@droid qa`                            | Read-only QA validation run                             | `triage`                              |
+| `@droid plan-supabase <summary>`       | Read-only Supabase change plan (never applied)          | `triage`                              |
+| `workflow_dispatch` of fleet workflows | Per workflow `docs/ai/` documentation                   | GitHub-enforced (`write` to dispatch) |
 
 ## 2. Trigger command grammars
 
 A command is recognized **only** as a newly created, top-level PR or issue
 conversation comment whose trimmed body matches the grammar exactly:
 
-| Command | Grammar (regular expression, trimmed body) |
-|---------|--------------------------------------------|
-| Fix | `^@droid fix( [A-Za-z0-9._/-]+)?$` (optional finding-id or check-name) |
-| Accept finding | `^@droid accept [A-Za-z0-9._/-]+$` |
-| Design / follow-up | `^@droid design( .+)?$` |
-| Security review | `^@droid security-review$` |
-| QA | `^@droid qa$` |
-| Supabase plan | `^@droid plan-supabase .+$` |
+| Command            | Grammar (regular expression, trimmed body)                             |
+| ------------------ | ---------------------------------------------------------------------- |
+| Fix                | `^@droid fix( [A-Za-z0-9._/-]+)?$` (optional finding-id or check-name) |
+| Accept finding     | `^@droid accept [A-Za-z0-9._/-]+$`                                     |
+| Design / follow-up | `^@droid design( .+)?$`                                                |
+| Security review    | `^@droid security-review$`                                             |
+| QA                 | `^@droid qa$`                                                          |
+| Supabase plan      | `^@droid plan-supabase .+$`                                            |
 
 Common rules for all commands:
 
@@ -56,14 +56,14 @@ Common rules for all commands:
 
 ## 3. Budgets (concrete, per policy revision)
 
-| Budget | Limit | Scope key |
-|--------|-------|-----------|
-| CI Steward automatic rerun retry budget | 2 reruns | repository + PR + head SHA + check fingerprint |
-| Auto-fix expert attempt limit | 3 attempts | work item (one finding or one failed check) |
-| Auto-fix expert commit limit | 2 commits | work item |
-| Combined cycle limit | 5 automatic actions (reruns + expert invocations + expert commits) | PR + head SHA + cause lineage |
-| PR Author repair attempts per operation | 3 attempts, at most 3 commits | accepted request |
-| Agent workflow job timeout | 15 minutes | per job |
+| Budget                                  | Limit                                                              | Scope key                                      |
+| --------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------- |
+| CI Steward automatic rerun retry budget | 2 reruns                                                           | repository + PR + head SHA + check fingerprint |
+| Auto-fix expert attempt limit           | 3 attempts                                                         | work item (one finding or one failed check)    |
+| Auto-fix expert commit limit            | 2 commits                                                          | work item                                      |
+| Combined cycle limit                    | 5 automatic actions (reruns + expert invocations + expert commits) | PR + head SHA + cause lineage                  |
+| PR Author repair attempts per operation | 3 attempts, at most 3 commits                                      | accepted request                               |
+| Agent workflow job timeout              | 15 minutes                                                         | per job                                        |
 
 Attempts are reserved atomically before execution; redeliveries and restarts
 never reset a budget. Exhaustion produces a named terminal result

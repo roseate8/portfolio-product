@@ -1,7 +1,12 @@
 -- =============================================================================
 -- ADD PROFILE PHOTO COLUMN
 -- =============================================================================
--- 
+--
+-- Migration order: 3 (run after restructure_hierarchy.sql)
+-- Status: COMPLETED — column has been added to production.
+--
+-- Rollback: ALTER TABLE nodes DROP COLUMN profile_photo.
+--
 -- This migration adds a profile_photo column to the nodes table
 -- to store the URI/path of a profile photo for any node (especially root)
 --

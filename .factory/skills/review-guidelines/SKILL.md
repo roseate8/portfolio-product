@@ -31,12 +31,12 @@ A reportable finding must be ALL of:
 
 ## Severity enum
 
-| Severity | Meaning | Examples |
-|----------|---------|----------|
-| P0 | Security breach, credential exposure, data loss, or production outage | Injection into a database-backed render path; leaked secret; destructive SQL reachable |
-| P1 | Broken core flow or clear regression of shipped behavior | Graph fails to load with live Supabase; navigation dead-ends; build breaks |
-| P2 | Incorrect behavior on a bounded path, or a missing policy-required test | Edge-case misrendering; fallback path broken; behavior change shipped without its regression test |
-| P3 | Minor objective defect with limited, well-understood impact | Wrong value in a rarely-hit state; misleading diagnostic output |
+| Severity | Meaning                                                                 | Examples                                                                                          |
+| -------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| P0       | Security breach, credential exposure, data loss, or production outage   | Injection into a database-backed render path; leaked secret; destructive SQL reachable            |
+| P1       | Broken core flow or clear regression of shipped behavior                | Graph fails to load with live Supabase; navigation dead-ends; build breaks                        |
+| P2       | Incorrect behavior on a bounded path, or a missing policy-required test | Edge-case misrendering; fallback path broken; behavior change shipped without its regression test |
+| P3       | Minor objective defect with limited, well-understood impact             | Wrong value in a rarely-hit state; misleading diagnostic output                                   |
 
 ## Finding format
 
@@ -45,6 +45,31 @@ condition, impact, correction boundary, and regression scenario. Findings
 carry a stable finding ID derived from defect semantics (normalized
 file/symbol/defect-kind), independent of SHA, so reruns deduplicate and
 resolutions track across commits.
+
+## Summary comment format
+
+The summary comment shows only sections that have real content. Omit a
+section entirely when it is empty. Never write filler such as "none
+identified". Keep the whole comment under 200 words.
+
+Sections, in this order:
+
+1. **Behavior**: what the change does, one or two sentences.
+2. **Tests and evidence**: which tests cover the change. Mention this section
+   only when changed logic lacks coverage, and say exactly what is missing.
+3. **Risk**: LOW, MEDIUM, or HIGH per `docs/ai/RISK_MODEL.md`, with the single
+   deciding rule.
+4. **Rollback**: one sentence, only when rollback needs more than reverting
+   the merge.
+
+## Project-specific checks
+
+- `innerHTML` or URL interpolation in `assets/js/**` that bypasses
+  `assets/js/utils/sanitize.js`.
+- Changes that weaken the Supabase to JSON snapshot fallback in
+  `assets/js/utils/Data.js`.
+- Secrets, service-role keys, or `.env` values anywhere in the diff.
+- New agent automation that duplicates an existing workflow trigger.
 
 ## Scope discipline
 

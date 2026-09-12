@@ -199,8 +199,8 @@ const Map = {
                 
                 const { data, uniqueDates, dataSource } = result;
                 
-                if (!data) {
-                    console.error('❌ No data in result!');
+                if (!data || dataSource === 'none') {
+                    console.warn('[Map] No portfolio data available. Details: window.__portfolio');
                     return;
                 }
                 
@@ -241,6 +241,13 @@ const Map = {
 
 
     setupMap(initialUri, sliderValue) {
+        if (this.uniqueDates.length === 0) {
+            document.querySelector('.slider-container')?.remove();
+            this.renderMap(this.data);
+            Page.closePage();
+            return;
+        }
+
         Slider.initialize(this, sliderValue); // Initialize the slider with a reference to the Map object
 
         // set currentNode to null so nothing is highlighted, even going back

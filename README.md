@@ -17,6 +17,8 @@ A responsive, node-based portfolio website built with vanilla JavaScript, D3.js,
 npm install
 ```
 
+For reproducible CI-style setup, agents should use `npm ci`.
+
 ### 2. Set Up Environment
 
 Create a `.env` file in the project root:
@@ -24,6 +26,7 @@ Create a `.env` file in the project root:
 ```env
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
+VITE_POSTHOG_API_KEY=
 ```
 
 ### 3. Run Development Server
@@ -47,18 +50,16 @@ portfolio-product/
 │   ├── js/                   # JavaScript files
 │   │   ├── app.js            # Main entry point
 │   │   ├── components/       # UI components (Map, Page, Slider)
-│   │   └── utils/            # Utilities (Data, Router)
+│   │   └── utils/            # Utilities (Data, Router, sanitize)
 │   ├── css/                  # Stylesheets (SCSS)
-│   ├── data/                 # Static data (portfolio.json)
 │   ├── fonts/                # Web fonts
 │   └── img/                  # Images and icons
 │
-├── backend/                  # Backend code
-│   └── supabase.js           # Supabase database integration
-│
-├── docs/                     # Documentation
-│   ├── SUPABASE_SETUP_GUIDE.md
-│   └── SUPABASE_IMPLEMENTATION_SUMMARY.md
+├── backend/                  # Supabase client and ordered SQL migrations
+├── docs/                     # Fleet policy (docs/ai), runbooks, and discipline guides
+├── public/                   # Static files (generated portfolio.json snapshot)
+├── scripts/                  # Snapshot and repository check scripts
+├── tests/                    # Vitest suite
 │
 ├── index.html                # Main HTML file
 ├── vite.config.js            # Vite configuration
@@ -76,9 +77,12 @@ portfolio-product/
 | `npm run dev` | Start development server (http://localhost:3000) |
 | `npm run build` | Build for production (output in `dist/`) |
 | `npm run preview` | Preview production build locally |
-| `npm run snapshot` | Refresh `assets/data/portfolio.json` from Supabase (runs automatically before every build) |
+| `npm run snapshot` | Refresh `public/assets/data/portfolio.json` from Supabase (runs automatically before every build) |
 | `npm test` | Run the test suite |
 | `npm run test:watch` | Re-run tests on change |
+| `npm run lint` | Run ESLint checks |
+| `npm run format:check` | Check documentation formatting |
+| `npm run validate` | Run all fast local validation checks |
 
 ---
 
@@ -93,7 +97,7 @@ The portfolio supports two data sources:
 
 ### The fallback snapshot
 
-`assets/data/portfolio.json` is generated, not hand-written, and is gitignored.
+`public/assets/data/portfolio.json` is generated, not hand-written, and is gitignored.
 `npm run snapshot` writes it from live Supabase data, and it runs automatically
 before every build (`prebuild`), so each deploy ships a snapshot taken at build
 time. If Supabase is down when a visitor arrives, they get slightly stale content
@@ -132,6 +136,7 @@ const CONFIG = {
 |----------|-------------|
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anonymous/public key |
+| `VITE_POSTHOG_API_KEY` | Optional PostHog project key; leave blank to disable analytics |
 
 These are safe to use in frontend code - they only allow reading public data.
 
@@ -188,14 +193,13 @@ for the source, error and node count. Data failures are never rendered into the 
 ## 📚 Documentation
 
 - **Quick Start:** This file
-- **✅ Migration Completed:** `backend/MIGRATION_COMPLETED.md` ← Data migration summary
-- **Data Status:** `DATA_SITUATION.md` ← Current status (all real data loaded)
+- **Agent workflow:** `AGENTS.md`
+- **Fleet policy:** `docs/ai/AGENT_POLICY.md` (see the control plane links below)
+- **Runbooks:** `docs/runbooks/README.md`
+- **Dependency policy:** `docs/DEPENDENCY_POLICY.md`
+- **Migration discipline:** `docs/MIGRATION_DISCIPLINE.md`
 - **Backend Integration:** `backend/supabase.js`
-- **Migration Script:** `backend/migrate_real_data.sql`
-- **Database Setup:** `docs/SUPABASE_SETUP_GUIDE.md`
-- **Implementation:** `docs/SUPABASE_IMPLEMENTATION_SUMMARY.md`
-- **Photography with Storage:** `docs/PHOTOGRAPHY_SUPABASE_STORAGE.md`
-- **Information Node Reorganization:** `docs/INFORMATION_NODE_REORGANIZATION.md`
+- **Migration files:** `backend/*.sql` (see migration discipline for order and status)
 
 ---
 

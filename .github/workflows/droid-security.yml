@@ -1,0 +1,60 @@
+name: Droid Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.github/**'
+      - '.factory/**'
+      - 'AGENTS.md'
+      - 'agent.md'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'skills-lock.json'
+      - 'backend/**/*.sql'
+      - 'backend/supabase.js'
+      - '.mcp.json'
+      - 'vercel.json'
+      - '.env.example'
+      - 'vite.config.js'
+      - 'assets/js/**'
+      - 'docs/ai/**'
+      - 'docs/DEPENDENCY_POLICY.md'
+      - 'docs/runbooks/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: droid-security-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  security-review:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      FACTORY_KEY_PRESENT: ${{ secrets.FACTORY_API_KEY != '' }}
+    steps:
+      - name: Skip when FACTORY_API_KEY is not configured
+        if: env.FACTORY_KEY_PRESENT != 'true'
+        run: echo "FACTORY_API_KEY secret not set; skipping fleet run."
+
+      - uses: actions/checkout@v4
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        with:
+          fetch-depth: 0
+
+      - uses: Factory-AI/droid-action@v7
+        if: env.FACTORY_KEY_PRESENT == 'true'
+        with:
+          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          automatic_security_review: true
+          security_severity_threshold: medium
+          security_block_on_critical: true
+          security_block_on_high: false

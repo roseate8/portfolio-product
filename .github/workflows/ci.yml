@@ -19,7 +19,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npm test
+      - run: npm run validate
 
       # Runs the snapshot first (prebuild), so the built site ships with a
       # portfolio.json fallback taken from live data. Without the secrets the
@@ -32,5 +32,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: portfolio-snapshot
-          path: assets/data/portfolio.json
+          path: public/assets/data/portfolio.json
           if-no-files-found: ignore
