@@ -39,5 +39,8 @@ jobs:
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
           automatic_review: true
-          review_depth: deep
+          # Routine reviews run on Gemini 3.7 Flash (3.8 is not in the model
+          # catalog yet); 3.6 Flash is the fallback when 3.7 is unavailable.
+          review_model: gemini-3.7-flash
+          settings: '{"modelFallbacks": {"gemini-3.7-flash": "gemini-3.6-flash"}}'
           include_suggestions: true

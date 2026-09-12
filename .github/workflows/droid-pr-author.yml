@@ -60,6 +60,11 @@ jobs:
         if: env.FACTORY_KEY_PRESENT == 'true'
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          # Fill and fix runs go through Factory Router (Auto Model). Grok 4.6,
+          # whose default reasoning effort is high, is the fallback.
+          fill_model: auto
+          droid_args: '--model auto'
+          settings: '{"modelFallbacks": {"auto": "grok-4.6"}}'
           label_trigger: 'droid'
           use_sticky_comment: true
           track_progress: true

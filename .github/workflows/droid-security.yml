@@ -54,6 +54,8 @@ jobs:
         if: env.FACTORY_KEY_PRESENT == 'true'
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          # Security review stays on the action's deep preset: it runs only on
+          # sensitive-path PRs, and critical findings justify the stronger model.
           automatic_security_review: true
           security_severity_threshold: medium
           security_block_on_critical: true

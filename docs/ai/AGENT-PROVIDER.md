@@ -122,12 +122,21 @@ From `AGENT_POLICY.md` section 7 and `AGENTS.md`:
 
 ## 3. Reference adapter: current Factory implementation
 
-| Workflow file          | Trigger                              | Mode inputs                                                                                                 | Notes                                                              |
-| ---------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `droid-review.yml`     | PR open/update                       | `automatic_review`, `review_depth`, `include_suggestions`                                                   | Deep review on every non-draft PR                                  |
-| `droid-security.yml`   | PR open/update, sensitive paths only | `automatic_security_review`, `security_severity_threshold`, `security_block_on_critical`                    | Path filter lives in the workflow, not the action                  |
-| `droid-ci-steward.yml` | `workflow_run` on CI                 | `ci_steward`, `auto_fix`, `retry_mode`, `max_retries`, `max_fix_attempts`, `max_runs_per_pr`, `config_path` | Config file `.github/droid-ci.yml` is read from the default branch |
-| `droid-pr-author.yml`  | Comments, labels                     | `trigger_phrase` (default `@droid`), `label_trigger`, `use_sticky_comment`, `track_progress`                | Workflow `name:` is "Droid Tag"                                    |
+| Workflow file          | Trigger                              | Mode inputs                                                                                                                  | Notes                                                              |
+| ---------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `droid-review.yml`     | PR open/update                       | `automatic_review`, `review_model`, `include_suggestions`                                                                    | Review on every non-draft PR, pinned to Gemini 3.7 Flash           |
+| `droid-security.yml`   | PR open/update, sensitive paths only | `automatic_security_review`, `security_severity_threshold`, `security_block_on_critical`                                     | Path filter lives in the workflow, not the action                  |
+| `droid-ci-steward.yml` | `workflow_run` on CI                 | `ci_steward`, `auto_fix`, `retry_mode`, `max_retries`, `max_fix_attempts`, `max_runs_per_pr`, `config_path`, `steward_model` | Config file `.github/droid-ci.yml` is read from the default branch |
+| `droid-pr-author.yml`  | Comments, labels                     | `trigger_phrase` (default `@droid`), `label_trigger`, `use_sticky_comment`, `track_progress`, `fill_model`                   | Workflow `name:` is "Droid Tag"                                    |
+
+Model policy for the current adapter:
+
+- PR review: `gemini-3.7-flash` (Gemini 3.8 Flash is not in the model catalog
+  yet), falling back to `gemini-3.6-flash` via `modelFallbacks`.
+- Exec flows (fill, fix, steward): `auto`, the Factory Router, falling back
+  to `grok-4.6`, whose default reasoning effort is high.
+- Security review: the action's deep preset. It runs only on sensitive-path
+  PRs, so critical findings keep the stronger model.
 
 Action inputs are defined in `Factory-AI/droid-action@v7`'s `action.yml`.
 Treat that file as the authoritative list; inputs not present there are

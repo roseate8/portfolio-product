@@ -46,6 +46,10 @@ jobs:
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
           ci_steward: true
+          # Exec runs go through Factory Router (Auto Model). Grok 4.6, whose
+          # default reasoning effort is high, is the fallback.
+          steward_model: auto
+          settings: '{"modelFallbacks": {"auto": "grok-4.6"}}'
           auto_fix: true
           retry_mode: smart
           max_retries: '1'
