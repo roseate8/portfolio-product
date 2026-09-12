@@ -1,19 +1,4 @@
-/**
- * =============================================================================
- * SANITIZE MODULE
- * =============================================================================
- *
- * Sanitizes database-backed content before rendering to prevent XSS and
- * unsafe URL injection. The portfolio renders text, HTML, and URLs that come
- * from Supabase; this module ensures none of them can execute scripts or
- * redirect to dangerous protocols.
- *
- * Three functions:
- * - sanitizeHTML(html)  — strips dangerous elements/attributes from HTML
- * - sanitizeURL(url)    — validates URL protocol, returns "" if unsafe
- * - sanitizeText(text)  — escapes HTML entities for plain-text fields
- * =============================================================================
- */
+/** Sanitizers for database-backed HTML, URLs, and plain text. */
 
 // Tags that are removed entirely (element and content).
 const DANGEROUS_TAGS = new Set([
@@ -25,7 +10,6 @@ const DANGEROUS_TAGS = new Set([
     'input',
     'textarea',
     'select',
-    'button[form]', // form-associated buttons are handled separately
     'meta',
     'link',
     'base',
@@ -42,6 +26,8 @@ const SAFE_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 // Relative URL patterns that are safe (internal routing, anchors).
 const SAFE_RELATIVE = /^(\/|nodes\/|#|\?)/;
+// URL values are also interpolated into quoted HTML attributes.
+const UNSAFE_URL_CHARS = /["'<>`\u0000-\u001F\u007F]/;
 
 /**
  * Validates a URL string. Returns the URL if safe, or an empty string if the
@@ -54,6 +40,7 @@ export function sanitizeURL(url) {
     if (!url || typeof url !== 'string') return '';
 
     const trimmed = url.trim();
+    if (UNSAFE_URL_CHARS.test(trimmed)) return '';
 
     // Allow relative URLs (internal routing, anchors, query params)
     if (SAFE_RELATIVE.test(trimmed)) return trimmed;
@@ -67,9 +54,8 @@ export function sanitizeURL(url) {
         // Block javascript:, data:, vbscript:, etc.
         return '';
     } catch {
-        // If URL parsing fails, it might be a relative path or malformed.
-        // Only allow it if it matches the safe relative pattern.
-        if (SAFE_RELATIVE.test(trimmed)) return trimmed;
+        // Safe relative forms already returned above, so treat parse
+        // failures as unsafe.
         return '';
     }
 }
@@ -119,14 +105,13 @@ export function sanitizeHTML(html) {
  * @param {Node} node - The node to clean
  */
 function cleanNode(node) {
-    // Iterate backwards so removals don't skip siblings
-    const children = [...node.childNodes];
-    for (const child of children) {
+    // Save the next sibling before cleaning because cleaning may remove child.
+    for (let child = node.firstChild; child;) {
+        const next = child.nextSibling;
         if (child.nodeType === Node.ELEMENT_NODE) {
             cleanElement(child);
         }
-        // Text nodes and comments are safe (script content in a text node
-        // cannot execute).
+        child = next;
     }
 }
 
@@ -146,8 +131,8 @@ function cleanElement(el) {
     }
 
     // Remove dangerous attributes
-    const attrs = [...el.attributes];
-    for (const attr of attrs) {
+    for (let index = el.attributes.length - 1; index >= 0; index--) {
+        const attr = el.attributes[index];
         const name = attr.name.toLowerCase();
 
         // Strip event handlers and other dangerous attributes

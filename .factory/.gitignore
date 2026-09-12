@@ -1,4 +1,4 @@
-# Ignore Factory runtime files (not droids or memory)
+# Ignore Factory runtime files. Keep droid definitions tracked.
 cache/
 artifacts/
 bin/

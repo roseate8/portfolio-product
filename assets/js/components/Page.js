@@ -6,6 +6,7 @@ import Data from '../utils/Data.js';
 import Slider from './Slider.js';
 import Analytics, { EXPANSION_TYPES, CLICK_TYPES } from '../utils/Analytics.js';
 import { sanitizeHTML, sanitizeURL, sanitizeText } from '../utils/sanitize.js';
+import { showMobileContent } from '../utils/MobileView.js';
 
 const Page = {
 
@@ -483,15 +484,7 @@ const Page = {
 
 
 	openPage(uri) {
-		if (window.innerWidth <= 768) {
-			document.body.classList.add('mobile-content-view');
-			document.body.classList.remove('mobile-graph-view');
-			const toggle = document.querySelector('.mobile-view-toggle');
-			if (toggle) {
-				toggle.setAttribute('aria-label', 'Show graph view');
-				toggle.setAttribute('aria-pressed', 'false');
-			}
-		}
+		showMobileContent();
 		if(uri === 'nodes/information'){
 			Page.buildPage(uri, true);
 			document.body.classList.add('page-open', 'information-open');
@@ -513,15 +506,7 @@ const Page = {
 		Page.pageOpen = false;
 
         document.body.classList.remove('page-open', 'information-open');
-		if (window.innerWidth <= 768) {
-			document.body.classList.add('mobile-content-view');
-			document.body.classList.remove('mobile-graph-view');
-			const toggle = document.querySelector('.mobile-view-toggle');
-			if (toggle) {
-				toggle.setAttribute('aria-label', 'Show graph view');
-				toggle.setAttribute('aria-pressed', 'false');
-			}
-		}
+		showMobileContent();
 
 		const page = document.querySelector('.page');
 		const existingMedia = page.querySelectorAll('.media-item');
@@ -1301,16 +1286,6 @@ const Page = {
 		this.breadcrumbCache = {};
 	},
 
-	// Escape HTML to prevent XSS
-	escapeHtml(text) {
-		if (!text) return '';
-		return String(text)
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;');
-	},
-
 	// Get breadcrumb path with caching
 	getBreadcrumbPath(targetUri) {
 		if (!Map.data || !targetUri) return [];
@@ -1376,8 +1351,8 @@ const Page = {
 			const parent = path[path.length - 2];
 			return `
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="${this.escapeHtml(parent.uri)}" data-uri="${this.escapeHtml(parent.uri)}" class="breadcrumb-link">
-						← ${this.escapeHtml(parent.title)}
+					<a href="${sanitizeText(sanitizeURL(parent.uri))}" data-uri="${sanitizeText(sanitizeURL(parent.uri))}" class="breadcrumb-link">
+						← ${sanitizeText(parent.title)}
 					</a>
 				</nav>
 				${this.buildSchemaMarkup(path)}
@@ -1389,8 +1364,8 @@ const Page = {
 		
 		const items = displayPath.map((item, i) => {
 			const isLast = i === displayPath.length - 1;
-			const escaped = this.escapeHtml(item.title);
-			const escapedUri = this.escapeHtml(item.uri);
+			const escaped = sanitizeText(item.title);
+			const escapedUri = sanitizeText(sanitizeURL(item.uri));
 			
 			if (item.isEllipsis) {
 				return `<span class="breadcrumb-ellipsis">…</span>`;
@@ -1429,7 +1404,9 @@ const Page = {
 			"itemListElement": items
 		};
 		
-		return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+		// Prevent database text from closing the script element.
+		const json = JSON.stringify(schema).replace(/</g, '\\u003c');
+		return `<script type="application/ld+json">${json}</script>`;
 	},
 
 	// Setup keyboard navigation for breadcrumbs

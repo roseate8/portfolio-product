@@ -12,6 +12,7 @@ import Router from './utils/Router.js';
 import { mountGradient } from './gradient-mount.jsx';
 import Analytics from './utils/Analytics.js';
 import Map from './components/Map.js';
+import { initializeMobileView } from './utils/MobileView.js';
 
 /**
  * Application initialization
@@ -30,33 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('[Analytics] No VITE_POSTHOG_API_KEY found - analytics disabled');
   }
   
-  // 2. Initialize the mobile view state before routing so the first paint is content-first.
+  // Initialize responsive navigation before routing so mobile starts content-first.
   const isMobile = window.innerWidth <= 768;
-  const mobileToggle = document.createElement('button');
-  mobileToggle.type = 'button';
-  mobileToggle.className = 'mobile-view-toggle';
-  mobileToggle.setAttribute('aria-label', 'Show graph view');
-  mobileToggle.innerHTML = '<span class="mobile-view-toggle__graph" aria-hidden="true">◌</span><span class="mobile-view-toggle__list" aria-hidden="true">≡</span>';
-  document.body.appendChild(mobileToggle);
-
-  const setMobileView = (view) => {
-    const graphView = view === 'graph';
-    document.body.classList.toggle('mobile-graph-view', graphView);
-    document.body.classList.toggle('mobile-content-view', !graphView);
-    mobileToggle.setAttribute('aria-label', graphView ? 'Show content view' : 'Show graph view');
-    mobileToggle.setAttribute('aria-pressed', String(graphView));
-    if (graphView && Map.resizeMap) {
+  initializeMobileView({
+    onGraphShown: () => {
       Map.resizeMap();
       if (Map.simulation) Map.simulation.alpha(0.3).restart();
-    }
-  };
-
-  if (isMobile) {
-    document.body.classList.add('mobile-content-view');
-    mobileToggle.addEventListener('click', () => {
-      setMobileView(document.body.classList.contains('mobile-graph-view') ? 'content' : 'graph');
-    });
-  }
+    },
+  });
 
   // 3. Mount gradient background (or grey if disabled in config)
   if (!isMobile) mountGradient();

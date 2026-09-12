@@ -31,10 +31,7 @@ See [docs/agent-fleet/RISK_TAXONOMY.md](../docs/agent-fleet/RISK_TAXONOMY.md) fo
 
 ## Agent involvement
 
-- [ ] No agent was involved in creating this PR
-- [ ] An agent created or assisted with this PR (describe below)
-
-<!-- If an agent was involved, note which agent and what it did. -->
+<!-- Note any agent involvement and the checks a human performed afterward. -->
 
 ## Notes for reviewers
 

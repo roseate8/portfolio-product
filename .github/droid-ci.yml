@@ -13,7 +13,7 @@ max_retries: 1
 max_fix_attempts: 2
 
 # Lifetime maximum CI Steward invocations per pull request
-max_runs_per_pr: 10
+max_runs_per_pr: 3
 
 # Allow CI Steward to push fixes directly to the pull request branch
 auto_fix: true
@@ -24,7 +24,7 @@ instructions: |
 
   Project commands:
     npm ci          # Install dependencies
-    npm test        # Run Vitest (33 tests expected)
+    npm test        # Run the Vitest suite
     npm run lint    # Run ESLint
     npm run build   # Run production build (includes snapshot prebuild)
 

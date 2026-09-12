@@ -2,15 +2,7 @@
   "mcpServers": {
     "supabase": {
       "type": "sse",
-      "url": "https://mcp.supabase.com/mcp?project_ref=eeuvtdgwdjerdsumowmx"
-    },
-    "code-graph-context": {
-      "command": "cgc",
-      "args": [
-        "mcp",
-        "start"
-      ],
-      "env": {}
+      "url": "https://mcp.supabase.com/mcp?project_ref=eeuvtdgwdjerdsumowmx&read_only=true&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching"
     }
   }
 }

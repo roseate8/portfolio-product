@@ -34,6 +34,12 @@ describe('sanitizeURL', () => {
         expect(sanitizeURL('vbscript:msgbox(1)')).toBe('');
     });
 
+    it('blocks characters that can escape an HTML attribute', () => {
+        expect(sanitizeURL('https://example.com/" autofocus onfocus="alert(1)')).toBe('');
+        expect(sanitizeURL("https://example.com/' onclick='alert(1)")).toBe('');
+        expect(sanitizeURL('https://example.com/<script>')).toBe('');
+    });
+
     it('returns empty string for null, undefined, or non-strings', () => {
         expect(sanitizeURL(null)).toBe('');
         expect(sanitizeURL(undefined)).toBe('');

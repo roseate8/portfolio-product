@@ -125,7 +125,7 @@ export const Data = {
         if (CONFIG.useSupabase) {
             // OPTION 1: Try Supabase first
             log('📡', 'Attempting to fetch from Supabase...');
-            
+
             try {
                 data = await fetchPortfolioData();
                 
@@ -155,7 +155,7 @@ export const Data = {
         // =====================================================================
         // CHECK IF WE GOT DATA
         // =====================================================================
-        
+
         if (!data) {
             log('❌', 'FATAL: No data available from any source!');
             console.error(
@@ -168,7 +168,7 @@ export const Data = {
                 '- Does /assets/data/portfolio.json exist?\n' +
                 '- Is your Supabase project active?'
             );
-            
+
             this.dataSource = 'none';
             publishDiagnostics({
                 ok: false,
@@ -176,16 +176,9 @@ export const Data = {
                 error: lastError || 'No data returned from any source',
                 nodeCount: 0
             });
-            
-            // Return empty structure instead of undefined to prevent crashes
+
             return {
-                data: {
-                    title: 'Error: No Data',
-                    children: [],
-                    uri: '/',
-                    uuid: 'error',
-                    type: ''
-                },
+                data: null,
                 uniqueDates: [],
                 dataSource: 'none'
             };
@@ -194,7 +187,7 @@ export const Data = {
         // =====================================================================
         // PROCESS THE DATA
         // =====================================================================
-        
+
         // Extract unique dates for timeline features
         const allNodes = this.flattenNodes(data);
         const uniqueDates = [...new Set(
@@ -203,10 +196,10 @@ export const Data = {
 
         // Store the data source for external access
         this.dataSource = dataSource;
-        
+
         // Notify Analytics of the data source
         Analytics.setDataSource(dataSource);
-        
+
         publishDiagnostics({
             ok: true,
             dataSource,

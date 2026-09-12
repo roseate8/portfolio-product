@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Propose a focused improvement
-title: "[Feature] "
+title: '[Feature] '
 labels: enhancement
 ---
 
@@ -13,7 +13,7 @@ labels: enhancement
 
 ## Acceptance criteria
 
-- [ ] 
+- [ ]
 
 ## Impact
 

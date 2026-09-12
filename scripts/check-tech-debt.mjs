@@ -1,8 +1,7 @@
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { listTrackedFiles } from './tracked-files.mjs';
 
 const ignored = new Set([
-    'docs/readiness-report-sample/SKILL.md',
     'scripts/check-tech-debt.mjs',
 ]);
 // Match standalone TODO/FIXME/HACK markers but not documentation references
@@ -11,10 +10,7 @@ const marker = /\b(TODO|FIXME|HACK)\b/;
 const docReference = /\bTODO\/FIXME\/HACK\b/;
 const linkedMarker = /\b(?:TODO|FIXME|HACK)\([A-Z][A-Z0-9_-]*-\d+\)/;
 
-const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
-    .split('\0')
-    .filter(Boolean)
-    .filter(file => !ignored.has(file));
+const files = listTrackedFiles().filter(file => !ignored.has(file));
 
 const findings = [];
 

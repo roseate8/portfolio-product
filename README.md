@@ -45,18 +45,16 @@ portfolio-product/
 │   ├── js/                   # JavaScript files
 │   │   ├── app.js            # Main entry point
 │   │   ├── components/       # UI components (Map, Page, Slider)
-│   │   └── utils/            # Utilities (Data, Router)
+│   │   └── utils/            # Utilities (Data, Router, sanitize)
 │   ├── css/                  # Stylesheets (SCSS)
-│   ├── data/                 # Static data (portfolio.json)
 │   ├── fonts/                # Web fonts
 │   └── img/                  # Images and icons
 │
-├── backend/                  # Backend code
-│   └── supabase.js           # Supabase database integration
-│
-├── docs/                     # Documentation
-│   ├── SUPABASE_SETUP_GUIDE.md
-│   └── SUPABASE_IMPLEMENTATION_SUMMARY.md
+├── backend/                  # Supabase client and ordered SQL migrations
+├── docs/                     # Policies, runbooks, and agent-fleet docs
+├── public/                   # Static files (generated portfolio.json snapshot)
+├── scripts/                  # Snapshot and repository check scripts
+├── tests/                    # Vitest suite
 │
 ├── index.html                # Main HTML file
 ├── vite.config.js            # Vite configuration
@@ -74,7 +72,7 @@ portfolio-product/
 | `npm run dev` | Start development server (http://localhost:3000) |
 | `npm run build` | Build for production (output in `dist/`) |
 | `npm run preview` | Preview production build locally |
-| `npm run snapshot` | Refresh `assets/data/portfolio.json` from Supabase (runs automatically before every build) |
+| `npm run snapshot` | Refresh `public/assets/data/portfolio.json` from Supabase (runs automatically before every build) |
 | `npm test` | Run the test suite |
 | `npm run test:watch` | Re-run tests on change |
 | `npm run lint` | Run ESLint checks |
@@ -94,7 +92,7 @@ The portfolio supports two data sources:
 
 ### The fallback snapshot
 
-`assets/data/portfolio.json` is generated, not hand-written, and is gitignored.
+`public/assets/data/portfolio.json` is generated, not hand-written, and is gitignored.
 `npm run snapshot` writes it from live Supabase data, and it runs automatically
 before every build (`prebuild`), so each deploy ships a snapshot taken at build
 time. If Supabase is down when a visitor arrives, they get slightly stale content
@@ -195,10 +193,8 @@ for the source, error and node count. Data failures are never rendered into the 
 - **Runbooks:** `docs/runbooks/README.md`
 - **Dependency policy:** `docs/DEPENDENCY_POLICY.md`
 - **Migration discipline:** `docs/MIGRATION_DISCIPLINE.md`
-- **Supabase setup:** `SUPABASE_SETUP.md`
 - **Backend Integration:** `backend/supabase.js`
 - **Migration files:** `backend/*.sql` (see migration discipline for order and status)
-- **Readiness sample:** `docs/readiness-report-sample/SKILL.md`
 
 ---
 

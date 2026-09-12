@@ -50,13 +50,13 @@ describe('Data.buildData diagnostics', () => {
         expect(window.__portfolio).toMatchObject({ ok: true, dataSource: 'json-fallback', error: 'network down' });
     });
 
-    it('returns an empty tree and reports the failure when no source works', async () => {
+    it('returns null data and reports the failure when no source works', async () => {
         supabase.fetchPortfolioData.mockResolvedValue(null);
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404, statusText: 'Not Found' }));
 
         const result = await Data.buildData();
 
-        expect(result.data.children).toEqual([]);
+        expect(result.data).toBeNull();
         expect(result.dataSource).toBe('none');
         expect(window.__portfolio).toMatchObject({ ok: false, dataSource: 'none', nodeCount: 0 });
         expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Could not load portfolio data'));

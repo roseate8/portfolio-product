@@ -1,6 +1,6 @@
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'assets/data/portfolio.json'],
+    ignores: ['dist/**', 'node_modules/**', 'public/assets/data/portfolio.json'],
   },
   {
     files: ['**/*.{js,mjs,jsx}'],
@@ -24,6 +24,14 @@ export default [
     rules: {
       'no-debugger': 'error',
       'no-constant-binary-expression': 'error',
+      'no-dupe-keys': 'error',
+      'no-func-assign': 'error',
+      'no-import-assign': 'error',
+      'no-sparse-arrays': 'error',
+      'no-unreachable': 'error',
+      'no-unsafe-finally': 'error',
+      'use-isnan': 'error',
+      'valid-typeof': 'error',
     },
   },
 ];

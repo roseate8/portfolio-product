@@ -26,6 +26,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Verify failing revision
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
 
       - uses: Factory-AI/droid-action@v7
         with:
@@ -35,5 +39,5 @@ jobs:
           retry_mode: smart
           max_retries: '1'
           max_fix_attempts: '2'
-          max_runs_per_pr: '10'
+          max_runs_per_pr: '3'
           config_path: .github/droid-ci.yml

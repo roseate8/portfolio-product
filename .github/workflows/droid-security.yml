@@ -4,13 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - '.github/workflows/**'
-      - '.github/CODEOWNERS'
-      - '.github/dependabot.yml'
-      - '.github/droid-ci.yml'
-      - '.factory/droids/**'
-      - '.factory/skills/**'
-      - '.factory/memory/**'
+      - '.github/**'
+      - '.factory/**'
       - 'AGENTS.md'
       - 'agent.md'
       - 'package.json'
@@ -22,8 +17,7 @@ on:
       - 'vercel.json'
       - '.env.example'
       - 'vite.config.js'
-      - 'assets/js/utils/Data.js'
-      - 'assets/js/components/Map.js'
+      - 'assets/js/**'
       - 'docs/agent-fleet/**'
       - 'docs/DEPENDENCY_POLICY.md'
       - 'docs/runbooks/**'

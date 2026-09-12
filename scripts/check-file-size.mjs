@@ -1,17 +1,14 @@
-import { execFileSync } from 'node:child_process';
 import { statSync, readFileSync } from 'node:fs';
+import { listTrackedFiles } from './tracked-files.mjs';
 
 const maxBytes = 1024 * 1024;
 const maxLines = 2000;
 const ignored = new Set([
-    'assets/data/portfolio.json',
+    'public/assets/data/portfolio.json',
     'package-lock.json',
 ]);
 
-const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
-    .split('\0')
-    .filter(Boolean)
-    .filter(file => !ignored.has(file));
+const files = listTrackedFiles().filter(file => !ignored.has(file));
 
 const violations = [];
 

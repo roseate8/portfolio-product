@@ -22,8 +22,13 @@ jobs:
   pr-author:
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@droid')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@droid')) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@droid fix') &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)) ||
+      (github.event_name == 'pull_request_review_comment' &&
+       contains(github.event.comment.body, '@droid fix') &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)) ||
       (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'droid') ||
       (github.event_name == 'issues' && github.event.action == 'assigned' && contains(github.event.assignee.login, 'droid'))
     steps:
@@ -32,10 +37,18 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Reject fork pull requests
+        if: github.event_name != 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+        run: |
+          test "$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" --jq .head.repo.full_name)" = "${{ github.repository }}"
+
       - uses: Factory-AI/droid-action@v7
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
-          trigger_phrase: '@droid'
+          trigger_phrase: '@droid fix'
           label_trigger: 'droid'
           use_sticky_comment: true
           track_progress: true
