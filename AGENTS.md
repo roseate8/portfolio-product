@@ -60,6 +60,8 @@ diagnostics. Keep raw Supabase errors out of the page.
 - `.github/pull_request_template.md`: required PR disclosure headings.
 - `.factory/skills/review-guidelines/SKILL.md`: objective review criteria and
   the P0-P3 severity enum.
+- `docs/ai/AGENT-PROVIDER.md`: contract and procedure for swapping the coding
+  agent provider.
 - `docs/MIGRATION_DISCIPLINE.md`: ordering, guards, and rollback for
   `backend/*.sql` migrations.
 - `docs/DEPENDENCY_POLICY.md` and `docs/runbooks/README.md`: dependency update

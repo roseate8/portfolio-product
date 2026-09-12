@@ -252,6 +252,7 @@ review, assess risk, and report — they never merge, force-push, or push to
 - **Code ownership** (human review for sensitive paths): [`.github/CODEOWNERS`](.github/CODEOWNERS)
 - **Pull request template:** [`.github/pull_request_template.md`](.github/pull_request_template.md)
 - **Review guidelines** (objective bug criteria, P0–P3 severity): [`.factory/skills/review-guidelines/SKILL.md`](.factory/skills/review-guidelines/SKILL.md)
+- **Agent provider spec** (swap the coding agent, keep the control plane): [`docs/ai/AGENT-PROVIDER.md`](docs/ai/AGENT-PROVIDER.md)
 
 Fleet guardrails are enforced by the policy test harness in
 [`tests/fleet-policy.test.mjs`](tests/fleet-policy.test.mjs), which parses every
