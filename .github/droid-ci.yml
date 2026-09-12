@@ -1,24 +1,10 @@
-# CI Steward Configuration
+# CI Steward configuration.
 #
-# This file configures the Droid CI Steward agent for this repository.
-# The CI Steward runs on workflow_run events when the CI workflow completes.
+# The action reads this file from the default branch, so a pull request
+# cannot loosen its own limits. Retry and fix budgets live as inputs in
+# .github/workflows/droid-ci-steward.yml. This file carries only the
+# project-specific instructions.
 
-# Retry policy: off, always, or smart (retry only infrastructure and flaky failures)
-retry_mode: smart
-
-# Maximum retries per failed job per commit
-max_retries: 1
-
-# Maximum consecutive fix commits per pull request
-max_fix_attempts: 2
-
-# Lifetime maximum CI Steward invocations per pull request
-max_runs_per_pr: 3
-
-# Allow CI Steward to push fixes directly to the pull request branch
-auto_fix: true
-
-# Additional instructions for the CI Steward agent
 instructions: |
   You are the CI Steward for a Vite-powered portfolio website.
 

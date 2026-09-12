@@ -16,6 +16,10 @@ Implement work on `factory/*` branches. Apply one same-repository PR fix only
 after an authorized `@droid fix` comment. Recheck the current SHA first. Each
 fix targets one failed check or accepted finding.
 
+The tag workflow also serves `@droid fill`, `@droid review`, and
+`@droid security` from authorized commenters. Those commands never write
+code. Only `@droid fix` authorizes branch writes.
+
 Read `docs/agent-fleet/SENSITIVE_PATHS.md` and
 `docs/agent-fleet/AGENT_PERMISSIONS.md` before editing. Report work that needs
 a sensitive path. Never merge, approve, force-push, write to `main`, operate on

@@ -5,11 +5,13 @@ on:
     workflows: ['CI']
     types: [completed]
 
+# actions: write is required to rerun failed jobs; the steward token cannot
+# retry with read-only actions scope.
 permissions:
   contents: write
   pull-requests: write
   issues: write
-  actions: read
+  actions: write
   id-token: write
 
 concurrency:

@@ -1,0 +1,26 @@
+name: Deploy Smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Set the SITE_URL repository variable (Settings, Secrets and variables,
+# Variables) to the production URL, for example https://example.com.
+# The job skips silently until it is set.
+permissions: {}
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check production site and snapshot fallback
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$SITE_URL" ]; then
+            echo "SITE_URL variable not set; skipping."
+            exit 0
+          fi
+          curl -fsS -o /dev/null -w "home: %{http_code}\n" "$SITE_URL/"
+          curl -fsS -o /dev/null -w "snapshot: %{http_code}\n" "$SITE_URL/assets/data/portfolio.json"

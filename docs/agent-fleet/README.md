@@ -41,6 +41,29 @@ repository.
   human review.
 - [`AGENT_PERMISSIONS.md`](./AGENT_PERMISSIONS.md): Per-agent permission
   boundaries and prohibited operations.
+- `.factory/skills/review-guidelines/SKILL.md`: Summary format and
+  project-specific checks injected into every Droid review.
+
+On top of the roster, any authorized commenter can run `@droid fill`,
+`@droid review`, or `@droid security` on a pull request. `@droid fill`
+writes the PR description from the minimal template.
+
+## SDLC coverage
+
+| Stage            | Automation                                                 | Notes                                                |
+| ---------------- | ---------------------------------------------------------- | ---------------------------------------------------- |
+| Issue triage     | Manual                                                     | Deliberate non-goal for a solo repository            |
+| Development      | Manual                                                     | CI runs the same checks as local `npm run validate`  |
+| PR description   | `@droid fill` on demand                                    | Template stays minimal by design                     |
+| CI               | Lint, format, tests, build, snapshot upload                | None                                                 |
+| Code review      | Deep Reviewer on every PR, structured summary included     | None                                                 |
+| Security         | Security Reviewer on sensitive paths, gitleaks on every PR | None                                                 |
+| CI failure       | CI Steward retries and fixes within budget                 | None                                                 |
+| Dependencies     | Dependabot weekly with grouped PRs                         | None                                                 |
+| Merge            | Human-only                                                 | Enable branch protection in GitHub settings          |
+| Deploy           | Vercel, plus HTTP smoke check on push to main              | Set the `SITE_URL` repository variable               |
+| Stale management | None                                                       | Deliberate non-goal                                  |
+| Release notes    | None                                                       | Deliberate non-goal; commit history is the changelog |
 
 ## Supabase boundary
 

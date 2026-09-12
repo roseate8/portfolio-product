@@ -1,4 +1,8 @@
-name: Droid PR Author
+name: Droid Tag
+
+# Responds to @droid commands (fill, review, security, fix) from authorized
+# commenters, and to the `droid` issue label. The action parses the command;
+# code writes stay limited to the @droid fix flow guarded below.
 
 on:
   issue_comment:
@@ -24,10 +28,10 @@ jobs:
     if: |
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request != null &&
-       contains(github.event.comment.body, '@droid fix') &&
+       contains(github.event.comment.body, '@droid') &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)) ||
       (github.event_name == 'pull_request_review_comment' &&
-       contains(github.event.comment.body, '@droid fix') &&
+       contains(github.event.comment.body, '@droid') &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)) ||
       (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'droid') ||
       (github.event_name == 'issues' && github.event.action == 'assigned' && contains(github.event.assignee.login, 'droid'))
@@ -48,7 +52,6 @@ jobs:
       - uses: Factory-AI/droid-action@v7
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
-          trigger_phrase: '@droid fix'
           label_trigger: 'droid'
           use_sticky_comment: true
           track_progress: true

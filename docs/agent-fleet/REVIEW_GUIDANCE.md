@@ -3,6 +3,13 @@
 Review agents report high-confidence, line-specific findings. They skip style
 preferences, naming debates, and speculative redesigns.
 
+## PR Context
+
+The review summary format and project-specific checks live in
+`.factory/skills/review-guidelines/SKILL.md`. The review agent loads that
+file automatically, so summaries stay structured without a separate workflow.
+Comment `@droid fill` on a PR to write its description from the template.
+
 ## Deep Reviewer
 
 Flag correctness, security, data integrity, and test gaps. Prioritize broken
