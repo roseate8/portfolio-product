@@ -24,16 +24,25 @@ jobs:
     if: |
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.head_repository.full_name == github.repository
+    env:
+      FACTORY_KEY_PRESENT: ${{ secrets.FACTORY_API_KEY != '' }}
     steps:
+      - name: Skip when FACTORY_API_KEY is not configured
+        if: env.FACTORY_KEY_PRESENT != 'true'
+        run: echo "FACTORY_API_KEY secret not set; skipping fleet run."
+
       - uses: actions/checkout@v4
+        if: env.FACTORY_KEY_PRESENT == 'true'
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Verify failing revision
+        if: env.FACTORY_KEY_PRESENT == 'true'
         run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
 
       - uses: Factory-AI/droid-action@v7
+        if: env.FACTORY_KEY_PRESENT == 'true'
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
           ci_steward: true

@@ -38,12 +38,20 @@ jobs:
     if: |
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      FACTORY_KEY_PRESENT: ${{ secrets.FACTORY_API_KEY != '' }}
     steps:
+      - name: Skip when FACTORY_API_KEY is not configured
+        if: env.FACTORY_KEY_PRESENT != 'true'
+        run: echo "FACTORY_API_KEY secret not set; skipping fleet run."
+
       - uses: actions/checkout@v4
+        if: env.FACTORY_KEY_PRESENT == 'true'
         with:
           fetch-depth: 0
 
       - uses: Factory-AI/droid-action@v7
+        if: env.FACTORY_KEY_PRESENT == 'true'
         with:
           factory_api_key: ${{ secrets.FACTORY_API_KEY }}
           automatic_security_review: true
