@@ -1,0 +1,78 @@
+name: Droid Memory Curator
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+  id-token: write
+
+concurrency:
+  group: droid-memory-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  curate:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Droid CLI
+        run: |
+          curl --retry 5 --retry-delay 2 --retry-all-errors -fsSL https://app.factory.ai/cli | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/droid" --version
+
+      - name: Setup custom droids
+        run: |
+          mkdir -p ~/.factory/droids
+          if [ -d .factory/droids ]; then
+            cp -r .factory/droids/* ~/.factory/droids/
+          fi
+
+      - name: Curate merged PR decisions
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+
+          droid exec \
+            --auto medium \
+            --restrict-tools Read,LS,Grep,Glob,Create,Edit \
+            --tag memory-curator \
+            --tag "{\"name\":\"pr\",\"value\":\"$PR_NUMBER\"}" \
+            "Curate memory from merged PR #$PR_NUMBER: $PR_TITLE
+
+          PR description:
+          $PR_BODY
+
+          Steps:
+          1. Read .factory/droids/memory-curator.md for your instructions
+          2. Read .factory/memory/README.md for memory file format
+          3. Review the merged PR diff and comments
+          4. Identify any decisions, accepted guidance, or resolved CI causes
+             that should be recorded
+          5. Write memory entries to .factory/memory/ as Markdown files
+          6. Commit and push the memory files to the main branch
+
+          Never record:
+          - Secrets, tokens, API keys, or credentials
+          - Personal data (emails, private messages)
+          - Unmerged speculation or rejected proposals
+          - Supabase service-role keys or private URLs
+
+          Commit message: 'docs: curate memory from PR #$PR_NUMBER'
+          Push to main only (memory files are not code changes)."
+        env:
+          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

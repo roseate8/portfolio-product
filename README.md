@@ -12,6 +12,8 @@ A responsive, node-based portfolio website built with vanilla JavaScript, D3.js,
 npm install
 ```
 
+For reproducible CI-style setup, agents should use `npm ci`.
+
 ### 2. Set Up Environment
 
 Create a `.env` file in the project root:
@@ -19,6 +21,7 @@ Create a `.env` file in the project root:
 ```env
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
+VITE_POSTHOG_API_KEY=
 ```
 
 ### 3. Run Development Server
@@ -74,6 +77,9 @@ portfolio-product/
 | `npm run snapshot` | Refresh `assets/data/portfolio.json` from Supabase (runs automatically before every build) |
 | `npm test` | Run the test suite |
 | `npm run test:watch` | Re-run tests on change |
+| `npm run lint` | Run ESLint checks |
+| `npm run format:check` | Check documentation formatting |
+| `npm run validate` | Run all fast local validation checks |
 
 ---
 
@@ -127,6 +133,7 @@ const CONFIG = {
 |----------|-------------|
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anonymous/public key |
+| `VITE_POSTHOG_API_KEY` | Optional PostHog project key; leave blank to disable analytics |
 
 These are safe to use in frontend code - they only allow reading public data.
 
@@ -189,6 +196,10 @@ for the source, error and node count. Data failures are never rendered into the 
 - **Migration Script:** `backend/migrate_real_data.sql`
 - **Database Setup:** `docs/SUPABASE_SETUP_GUIDE.md`
 - **Implementation:** `docs/SUPABASE_IMPLEMENTATION_SUMMARY.md`
+- **Agent workflow:** `AGENTS.md`
+- **Agent fleet:** `docs/agent-fleet/README.md`
+- **Runbooks:** `docs/runbooks/README.md`
+- **Dependency policy:** `docs/DEPENDENCY_POLICY.md`
 - **Photography with Storage:** `docs/PHOTOGRAPHY_SUPABASE_STORAGE.md`
 - **Information Node Reorganization:** `docs/INFORMATION_NODE_REORGANIZATION.md`
 

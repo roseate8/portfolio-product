@@ -1,0 +1,8 @@
+# Ignore Factory runtime files (not droids or memory)
+cache/
+artifacts/
+bin/
+settings.json
+background-processes.json
+background-tasks.json
+*.bak

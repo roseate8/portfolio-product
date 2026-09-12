@@ -1,0 +1,58 @@
+name: Droid Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.github/workflows/**'
+      - '.github/CODEOWNERS'
+      - '.github/dependabot.yml'
+      - '.github/droid-ci.yml'
+      - '.factory/droids/**'
+      - '.factory/skills/**'
+      - '.factory/memory/**'
+      - 'AGENTS.md'
+      - 'agent.md'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'skills-lock.json'
+      - 'backend/**/*.sql'
+      - 'backend/supabase.js'
+      - '.mcp.json'
+      - 'vercel.json'
+      - '.env.example'
+      - 'vite.config.js'
+      - 'assets/js/utils/Data.js'
+      - 'assets/js/components/Map.js'
+      - 'docs/agent-fleet/**'
+      - 'docs/DEPENDENCY_POLICY.md'
+      - 'docs/runbooks/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: droid-security-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  security-review:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: Factory-AI/droid-action@v7
+        with:
+          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          automatic_security_review: true
+          security_severity_threshold: medium
+          security_block_on_critical: true
+          security_block_on_high: false

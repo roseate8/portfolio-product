@@ -1,0 +1,41 @@
+name: Droid PR Author
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [opened, labeled, assigned]
+  pull_request_review_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: droid-pr-author-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  pr-author:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@droid')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@droid')) ||
+      (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'droid') ||
+      (github.event_name == 'issues' && github.event.action == 'assigned' && contains(github.event.assignee.login, 'droid'))
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: Factory-AI/droid-action@v7
+        with:
+          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          trigger_phrase: '@droid'
+          label_trigger: 'droid'
+          use_sticky_comment: true
+          track_progress: true

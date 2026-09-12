@@ -9,6 +9,12 @@
     "prebuild": "npm run snapshot",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write AGENTS.md docs/**/*.md",
+    "format:check": "prettier --check AGENTS.md docs/**/*.md",
+    "check:file-size": "node scripts/check-file-size.mjs",
+    "check:tech-debt": "node scripts/check-tech-debt.mjs",
+    "validate": "npm run lint && npm run format:check && npm run check:file-size && npm run check:tech-debt && npm test",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -28,7 +34,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.2",
+    "eslint": "^10.10.0",
     "jsdom": "^30.0.1",
+    "prettier": "^3.9.6",
     "sass": "^1.69.5",
     "vite": "^5.0.0",
     "vitest": "^2.1.9"

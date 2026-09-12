@@ -1,0 +1,48 @@
+# CI Steward Configuration
+#
+# This file configures the Droid CI Steward agent for this repository.
+# The CI Steward runs on workflow_run events when the CI workflow completes.
+
+# Retry policy: off, always, or smart (retry only infrastructure and flaky failures)
+retry_mode: smart
+
+# Maximum retries per failed job per commit
+max_retries: 1
+
+# Maximum consecutive fix commits per pull request
+max_fix_attempts: 2
+
+# Lifetime maximum CI Steward invocations per pull request
+max_runs_per_pr: 10
+
+# Allow CI Steward to push fixes directly to the pull request branch
+auto_fix: true
+
+# Additional instructions for the CI Steward agent
+instructions: |
+  You are the CI Steward for a Vite-powered portfolio website.
+
+  Project commands:
+    npm ci          # Install dependencies
+    npm test        # Run Vitest (33 tests expected)
+    npm run lint    # Run ESLint
+    npm run build   # Run production build (includes snapshot prebuild)
+
+  Classification guidance:
+    - Vite build warnings about chunk size are NOT failures. Do not retry or
+      fix them.
+    - Test failures in tests/*.test.js are code failures. Attempt a fix only
+      if the failing test is in the changed files of the PR.
+    - "npm ci" failures due to network issues are infrastructure failures.
+      Retry once.
+    - Snapshot generation warnings (when VITE_SUPABASE_URL is not set) are
+      expected in CI without secrets. Do not treat them as failures.
+
+  Fix constraints:
+    - Push only to the PR branch or factory/* branches.
+    - Never push to main.
+    - Never force-push, merge, or enable auto-merge.
+    - Each fix targets a single failed check.
+    - If the fix would touch a sensitive path (see docs/agent-fleet/SENSITIVE_PATHS.md),
+      stop and report instead of fixing.
+    - Run npm test and npm run build before pushing a fix.

@@ -1,0 +1,39 @@
+name: Droid CI Steward
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+  id-token: write
+
+concurrency:
+  group: droid-ci-steward-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  ci-steward:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: Factory-AI/droid-action@v7
+        with:
+          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+          ci_steward: true
+          auto_fix: true
+          retry_mode: smart
+          max_retries: '1'
+          max_fix_attempts: '2'
+          max_runs_per_pr: '10'
+          config_path: .github/droid-ci.yml
